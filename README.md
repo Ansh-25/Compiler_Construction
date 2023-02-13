@@ -20,9 +20,7 @@
 
 3. Create saperate header files for lexer and parser implementation.
 
-4. Create Hash Table for keywords.
-
-5. merging and testing of lexer and tokenize.
+4. merging and testing of lexer and tokenize.
 
 ### ! Important points ###
 
