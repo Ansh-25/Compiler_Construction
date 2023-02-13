@@ -13,7 +13,7 @@
     - Start state Ansh
     - State 1-10 Nikhil
     - State 11-20 Shreekar
-    - State 21-30 Shriram
+    - State 21-30 Sriram
     - State 31-39 Toshit
 
 2. Create string to real/integer convertor and store exponent values also.
