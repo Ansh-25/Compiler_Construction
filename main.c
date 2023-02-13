@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*>>>>>>>>>>>> INIITIALIZING STRUCTS AND GLOBAL VARS <<<<<<<<<<<<<<<<<*/
+
 char buffer1[32],buffer2[32];
 FILE* ptr;
 
@@ -17,6 +19,16 @@ struct Token{
     union TokenVal val;
 };
 
+/*>>>>>>>>>>>>>>>>>>>>> UTILITY FUNCTIONS <<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+int isNum(char ch){
+    return (ch>='0' && ch<='9');
+}
+
+int isChar(char ch){
+    return (ch>='a' && ch<='z' ) || (ch>='A' && ch<='Z') || ch=='_';
+}
+
 int readBuffer(){
     if(!ptr){
         ptr = fopen("./Program.txt","r");
@@ -29,6 +41,41 @@ int readBuffer(){
     else return -1;
     return 0;
 }
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>> HASH TABLE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+// collisions resolved using linear probing
+char* hash[50];
+
+int sumChars(char* s){
+    int res=0;
+    for(int i=0;s[i]!='\0';++i){
+        res = (res+s[i]-'a');
+    }
+    return res;
+}
+
+void insert_hash(char* str){
+    int ind = sumChars(str);
+    while(hash[ind]!=NULL) ind++;
+    hash[ind] = str;
+}
+
+int search_hash(char* str){
+    int ind = sumChars(str);
+    while(hash[ind]!=NULL){
+        printf("%s == %s\n",str,hash[ind]);
+        if(strcmp(str,hash[ind])==0) return 1;
+        ind++;
+    }
+    return 0;
+}
+
+void init_hash(){
+    char* keywords[] = {"integer","real","boolean","of","array","start","end","declare","module","driver","program","get_value","print","use","with","parameters","takes","input","returns","for","in","switch","case","break","default","while"};
+    for(int i=0;i<sizeof(keywords)/sizeof(keywords[0]);++i) insert_hash(keywords[i]);
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>> LEXER FUNCTIONS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
 void Tokenize(int begin,int forward,char* tokenType,int lineNo){
     char s[64];
@@ -50,7 +97,16 @@ void Tokenize(int begin,int forward,char* tokenType,int lineNo){
     }
     tk.type = tokenType;
     tk.lineNo = lineNo;
-    if(tokenType=="TK_NUM"){
+    // ID to keyword resolution
+    if(tokenType=="TK_ID"){
+        int is_keword = search(s);
+        tk.val.identifier = s;
+        int i=0;
+        // capitalize s
+        while(s[i]!='\0') s[i] += 'A'-'a';
+        tk.type = s;
+    }
+    else if(tokenType=="TK_NUM"){
         int r=0,k=1;
         for(int i=size;i>=0;--i){
             r+=k*(s[i]-'0');
@@ -66,10 +122,6 @@ void Tokenize(int begin,int forward,char* tokenType,int lineNo){
     // parser(tk);
 }
 
-int isNum(char ch){
-    return (ch>='0' && ch<='9');
-}
-
 void Lexer(){
     int begin=0,forward=0,line=0;
     char ch = buffer1[forward];
@@ -78,7 +130,7 @@ void Lexer(){
         switch(state){
             // start state
             case 0: 
-                if((ch>='a' && ch<='z' ) || (ch>='A' && ch<='Z') || ch=='_') state = 1;
+                if(isChar(ch)) state = 1;
                 else if(ch=='+') state = 2;
                 else if(ch=='-') state = 3;
                 else if(isNum(ch)) state = 4;
@@ -103,20 +155,20 @@ void Lexer(){
 
             // ID/keyword final state
             case 1:
-                if ((ch>='a' && ch<='z' ) || (ch>='A' && ch<='Z') || ch=='_' || isNum(ch)) {
+                if (isChar(ch) || isNum(ch)) {
                     state = 1;
                     forward++;
                 } 
                 // if whitespace encountered
                 else{
-                    tokenize(begin,forward,"TK_ID",line);
+                    Tokenize(begin,forward,"TK_ID",line);
                     begin = forward;
                 }
                 break;
 
             // tokenize TK_PLUS
             case 2:
-                tokenize(begin,forward,"TK_PLUS",line);
+                Tokenize(begin,forward,"TK_PLUS",line);
                 forward++;
                 begin = forward;
                 break;
@@ -137,8 +189,10 @@ void Lexer(){
     }
 }
 
+/* >>>>>>>>>>>>>>>>>>>>>>>>> DRIVER CODE <<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
 int main(){
+    init_hash();
     readBuffer();
     strcpy(buffer1,buffer2);
     readBuffer();
