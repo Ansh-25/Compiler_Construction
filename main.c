@@ -155,10 +155,8 @@ void Lexer(){
 
             // ID/keyword final state
             case 1:
-                if (isChar(ch) || isNum(ch)) {
-                    state = 1;
+                if (isChar(ch) || isNum(ch)) 
                     forward++;
-                } 
                 // if whitespace encountered
                 else{
                     Tokenize(begin,forward,"TK_ID",line);
