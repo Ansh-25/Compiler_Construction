@@ -99,7 +99,7 @@ void Tokenize(int begin,int forward,char* tokenType,int lineNo){
     tk.lineNo = lineNo;
     // ID to keyword resolution
     if(tokenType=="TK_ID"){
-        int is_keword = search(s);
+        int is_keword = search_hash(s);
         tk.val.identifier = s;
         int i=0;
         // capitalize s
@@ -167,15 +167,103 @@ void Lexer(){
             // tokenize TK_PLUS
             case 2:
                 Tokenize(begin,forward,"TK_PLUS",line);
-                forward++;
+                forward ++;
                 begin = forward;
                 break;
+
+            // tokenize TK_MINUS
+            case 3:
+                Tokenize(begin,forward,"TK_MINUS",line);
+                forward ++;
+                begin = forward;
+                break;
+            
+
+            // ----------------------------------------Numbers------------------------------------------
+            
+            // TK_NUM final state
+            case 4:
+                if (isNum(ch))
+                    forward ++;
+                else if (ch == '.')
+                    state = 5;
+                else {
+                    Tokenize(begin, forward - 1, "TK_NUM", line);
+                    begin = forward;
+                }
+                break;
+
+            // dot after number
+            case 5:
+                if (isNum(ch)) {
+                    state = 7;
+                    forward ++;
+                }
+                else if (ch == '.') {
+                    Tokenize(begin, forward - 2, "TK_NUM", line);
+                    forward -= 1;
+                    begin = forward;
+                }
+                else {
+                    printf("ERROR: Token not recognized at line %d\n",line);
+                    exit(1);
+                }
+                break;
+
+            // -------------------------       ELIMINATED CASE 6 ... FUNCTIONALITY PROVIDED IN CASE 5    -------------------------
+            
+            // floating point number final state
+            case 7:
+                if (isNum(ch))
+                    forward ++;
+                else if (ch == 'E' || ch == 'e') {
+                    forward ++;
+                    state = 8;
+                }
+                else {
+                    Tokenize(begin, forward - 1, "TK_RNUM", line);
+                    begin = forward;
+                }
+
+            // <num>.<num>E
+            case 8:
+                if (isNum(ch)) {
+                    forward ++;
+                    state = 10;
+                }
+                else if (ch == '+' || ch == '-') {
+                    state = 9;
+                    forward ++;
+                }
+                else {
+                    printf("ERROR: Token not recognized at line %d\n",line);
+                    exit(1);
+                }
+            
+            // <num>.<num>E(+/-)
+            case 9:
+                if (isNum(ch)) {
+                    forward ++;
+                    state = 10;
+                }
+                else {
+                    printf("ERROR: Token not recognized at line %d\n",line);
+                    exit(1);
+                }
+
+            // scientific notation final state
+            case 10:
+                if (isNum(ch))
+                    forward ++;
+                else {
+                    Tokenize(begin,forward - 1, "TK_RNUM", line);
+                    begin = forward;
+                }
+            //-----------------------------------------Numbers End---------------------------------------------
 
             default:
                 printf("ERROR: State does not exist\n");
                 exit(1);
-                state = -1;
-                break;
         }
         // character update
         if(forward<32) ch = buffer1[forward];
