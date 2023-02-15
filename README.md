@@ -31,3 +31,13 @@
 3. Create saperate files for testing of any function/utility and then merge. eg: hash_testing.c
 
 4. Keep case naming of functions as *camelCase* or *underscore_saperated*.
+
+### Basic Git Commands ###
+
+For checking current branch: ` git branch`
+For creting new branch off main: `git branch <branch_name>`
+For changing branch: `git checkout <branch_name>`
+For updating local branch:  `git pull`
+For updating remote branch: `git push`
+for deleting branch locally: `git branch -d <branch_name>`
+for deleting branch remotely: `git push origin --delete <branch_name>`
