@@ -169,6 +169,7 @@ void Lexer(){
                 Tokenize(begin,forward,"TK_PLUS",line);
                 forward ++;
                 begin = forward;
+                state = 0;
                 break;
 
             // tokenize TK_MINUS
@@ -176,6 +177,7 @@ void Lexer(){
                 Tokenize(begin,forward,"TK_MINUS",line);
                 forward ++;
                 begin = forward;
+                state = 0;
                 break;
             
 
@@ -203,6 +205,7 @@ void Lexer(){
                     Tokenize(begin, forward - 2, "TK_NUM", line);
                     forward -= 1;
                     begin = forward;
+                    state = 0;
                 }
                 else {
                     printf("ERROR: Token not recognized at line %d\n",line);
@@ -223,6 +226,7 @@ void Lexer(){
                 else {
                     Tokenize(begin, forward - 1, "TK_RNUM", line);
                     begin = forward;
+                    state = 0;
                 }
 
             // <num>.<num>E
@@ -258,6 +262,7 @@ void Lexer(){
                 else {
                     Tokenize(begin,forward - 1, "TK_RNUM", line);
                     begin = forward;
+                    state = 0;
                 }
             //-----------------------------------------Numbers End---------------------------------------------
 
