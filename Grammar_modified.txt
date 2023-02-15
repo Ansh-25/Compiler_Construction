@@ -28,19 +28,14 @@
 <idList> -> ID | ID <_idList>
 <_idList> -> COMMA ID | COMMA ID <_idlist>
 <expression> -> <arithmeticExpr> | <booleanExpr>
-
-
-<arithmeticExpr> -> <arithmeticExpr> <op> <term>
-<arithmeticExpr> -> <term>
-
 <arithmeticExpr> -> <term> <_arithmeticExpr>
-<_arithmeticExpr> -> PLUS <term> <_arithmeticExpr> | ε
-
-<term> -> <term> <op> <factor>
-<term> -> <factor>
-<factor> ->BO <arithmeticExpr> BC
-<factor> -><var>
-<op> -> PLUS | MINUS | MUL | DIV
+<_arithmeticExpr> -> <addop> <term> <_arithmeticExpr> | ε
+<addop> -> PLUS | MINUS
+<term> -> <factor> <_term>
+<_term> -> <mulop> <factor> <_term> | ε
+<mulop> -> MUL | DIV
+<factor> -> BO <arithmeticExpr> BC
+<factor> -> <var>
 <booleanExpr> -> <booleanExpr> <logicalOp> <booleanExpr>
 <logicalOp> -> AND | OR
 <booleanExpr> -> <arithmeticExpr> <relationalOp> <arithmeticExpr>
