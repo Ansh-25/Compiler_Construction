@@ -241,8 +241,11 @@ void Lexer()
         case 4:
             if (isNum(ch))
                 forward++;
-            else if (ch == '.')
+            else if (ch == '.') 
+            {
+                forward++;
                 state = 5;
+            }
             else
             {
                 Tokenize(begin, forward - 1, "TK_NUM", line);
@@ -288,7 +291,7 @@ void Lexer()
                 begin = forward;
                 state = 0;
             }
-
+            break;
         // <num>.<num>E
         case 8:
             if (isNum(ch))
@@ -306,7 +309,7 @@ void Lexer()
                 printf("ERROR: Token not recognized at line %d\n", line);
                 exit(1);
             }
-
+            break;
         // <num>.<num>E(+/-)
         case 9:
             if (isNum(ch))
@@ -319,7 +322,7 @@ void Lexer()
                 printf("ERROR: Token not recognized at line %d\n", line);
                 exit(1);
             }
-
+            break;
         // scientific notation final state
         case 10:
             if (isNum(ch))
@@ -330,9 +333,191 @@ void Lexer()
                 begin = forward;
                 state = 0;
             }
+            break;
         //-----------------------------------------Numbers End---------------------------------------------
-
+        //Shreekar starts
+        //tokenise ==
+        case 11:
+            if(ch=='=') {
+                forward++;
+                state = 12;
+            }
+            else {
+                printf("ERROR: Token not recognized at line %d\n", line);
+                exit(1);
+            }
+            break;
+        
+        case 12:
+            Tokenize(begin, forward, "TK_EQ", line);
+            forward++;
+            begin = forward;
+            state = 0;
+            break;
+        //tokenise comments
+        case 13:
+            if(ch=='*'){
+                forward++;
+                state=14;
+            }
+            else{
+                Tokenize(begin, forward - 1, "TK_MUL", line);
+                begin = forward;
+                state = 0;
+            }
+            break;
+            //keep moving forward until we reach 2 *s
+        case 14:
+            if(ch=='*'){
+                forward++;
+                state=15;
+            }
+            else {forward++;}
+            break;
+        case 15:
+            if(ch=='*'){
+                //discard token
+                forward++;
+                begin=forward;
+                state=0;
+            }
+            else {
+                forward++;
+                state=14;
+            }
+            break;
+        //ignoring state 16 coz I did it in state 17
+        //tokenise <,<<,<<<,<=
+        case 17:
+            if(ch=='<'){
+                forward++;
+                state=19;
+            }
+            else if(ch=='=') {
+                forward++;
+                state=18;
+            }
+            else {
+                Tokenize(begin, forward - 1, "TK_LT", line);
+                begin = forward;
+                state = 0;
+            }
+            break;
+        case 18:
+            Tokenize(begin, forward - 1, "TK_LE", line);
+            begin = forward;
+            state = 0;
+            break;
+        
+        case 19:
+            if(ch=='<'){
+                forward++;
+                state=20;
+            }
+            else {
+            Tokenize(begin, forward - 1, "TK_DEF", line);
+            begin = forward;
+            state = 0;
+            }
+            break;
+            
+        case 20:
+            Tokenize(begin, forward - 1, "TK_DRIVERDEF", line);
+            begin = forward;
+            state = 0;
+            break;
+        //Shreekar ends
         // tokenize open sq bracket
+
+        //Sriram Cases: 21 to 30
+        //Tokenize Comma and Semicolon
+        case 21:
+            Tokenize(begin, forward, "TK_COMMA", line);
+            forward ++;
+            begin = forward;
+            state = 0;
+            break;
+
+        case 22:
+            Tokenize(begin, forward, "TK_SEMICOLON", line);
+            forward ++;
+            begin = forward;
+            state = 0;
+            break;
+
+        //Tokenize :, :=, ( and )
+        case 23:
+            if (ch == '='){
+                state = 24;
+            }
+            else{
+                Tokenize(begin, forward - 1, "TK_COLON", line);
+                begin = forward;
+                state = 0;
+            }
+            break;
+
+        case 24:
+            Tokenize(begin, forward, "TK_ASSIGNOP", line);
+            forward ++;
+            begin = forward;
+            state = 0;
+            break;
+
+        case 25:
+            Tokenize(begin, forward, "TK_BO", line);
+            forward ++;
+            begin = forward;
+            state = 0;
+            break;
+
+        case 26:
+            Tokenize(begin, forward, "TK_BC", line);
+            forward ++;
+            begin = forward;
+            state = 0;
+            break;
+
+        //Tokenize >=, >, >>, >>>
+        case 28:
+            if(ch=='='){
+                forward++;
+                state=27;
+            }
+            else if(ch=='>') {
+                forward++;
+                state=29;
+            }
+            else {
+                Tokenize(begin, forward - 1, "TK_GT", line);
+                begin = forward;
+                state = 0;
+            }
+            break;
+        case 27:
+            Tokenize(begin, forward - 1, "TK_GE", line);
+            begin = forward;
+            state = 0;
+            break;
+        
+        case 29:
+            if(ch=='>'){
+                forward++;
+                state=30;
+            }
+            else {
+            Tokenize(begin, forward - 1, "TK_ENDDEF", line);
+            begin = forward;
+            state = 0;
+            }
+            break;
+            
+        case 30:
+            Tokenize(begin, forward - 1, "TK_DRIVERENDDEF", line);
+            begin = forward;
+            state = 0;
+            break;
+
         case 31:
             Tokenize(begin, forward - 1, "TK_SQBO", line);
             // forward ++;

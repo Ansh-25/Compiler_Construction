@@ -3,53 +3,68 @@
 <moduleDeclaration> -> DECLARE MODULE ID SEMICOL
 <otherModules> -> <module><otherModules>| ε
 <driverModule> -> DRIVERDEF DRIVER PROGRAM DRIVERENDDEF <moduleDef>
+//what if fn doesnt take input params
 <module> -> DEF MODULE ID ENDDEF TAKES INPUT SQBO <input_plist> SQBC SEMICOL <ret><moduleDef>
 <ret> -> RETURNS SQBO <output_plist> SQBC SEMICOL | ε
-<input_plist> -> ID COLON <dataType> | ID COLON <dataType> <_input_plist>
-<_input_plist> -> COMMA ID COLON <dataType> | COMMA ID COLON <dataType> <_input_plist>
-<output_plist> -> ID COLON <type> | ID COLON <type> <_output_plist>
-<_output_plist> -> COMMA ID COLON <type> | COMMA ID COLON <type> <_output_plist>
+
+<input_plist> -> ID COLON <dataType> <_input_plist>
+<_input_plist> -> COMMA ID COLON <dataType> <_input_plist> | ε
+<output_plist> -> ID COLON <type> <_output_plist>
+<_output_plist> -> COMMA ID COLON <type> <_output_plist> | ε
+
 <dataType> -> INTEGER | REAL | BOOLEAN | ARRAY SQBO <range> SQBC OF <type>
 <type> -> INTEGER | REAL | BOOLEAN
+
 <moduleDef> -> START <statements> END
 <statements> -> <statement> <statements> | ε
 <statement> -> <ioStmt>|<simpleStmt>|<declareStmt>|<condionalStmt>|<iterativeStmt>
-<ioStmt> -> GET_VALUE BO ID BC SEMICOL | PRINT BO <var> BC SEMICOL
+
+//added whichId
+<ioStmt> -> GET_VALUE BO ID <whichId> BC SEMICOL | PRINT BO <var> BC SEMICOL
 <var> -> ID <whichId> | NUM | RNUM
 <whichId> -> SQBO ID SQBC | ε
+
+//remove simpleStmt?
 <simpleStmt> -> <assignmentStmt> | <moduleReuseStmt>
+
 <assignmentStmt> -> ID <whichStmt>
 <whichStmt> -> <lvalueIDStmt> | <lvalueARRStmt>
 <lvalueIDStmt> -> ASSIGNOP <expression> SEMICOL
 <lvalueARRStmt> -> SQBO <index> SQBC ASSIGNOP <expression> SEMICOL
 <index> -> NUM | ID
-<moduleReuseStmt> -> <optional> USE MODULE ID WITH PARAMETERS <idList>SEMICOL
+
+<moduleReuseStmt> -> <optional> USE MODULE ID WITH PARAMETERS <idList> SEMICOL
 <optional> -> SQBO <idList> SQBC ASSIGNOP | ε
-<idList> -> ID | ID <_idList>
-<_idList> -> COMMA ID | COMMA ID <_idlist>
+
+<idList> -> ID <_idList>
+<_idList> -> COMMA ID <_idlist> | ε
+
 <expression> -> <arithmeticExpr> | <booleanExpr>
 
-
-<arithmeticExpr> -> <arithmeticExpr> <op> <term>
-<arithmeticExpr> -> <term>
-
 <arithmeticExpr> -> <term> <_arithmeticExpr>
-<_arithmeticExpr> -> PLUS <term> <_arithmeticExpr> | ε
+<_arithmeticExpr> -> <addop> <term> <_arithmeticExpr> | ε
+<addop> -> PLUS | MINUS
+<term> -> <factor> <_term>
+<_term> -> <mulop> <factor> <_term> | ε
+<mulop> -> MUL | DIV
+<factor> -> BO <arithmeticExpr> BC
+<factor> -> <var>
 
-<term> -> <term> <op> <factor>
-<term> -> <factor>
-<factor> ->BO <arithmeticExpr> BC
-<factor> -><var>
-<op> -> PLUS | MINUS | MUL | DIV
-<booleanExpr> -> <booleanExpr> <logicalOp> <booleanExpr>
+<booleanExpr> -> <arithmeticExpr> <relationalOp> <arithmeticExpr> <_booleanExpr>
+<booleanExpr> -> BO <booleanExpr> BC <_booleanExpr>
+<_booleanExpr> -> <logicalOp> <booleanExpr> <_booleanExpr> | ε
 <logicalOp> -> AND | OR
-<booleanExpr> -> <arithmeticExpr> <relationalOp> <arithmeticExpr>
-<booleanExpr> -> BO <booleanExpr> BC
 <relationalOp> -> LT | LE | GT | GE | EQ | NE
+
 <declareStmt> -> DECLARE <idList> COLON <dataType> SEMICOL
-<condionalStmt> -> SWITCH BO ID BC START <caseStmt><default> END
-<caseStmt> -> CASE <value> COLON <statements> BREAK SEMICOL <caseStmt>
+
+//added whichId
+<condionalStmt> -> SWITCH BO ID <whichId> BC START CASE <value> COLON <statements> BREAK SEMICOL <caseStmt> <default> END
+<caseStmt> -> CASE <value> COLON <statements> BREAK SEMICOL <caseStmt> | ε
 <value> -> NUM | TRUE | FALSE
+//check if we need epsilon
 <default> -> DEFAULT COLON <statements> BREAK SEMICOL | ε
+
 <iterativeStmt> -> FOR BO ID IN <range> BC START <statements> END | WHILE BO <booleanExpr> BC START <statements> END
+
 <range> -> NUM RANGEOP NUM
