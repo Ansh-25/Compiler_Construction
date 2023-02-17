@@ -1,0 +1,98 @@
+<range>  {NUM} {BC,}
+
+<iterativeStmt>   {FOR,WHILE}
+
+<default> {DEFAULT,E}
+
+<value>  {NUM,TRUE,FALSE}  {COLON,}
+
+<caseStmt> {CASE,E}  {DEFAULT,END}
+
+<conditionalStmt> {SWITCH}
+
+<declareStmt> {DECLARE}
+
+<relationalOp> {LT | LE | GT | GE | EQ | NE}
+
+<logicalOp> {AND,OR}  {BO,ID,NUM,RNUM}
+
+<_booleanExpr> {AND,OR,E} {BC,AND,OR,E}
+
+<booleanExpr>  {BO,ID,NUM,RNUM}  {BC,AND,OR,E}
+
+<factor> {BO,ID,NUM,RNUM} 
+
+<mulop> {MUL,DIV}
+
+<_term> {MUL,DIV,E}
+
+<term> {BO,ID,NUM,RNUM} 
+
+<addop> {PLUS,MINUS}
+
+<_arithmeticExpr> {PLUS,MINUS,E}
+
+<arithmeticExpr> {BO,ID,NUM,RNUM} 
+
+<expression> {BO,ID,NUM,RNUM} 
+
+<_idList> {COMMA,E}
+
+<idList> {ID}  {COLON,}
+
+<optional> {SQBO,E}
+
+<moduleReuseStmt> {SQBO,E}
+
+<index> {NUM,ID}
+
+<lvalueARRStmt> {SQBO}
+
+<lvalueIDStmt> {ASSIGNOP}
+
+<whichStmt> {SQBO,ASSIGNOP}
+
+<assignmentStmt> {ID}
+
+<simpleStmt> {ID,SQBO,E}
+
+<whichId> {SQBO,E}  {BC}
+
+<var> {ID,NUM,RNUM}
+
+<ioStmt> {GET_VALUE,PRINT}
+
+<statement> {GET_VALUE,PRINT,ID,SQBO,DECLARE,SWITCH,FOR,WHILE,E}
+
+<statements> {GET_VALUE,PRINT,ID,SQBO,DECLARE,SWITCH,FOR,WHILE,E}  {END,BREAK,}
+
+<type> {INTEGER | REAL | BOOLEAN}
+
+<dataType> {INTEGER | REAL | BOOLEAN,ARRAY}  {SEMICOL}
+
+<_output_plist> {COMMA,E}
+
+<output_plist> {ID}
+
+<_input_plist> {COMMA,E}
+
+<input_plist>  {ID}
+
+<ret> {RETURNS,E}
+
+<module> {DEF}
+
+<driverModule> {DRIVERDEF}
+
+<otherModules> {DEF,E}
+
+<moduleDeclaration> {DECLARE}
+
+<moduleDeclarations> {DECLARE,E}
+
+<program> {DECLARE,E}
+
+
+
+
+
