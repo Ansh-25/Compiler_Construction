@@ -59,8 +59,8 @@
 <declareStmt> -> DECLARE <idList> COLON <dataType> SEMICOL
 
 //added whichId
-<condionalStmt> -> SWITCH BO ID <whichId> BC START <caseStmt> <default> END
-<caseStmt> -> CASE <value> COLON <statements> BREAK SEMICOL <caseStmt> | CASE <value> COLON <statements> BREAK SEMICOL
+<condionalStmt> -> SWITCH BO ID <whichId> BC START CASE <value> COLON <statements> BREAK SEMICOL <caseStmt> <default> END
+<caseStmt> -> CASE <value> COLON <statements> BREAK SEMICOL <caseStmt> | ε
 <value> -> NUM | TRUE | FALSE
 //check if we need epsilon
 <default> -> DEFAULT COLON <statements> BREAK SEMICOL | ε
