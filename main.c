@@ -428,6 +428,96 @@ void Lexer()
             break;
         //Shreekar ends
         // tokenize open sq bracket
+
+        //Sriram Cases: 21 to 30
+        //Tokenize Comma and Semicolon
+        case 21:
+            Tokenize(begin, forward, "TK_COMMA", line);
+            forward ++;
+            begin = forward;
+            state = 0;
+            break;
+
+        case 22:
+            Tokenize(begin, forward, "TK_SEMICOLON", line);
+            forward ++;
+            begin = forward;
+            state = 0;
+            break;
+
+        //Tokenize :, :=, ( and )
+        case 23:
+            if (ch == '='){
+                state = 24;
+            }
+            else{
+                Tokenize(begin, forward - 1, "TK_COLON", line);
+                begin = forward;
+                state = 0;
+            }
+            break;
+
+        case 24:
+            Tokenize(begin, forward, "TK_ASSIGNOP", line);
+            forward ++;
+            begin = forward;
+            state = 0;
+            break;
+
+        case 25:
+            Tokenize(begin, forward, "TK_BO", line);
+            forward ++;
+            begin = forward;
+            state = 0;
+            break;
+
+        case 26:
+            Tokenize(begin, forward, "TK_BC", line);
+            forward ++;
+            begin = forward;
+            state = 0;
+            break;
+
+        //Tokenize >=, >, >>, >>>
+        case 28:
+            if(ch=='='){
+                forward++;
+                state=27;
+            }
+            else if(ch=='>') {
+                forward++;
+                state=29;
+            }
+            else {
+                Tokenize(begin, forward - 1, "TK_GT", line);
+                begin = forward;
+                state = 0;
+            }
+            break;
+        case 27:
+            Tokenize(begin, forward - 1, "TK_GE", line);
+            begin = forward;
+            state = 0;
+            break;
+        
+        case 29:
+            if(ch=='>'){
+                forward++;
+                state=30;
+            }
+            else {
+            Tokenize(begin, forward - 1, "TK_ENDDEF", line);
+            begin = forward;
+            state = 0;
+            }
+            break;
+            
+        case 30:
+            Tokenize(begin, forward - 1, "TK_DRIVERENDDEF", line);
+            begin = forward;
+            state = 0;
+            break;
+
         case 31:
             Tokenize(begin, forward - 1, "TK_SQBO", line);
             // forward ++;
