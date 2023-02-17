@@ -1,6 +1,6 @@
-<range>  {NUM} {BC,}
+<range>  {NUM}  {BC,}
 
-<iterativeStmt>   {FOR,WHILE}
+<iterativeStmt>   {FOR,WHILE}  {GET_VALUE,PRINT,ID,SQBO,DECLARE,SWITCH,FOR,WHILE,END,BREAK}  //F=STAT
 
 <default> {DEFAULT,E}
 
@@ -8,89 +8,91 @@
 
 <caseStmt> {CASE,E}  {DEFAULT,END}
 
-<conditionalStmt> {SWITCH}
+<conditionalStmt> {SWITCH} {GET_VALUE,PRINT,ID,SQBO,DECLARE,SWITCH,FOR,WHILE,END,BREAK} //F=STAT
 
-<declareStmt> {DECLARE}
+<declareStmt> {DECLARE} {GET_VALUE,PRINT,ID,SQBO,DECLARE,SWITCH,FOR,WHILE,END,BREAK}  //F=STAT
 
-<relationalOp> {LT | LE | GT | GE | EQ | NE}
+<relationalOp> {LT | LE | GT | GE | EQ | NE}  {BO,ID,NUM,RNUM}
 
 <logicalOp> {AND,OR}  {BO,ID,NUM,RNUM}
 
-<_booleanExpr> {AND,OR,E} {BC,AND,OR,E}
+<_booleanExpr> {AND,OR,E}  **{BC,AND,OR,SEMICOL}** //F=BOOLEAN
 
-<booleanExpr>  {BO,ID,NUM,RNUM}  {BC,AND,OR,E}
+<booleanExpr>  {BO,ID,NUM,RNUM}  **{BC,AND,OR,SEMICOL}**  //F=EXPR
 
-<factor> {BO,ID,NUM,RNUM} 
+<factor> {BO,ID,NUM,RNUM}  **{MUL,DIV, PLUS,MINUS,LT | LE | GT | GE | EQ | NE,AND,OR,BC,SEMICOL} ** //F=TERM
 
-<mulop> {MUL,DIV}
+<mulop> {MUL,DIV}  {BO,ID,NUM,RNUM} 
 
-<_term> {MUL,DIV,E}
+<_term> {MUL,DIV,E}   **{PLUS,MINUS,LT | LE | GT | GE | EQ | NE,AND,OR,BC} **
 
-<term> {BO,ID,NUM,RNUM} 
+<term> {BO,ID,NUM,RNUM}  **{PLUS,MINUS,LT | LE | GT | GE | EQ | NE,AND,OR,BC,SEMICOL} **  //F=ARITH
 
-<addop> {PLUS,MINUS}
+<addop> {PLUS,MINUS}  {BO,ID,NUM,RNUM}
 
-<_arithmeticExpr> {PLUS,MINUS,E}
+<_arithmeticExpr> {PLUS,MINUS,E}  **{LT | LE | GT | GE | EQ | NE,AND,OR,BC}**
 
-<arithmeticExpr> {BO,ID,NUM,RNUM} 
+<arithmeticExpr> {BO,ID,NUM,RNUM}    **{LT | LE | GT | GE | EQ | NE,AND,OR,BC,SEMICOL}** //F=EXPR
 
-<expression> {BO,ID,NUM,RNUM} 
+<expression> {BO,ID,NUM,RNUM}  {SEMICOL}
 
-<_idList> {COMMA,E}
+<_idList> {COMMA,E}  {SQBC,SEMICOL}  //F=ID
 
-<idList> {ID}  {COLON,}
+<idList> {ID}  {COLON,} {SQBC,SEMICOL}
 
-<optional> {SQBO,E}
+<optional> {SQBO,E}  {USE}
 
-<moduleReuseStmt> {SQBO,E}
+<moduleReuseStmt> {SQBO,E}  {GET_VALUE,PRINT,ID,SQBO,DECLARE,SWITCH,FOR,WHILE,END,BREAK} //F=SIMPLE
 
-<index> {NUM,ID}
+<index> {NUM,ID}  {SQBC}
 
-<lvalueARRStmt> {SQBO}
+<lvalueARRStmt> {SQBO}  {GET_VALUE,PRINT,ID,SQBO,DECLARE,SWITCH,FOR,WHILE,END,BREAK} //F=WHICHS
 
-<lvalueIDStmt> {ASSIGNOP}
+<lvalueIDStmt> {ASSIGNOP} {GET_VALUE,PRINT,ID,SQBO,DECLARE,SWITCH,FOR,WHILE,END,BREAK}  //F=WHICHS
 
-<whichStmt> {SQBO,ASSIGNOP}
+<whichStmt> {SQBO,ASSIGNOP}  {GET_VALUE,PRINT,ID,SQBO,DECLARE,SWITCH,FOR,WHILE,END,BREAK}  //F=ASSIGN
 
-<assignmentStmt> {ID}
+<assignmentStmt> {ID}  {GET_VALUE,PRINT,ID,SQBO,DECLARE,SWITCH,FOR,WHILE,END,BREAK}  //F=SIMPLE
 
-<simpleStmt> {ID,SQBO,E}
+<simpleStmt> {ID,SQBO,E} {GET_VALUE,PRINT,ID,SQBO,DECLARE,SWITCH,FOR,WHILE,END,BREAK}  //F=STAT
 
-<whichId> {SQBO,E}  {BC}
+<whichId> {SQBO,E}  {BC,MUL,DIV, PLUS,MINUS,LT | LE | GT | GE | EQ | NE,AND,OR,BC,SEMICOL}  //F=VAR
 
-<var> {ID,NUM,RNUM}
+<var> {ID,NUM,RNUM} {BC,MUL,DIV, PLUS,MINUS,LT | LE | GT | GE | EQ | NE,AND,OR,BC,SEMICOL}  //F = FACTOR
 
-<ioStmt> {GET_VALUE,PRINT}
+<ioStmt> {GET_VALUE,PRINT}   {GET_VALUE,PRINT,ID,SQBO,DECLARE,SWITCH,FOR,WHILE,END,BREAK} //F=STAT
 
-<statement> {GET_VALUE,PRINT,ID,SQBO,DECLARE,SWITCH,FOR,WHILE,E}
+<statement> {GET_VALUE,PRINT,ID,SQBO,DECLARE,SWITCH,FOR,WHILE,E} {GET_VALUE,PRINT,ID,SQBO,DECLARE,SWITCH,FOR,WHILE,END,BREAK}
 
 <statements> {GET_VALUE,PRINT,ID,SQBO,DECLARE,SWITCH,FOR,WHILE,E}  {END,BREAK,}
 
-<type> {INTEGER | REAL | BOOLEAN}
+<moduleDef> {START}  {DEF,DRIVERDEF}   //F=MODULE,DRIVER
 
-<dataType> {INTEGER | REAL | BOOLEAN,ARRAY}  {SEMICOL}
+<type> {INTEGER | REAL | BOOLEAN}  {SEMICOL,COMMA,SQBC}  //F=DATATYPE,OUT
 
-<_output_plist> {COMMA,E}
+<dataType> {INTEGER | REAL | BOOLEAN,ARRAY}  {SEMICOL,COMMA,SQBC} //F=INP
 
-<output_plist> {ID}
+<_output_plist> {COMMA,E} {SQBC}
 
-<_input_plist> {COMMA,E}
+<output_plist> {ID}  {SQBC}
 
-<input_plist>  {ID}
+<_input_plist> {COMMA,E} {SQBC}
 
-<ret> {RETURNS,E}
+<input_plist>  {ID} {SQBC}
 
-<module> {DEF}
+<ret> {RETURNS,E} {START}
 
-<driverModule> {DRIVERDEF}
+<module> {DEF}  {DEF,DRIVERDEF}  //F=OTHER
 
-<otherModules> {DEF,E}
+<driverModule> {DRIVERDEF}  {DEF} 
 
-<moduleDeclaration> {DECLARE}
+<otherModules> {DEF,E} {DRIVERDEF}
 
-<moduleDeclarations> {DECLARE,E}
+<moduleDeclaration> {DECLARE}  {DECLARE,DEF,DRIVERDEF}  //F=MODS
 
-<program> {DECLARE,E}
+<moduleDeclarations> {DECLARE,E}  {DEF,DRIVERDEF}
+
+<program> {DECLARE,E} {}
 
 
 
