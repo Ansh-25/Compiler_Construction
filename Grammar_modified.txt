@@ -53,7 +53,7 @@
 <logicalOp>  ->AND  | OR 
 <booleanExpr> -> <arithmeticExpr> <relationalOp> <arithmeticExpr> <_booleanExpr>
 <booleanExpr> -> BO <booleanExpr> BC <_booleanExpr>
-<booleanExpr> -> TRUE | FALSE <_booleanExpr>
+<booleanExpr> -> TRUE <_booleanExpr> | FALSE <_booleanExpr>
 <_booleanExpr> -> <logicalOp> <booleanExpr> <_booleanExpr> | ε
 <relationalOp> -> LT | LE | GT | GE | EQ | NE 
 
