@@ -18,7 +18,7 @@
 
 <_booleanExpr> {AND,OR,E}  **{BC,AND,OR,SEMICOL}** //F=BOOLEAN
 
-<booleanExpr>  {BO,ID,NUM,RNUM}  **{BC,AND,OR,SEMICOL}**  //F=EXPR
+<booleanExpr>  {BO,ID,TRUE,FALSE,NUM,RNUM,}  **{BC,AND,OR,SEMICOL}**  //F=EXPR
 
 <factor> {BO,ID,NUM,RNUM}  **{MUL,DIV, PLUS,MINUS,LT | LE | GT | GE | EQ | NE,AND,OR,BC,SEMICOL} ** //F=TERM
 
@@ -32,7 +32,7 @@
 
 <_arithmeticExpr> {PLUS,MINUS,E}  **{LT | LE | GT | GE | EQ | NE,AND,OR,BC}**
 
-<arithmeticExpr> {BO,ID,NUM,RNUM}    **{LT | LE | GT | GE | EQ | NE,AND,OR,BC,SEMICOL}** //F=EXPR
+<arithmeticExpr> {PLUS,MINUS,BO,ID,NUM,RNUM}    **{LT | LE | GT | GE | EQ | NE,AND,OR,BC,SEMICOL}** //F=EXPR
 
 <expression> {BO,ID,NUM,RNUM}  {SEMICOL}
 

@@ -1,0 +1,59 @@
+<range> {num} {SQBC,BC}
+<iterativeStmt> {FOR, WHILE}
+<defalut> {DEFAULT, e}
+<value> {NUM, TRUE, FALSE}
+<caseStmt> {CASE,e}
+<conditionalStmt> {SWITCH}
+<declareStmt> {DECLARE}
+<relationalOp> {LT, LE, GT, GE, EQ, NE}
+<logicalOP> {AND, OR}
+<_booleanExpr> {AND, OR, e}
+
+<booleanExpr>
+    TRUE
+    FALSE
+    BO
+    <arithmeticExpr> // clash
+
+<var> {ID, NUM, RNUM}
+<factor> {ID, NUM, RNUM, BO} {MUL,DIV,follow(term)}
+<mulop> {MUL, DIV}
+<_term> {MUL, DIV, e}
+<term> {ID, NUM, RNUM, BO} {PLUS,MINUS,follow(arithmeticExpr)}
+<addop> {PLUS, MINUS}
+<_arithmeticExpr> {PLUS, MINUS, e}
+<arithmeticExpr> {PLUS, MINUS, ID, NUM, RNUM, BO}
+
+<expression> // clash arithmetic boolean
+
+<_idList> {comma,e}
+<idlist> {ID}
+
+<optional> {SQB0, e}
+<moduleReuseStmt> {SQBO, USE}
+<index> {NUM, ID}
+<lvalueARRStmt> {SQBO}
+<lvalueIDStmt> {ASSIGNOP}
+<whichStmt> {ASSIGNOP,SQBO}
+<assignmentStmt> {ID}
+<simpleStmt> {ID,SQBO,USE}
+<printable> {ID,NUM,RNUM,TRUE,FALSE}
+<whichId> {SQBO,e} {BC,fol(var),fol(printable)}
+<var> {ID,NUM, RNUM} {fol(factor)}
+<ioStmt> {GET_VALUE, PRINT}
+<statement> {GET_VALUE, PRINT, ID, SQBO, USE, DECLARE, SWITCH, FOR, WHILE}
+<statements> {GET_VALUE, PRINT, ID, SQBO, USE, DECLARE, SWITCH, FOR, WHILE, e} {END,BREAK}
+<moduleDef> {START}
+<type> {INT, RNUM, BOOLEAN}
+<dataType> {INT, RNUM, BOOLEAN, ARRAY} 
+<_output_plist> {COMMA, e} {SQBC}
+<output_plist> {ID} {SQBC}
+<_input_plist> {COMMA, e} {SQBC}
+<input_plist> {ID} {SQBC}
+<ret> {RETURNS, e} {START}
+<module> {DEF}
+<driverModule> {DRIVERDEF}
+<otherModules> {DEF, e} {DRIVERDEF,EOF}
+<moduleDeclaration> {DECLARE}
+<moduleDeclarations> {DECLARE, e} {DEF,DRIVERDEF}
+<program> {DECLARE,e} {EOF}
