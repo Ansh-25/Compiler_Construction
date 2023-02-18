@@ -1,4 +1,4 @@
-<range>  {NUM}  {BC,}
+<range>  {NUM}  {BC,SQBC}
 
 <iterativeStmt>   {FOR,WHILE}  {GET_VALUE,PRINT,ID,SQBO,DECLARE,SWITCH,FOR,WHILE,END,BREAK}  //F=STAT
 
