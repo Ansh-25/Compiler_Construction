@@ -48,7 +48,6 @@
 <_term> -> <mulop> <factor> <_term> | ε
 <factor> -> BO <arithmeticExpr> BC
 <factor> -> <var>
-<factor> -> <addop> <factor>
 
 <logicalOp>  ->AND  | OR 
 <relationalOp> -> LT | LE | GT | GE | EQ | NE 
