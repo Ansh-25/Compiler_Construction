@@ -8,11 +8,11 @@
 
 <input_plist> -> ID COLON <dataType> <_input_plist>
 <_input_plist> -> COMMA ID COLON <dataType> <_input_plist> | ε
-<output_plist> -> ID COLON <type> <_output_plist>index
+<output_plist> -> ID COLON <type> <_output_plist>
 <_output_plist> -> COMMA ID COLON <type> <_output_plist> | ε
 
-<dataType> -> INTEGER | RNUM | BOOLEAN | ARRAY SQBO <range> SQBC OF <type>
-<type> -> INTEGER | RNUM | BOOLEAN
+<dataType> -> INTEGER | REAL | BOOLEAN | ARRAY SQBO <range> SQBC OF <type>
+<type> -> INTEGER | REAL | BOOLEAN
 
 <moduleDef> -> START <statements> END
 <statements> -> <statement> <statements> | ε
@@ -42,11 +42,11 @@
 <_expression> -> <logicalOP> <relationalExpression> | ε
 <relationalExpression> -> <arithmeticExpr> <_relationalExpression> | TRUE | FALSE
 <_relationalExpression> -> <relationalOp> <arithmeticExpr> | ε
-<arithmeticExpr> -> <term> <_arithmeticExpr> | PLUS <term> <_arithmeticExpr> | MINS <term> <_arithmeticExpr>
+<arithmeticExpr> -> <term> <_arithmeticExpr> | <addop> <term> <_arithmeticExpr>
 <_arithmeticExpr> -> <addop> <term> <_arithmeticExpr> | ε
 <term> -> <factor> <_term>
 <_term> -> <mulop> <factor> <_term> | ε
-<factor> -> BO <arithmeticExpr> BC
+<factor> -> BO <expression> BC
 <factor> -> <var>
 
 <logicalOp>  ->AND  | OR 
