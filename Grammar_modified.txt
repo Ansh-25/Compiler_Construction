@@ -42,7 +42,7 @@
 <_expression> -> <logicalOP> <relationalExpression> | ε
 <relationalExpression> -> <arithmeticExpr> <_relationalExpression> | TRUE | FALSE
 <_relationalExpression> -> <relationalOp> <arithmeticExpr> | ε
-<arithmeticExpr> -> <term> <_arithmeticExpr>
+<arithmeticExpr> -> <term> <_arithmeticExpr> | PLUS <term> <_arithmeticExpr> | MINS <term> <_arithmeticExpr>
 <_arithmeticExpr> -> <addop> <term> <_arithmeticExpr> | ε
 <term> -> <factor> <_term>
 <_term> -> <mulop> <factor> <_term> | ε
