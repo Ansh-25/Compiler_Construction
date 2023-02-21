@@ -1,5 +1,5 @@
-#include <lexerDef.h>
-#include <hash.h>
+#include "lexerDef.h"
+#include "hash.h"
 
 /*>>>>>>>>>>>>>>>>>>>>> UTILITY FUNCTIONS <<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 
