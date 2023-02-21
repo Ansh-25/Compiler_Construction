@@ -7,9 +7,6 @@
 
 /*>>>>>>>>>>>> INIITIALIZING STRUCTS AND GLOBAL VARS <<<<<<<<<<<<<<<<<*/
 
-char buffer1[32], buffer2[32];
-FILE *ptr;
-
 union TokenVal
 {
     int integer;

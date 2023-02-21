@@ -108,7 +108,7 @@ void Lexer()
                 state = 2;
             else if (ch == '-')
                 state = 3;
-            else if (isNum(ch))
+            else if (ch >= '0' && ch <= '9')
                 state = 4;
             else if (ch == '=')
                 state = 11;
@@ -147,7 +147,7 @@ void Lexer()
 
         // ID/keyword final state
         case 1:
-            if (isChar(ch) || isNum(ch))
+            if (isChar(ch) || (ch >= '0' && ch <= '9'))
                 forward++;
             // if whitespace encountered
             else
@@ -177,7 +177,7 @@ void Lexer()
 
         // TK_NUM final state
         case 4:
-            if (isNum(ch))
+            if (ch >= '0' && ch <= '9')
                 forward++;
             else if (ch == '.') 
             {
@@ -216,7 +216,7 @@ void Lexer()
 
         // floating point number final state
         case 7:
-            if (isNum(ch))
+            if (ch >= '0' && ch <= '9')
                 forward++;
             else if (ch == 'E' || ch == 'e')
             {
@@ -232,7 +232,7 @@ void Lexer()
             break;
         // <num>.<num>E
         case 8:
-            if (isNum(ch))
+            if (ch >= '0' && ch <= '9')
             {
                 forward++;
                 state = 10;
@@ -250,7 +250,7 @@ void Lexer()
             break;
         // <num>.<num>E(+/-)
         case 9:
-            if (isNum(ch))
+            if (ch >= '0' && ch <= '9')
             {
                 forward++;
                 state = 10;
