@@ -22,8 +22,8 @@ FILE *getStream(FILE *fp){
 
 void Tokenize(int begin, int forward, char *tokenType, int lineNo)
 {
-    return;
-    // printf("begin:= %d  end:= %d type:=%s line:=%d\n",begin,forward,tokenType,lineNo);
+    //return;
+    printf("begin:= %d  end:= %d type:=%s line:=%d\n",begin,forward,tokenType,lineNo);
     // char s[64];
     // int size = 0;
     // struct Token tk;
@@ -143,6 +143,7 @@ void getNextToken()
             {
                 Tokenize(begin, forward, "TK_ID", line);
                 begin = forward;
+                state = -1;
             }
             break;
 
@@ -151,7 +152,7 @@ void getNextToken()
             Tokenize(begin, forward, "TK_PLUS", line);
             forward++;
             begin = forward;
-            state = 0;
+            state = -1;
             break;
 
         // tokenize TK_MINUS
@@ -159,7 +160,7 @@ void getNextToken()
             Tokenize(begin, forward, "TK_MINUS", line);
             forward++;
             begin = forward;
-            state = 0;
+            state = -1;
             break;
 
         // ----------------------------------------Numbers------------------------------------------
@@ -192,7 +193,7 @@ void getNextToken()
                 Tokenize(begin, forward - 2, "TK_NUM", line);
                 forward -= 1;
                 begin = forward;
-                state = 0;
+                state = -1;
             }
             else
             {
@@ -216,7 +217,7 @@ void getNextToken()
             {
                 Tokenize(begin, forward - 1, "TK_RNUM", line);
                 begin = forward;
-                state = 0;
+                state = -1;
             }
             break;
         // <num>.<num>E
@@ -258,7 +259,7 @@ void getNextToken()
             {
                 Tokenize(begin, forward - 1, "TK_RNUM", line);
                 begin = forward;
-                state = 0;
+                state = -1;
             }
             break;
         //-----------------------------------------Numbers End---------------------------------------------
@@ -279,7 +280,7 @@ void getNextToken()
             Tokenize(begin, forward, "TK_EQ", line);
             forward++;
             begin = forward;
-            state = 0;
+            state = -1;
             break;
         //tokenise comments
         case 13:
@@ -290,7 +291,7 @@ void getNextToken()
             else{
                 Tokenize(begin, forward - 1, "TK_MUL", line);
                 begin = forward;
-                state = 0;
+                state = -1;
             }
             break;
             //keep moving forward until we reach 2 *s
@@ -327,13 +328,13 @@ void getNextToken()
             else {
                 Tokenize(begin, forward - 1, "TK_LT", line);
                 begin = forward;
-                state = 0;
+                state = -1;
             }
             break;
         case 18:
             Tokenize(begin, forward - 1, "TK_LE", line);
             begin = forward;
-            state = 0;
+            state = -1;
             break;
         
         case 19:
@@ -344,14 +345,14 @@ void getNextToken()
             else {
             Tokenize(begin, forward - 1, "TK_DEF", line);
             begin = forward;
-            state = 0;
+            state = -1;
             }
             break;
             
         case 20:
             Tokenize(begin, forward - 1, "TK_DRIVERDEF", line);
             begin = forward;
-            state = 0;
+            state = -1;
             break;
         //Shreekar ends
         // tokenize open sq bracket
@@ -362,14 +363,14 @@ void getNextToken()
             Tokenize(begin, forward, "TK_COMMA", line);
             forward ++;
             begin = forward;
-            state = 0;
+            state = -1;
             break;
 
         case 22:
             Tokenize(begin, forward, "TK_SEMICOLON", line);
             forward ++;
             begin = forward;
-            state = 0;
+            state = -1;
             break;
 
         //Tokenize :, :=, ( and )
@@ -380,7 +381,7 @@ void getNextToken()
             else{
                 Tokenize(begin, forward - 1, "TK_COLON", line);
                 begin = forward;
-                state = 0;
+                state = -1;
             }
             break;
 
@@ -388,21 +389,21 @@ void getNextToken()
             Tokenize(begin, forward, "TK_ASSIGNOP", line);
             forward ++;
             begin = forward;
-            state = 0;
+            state = -1;
             break;
 
         case 25:
             Tokenize(begin, forward, "TK_BO", line);
             forward ++;
             begin = forward;
-            state = 0;
+            state = -1;
             break;
 
         case 26:
             Tokenize(begin, forward, "TK_BC", line);
             forward ++;
             begin = forward;
-            state = 0;
+            state = -1;
             break;
 
         //Tokenize >=, >, >>, >>>
@@ -418,13 +419,13 @@ void getNextToken()
             else {
                 Tokenize(begin, forward - 1, "TK_GT", line);
                 begin = forward;
-                state = 0;
+                state = -1;
             }
             break;
         case 27:
             Tokenize(begin, forward - 1, "TK_GE", line);
             begin = forward;
-            state = 0;
+            state = -1;
             break;
         
         case 29:
@@ -435,21 +436,21 @@ void getNextToken()
             else {
             Tokenize(begin, forward - 1, "TK_ENDDEF", line);
             begin = forward;
-            state = 0;
+            state = -1;
             }
             break;
             
         case 30:
             Tokenize(begin, forward - 1, "TK_DRIVERENDDEF", line);
             begin = forward;
-            state = 0;
+            state = -1;
             break;
 
         case 31:
             Tokenize(begin, forward - 1, "TK_SQBO", line);
             // forward ++;
             begin = forward;
-            state = 0;
+            state = -1;
             break;
 
         // tokenize close sq bracket
@@ -457,7 +458,7 @@ void getNextToken()
             Tokenize(begin, forward - 1, "TK_SQBC", line);
             // forward ++;
             begin = forward;
-            state = 0;
+            state = -1;
             break;
 
         // error if not '=' occurs after '!'
@@ -478,7 +479,7 @@ void getNextToken()
             Tokenize(begin, forward, "TK_NE", line);
             forward++;
             begin = forward;
-            state = 0;
+            state = -1;
             break;
 
         // tokenize div operator
@@ -486,7 +487,7 @@ void getNextToken()
             Tokenize(begin, forward - 1, "TK_DIV", line);
             // forward ++;
             begin = forward;
-            state = 0;
+            state = -1;
             break;
 
         // error if not '.' occurs after '.'
@@ -507,13 +508,13 @@ void getNextToken()
             Tokenize(begin, forward, "TK_RANGEOP", line);
             forward++;
             begin = forward;
-            state = 0;
+            state = -1;
             break;
 
         // updates line no
         case 38:
             line++;
-            state = 0;
+            state = -1;
             break;
 
         // ignores whitespaces
@@ -526,7 +527,7 @@ void getNextToken()
             }
             else
             {
-                state = 0;
+                state = -1;
                 break;
             }
 
@@ -555,7 +556,7 @@ int main()
     printf("%s\n", buffer1);
     printf("%s\n", buffer2);
 
-    // getNextToken();
+    getNextToken();
 
     return 0;
 }
