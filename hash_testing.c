@@ -8,7 +8,7 @@ int is_init=0;
 int sumchars(char* s){
     int res=0;
     for(int i=0;s[i]!='\0';++i){
-        res = (res+s[i]-'a');
+        res = (res+s[i]-'a')%50;
     }
     return res;
 }

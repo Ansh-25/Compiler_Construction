@@ -573,7 +573,7 @@ int main()
     // printf("END");
     // printf("%s\n", buffer2);
     // printf("END");
-    char s[] = "driver";
+    char s[] = "boolean";
     printf("%d\n",search_hash(s));
 
     // getNextToken();

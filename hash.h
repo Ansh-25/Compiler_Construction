@@ -14,7 +14,7 @@ int is_init=0;
 int sumchars(char* s){
     int res=0;
     for(int i=0;s[i]!='\0';++i){
-        res = (res+s[i]-'a');
+        res = (res+s[i]-'a')%50;
     }
     return res;
 }
@@ -30,7 +30,7 @@ int search_hash(char* str){
     // printf("hello := %d\n",hash[ind]!=NULL);
     while(hash[ind]!=NULL){
         // printf("%s == %s\n",str,hash[ind]);
-        //printf("hi:::::");
+        // printf("%s",hash[ind]);
         if(strcmp(str,hash[ind])==0) return 1;
         ind++;
     }
