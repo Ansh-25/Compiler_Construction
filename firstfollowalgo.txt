@@ -1,25 +1,20 @@
 
 GLobal:
 grammar (array of linkedlist of heads of linkedlists(where each linkedlist is RHS of a rule))
-first sets (array of linkedlists)
-follow sets (Array of linkedlists)
+first sets (array of sets)
+follow sets (Array of sets)
 Stack S of nodes
 Array[Array[TreeNode]] of size(nonTerminals * terminals)
 
 TreeNode (Struct consisting of 
     nodeType
     rule no. (if non-terminal)
-    line no. (if terminal)
     Token (if terminal)
     link to children
     link to sibling
 )
 Stack node (
-    nodeType
     link to corresponding TreeNode
-    rule no. (if non-terminal)
-    line no. (if terminal)
-    Token (if terminal)
 )
 
 
@@ -104,9 +99,8 @@ void computeFollow(nonTerminal A) {
 
 void createTable() {
     for each non-Terminal A in array{
-        bool eps=false
-        for each element x in the firstSet{
-            T[A,x] = 
+        for each terminal x {
+            if(FIRST[A].contains(x)) {T[A,x] = RHS}
         }
     }
 }
