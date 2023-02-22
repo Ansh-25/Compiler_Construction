@@ -1,4 +1,5 @@
 #include "lexerDef.h"
+#include "hash.h"
 
 char buffer1[32], buffer2[32];
 FILE *ptr;
@@ -11,77 +12,81 @@ FILE *getStream(FILE *fp){
         fp = fopen("./Program.txt", "r");
         if (!fp)
         {
-            fprintf(stdout, "File cannot be opened\n");
+            printf("File cannot be opened\n");
             exit(1);
         }
     }
-    if (!feof(fp)) fread(buffer2, sizeof(buffer2) - 1, 1, fp);
-    
+    for(int i=0;i<32;++i) buffer2[i]='\0'; 
+    // printf("booleal := %s\n",hash[search_hash("booleal")]);
+    if (!feof(fp)) fread(buffer2, sizeof(buffer2) - 1 , 1, fp);
+    printf("booleal := %s\n",hash[search_hash("booleal")]);
     return fp;
 }
 
 void Tokenize(int begin, int forward, char *tokenType, int lineNo)
 {
-    //return;
-    printf("begin:= %d  end:= %d type:=%s line:=%d\n",begin,forward,tokenType,lineNo);
-    // char s[64];
-    // int size = 0;
-    // struct Token tk;
-    // // assuming id size < 32
-    // if (begin < forward)
-    // {
-    //     strncpy(s, buffer1 + begin, forward - begin + 1);
-    //     size = forward - begin;
-    // }
-    // else
-    // {
-    //     strncpy(s, buffer1 + begin, 32 - begin);
-    //     for (int i = 0; i < forward; i++)
-    //     {
-    //         s[32 - begin + 1 + i] = buffer2[i];
-    //     }
-    //     s[32 - begin + forward + 1] = '\0';
-    //     strcpy(buffer1, buffer2);
-    //     readBuffer();
-    //     size = 32 - begin + forward;
-    // }
-    // tk.type = tokenType;
-    // tk.lineNo = lineNo;
-    // // ID to keyword resolution
-    // if (tokenType == "TK_ID")
-    // {
-    //     int is_keword = search_hash(s);
-    //     tk.val.identifier = s;
-    //     int i = 0;
-    //     // capitalize s
-    //     while (s[i] != '\0')
-    //         s[i] += 'A' - 'a';
-    //     tk.type = s;
-    // }
-    // else if (tokenType == "TK_NUM")
-    // {
-    //     int r = 0, k = 1;
-    //     for (int i = size; i >= 0; --i)
-    //     {
-    //         r += k * (s[i] - '0');
-    //         k *= 10;
-    //     }
-    //     tk.val.integer = r;
-    // }
-    // else if (tokenType == "TK_RNUM")
-    // {
-    //     // do something
-    // }
-    // else
-    // {
-    //     tk.val.identifier = s;
-    // }
-    // call parser with token tk
-    // parser(tk);
+    printf("begin:= %d  end:= %d  type:= %s  line:=%d  ",begin,forward,tokenType,lineNo);
+    char s[64];
+    int size = 0;
+    struct Token tk;
+    tk.type = tokenType;
+    tk.lineNo = lineNo;
+    init_hash();
+    // assuming id size < 32
+    if (begin < forward)
+    {
+        strncpy(s, buffer1 + begin, forward - begin);
+        size = forward - begin;
+    }
+    else
+    {
+        strncpy(s, buffer1 + begin, 31 - begin);
+        for (int i = 0; i < forward; i++)
+        {
+            s[31 - begin + i] = buffer2[i];
+        }
+        s[31 - begin + forward] = '\0';
+        size = 31 - begin + forward;
+    }
+    s[size]='\0';
+    // printf("%s  ",s);
+    // ID to keyword resolution
+    if (tokenType == "TK_ID" && search_hash(s))
+    {
+        tk.val.identifier = s;
+        int i = 0;
+        // capitalize s
+        char temp[64];
+        while (i<size) temp[i++] = s[i] + 'A' - 'a';
+        temp[i]='\0';
+        tk.type = temp;
+    }
+    else if (tokenType == "TK_NUM")
+    {
+        int r = 0, k = 1;
+        for (int i = size; i >= 0; --i)
+        {
+            r += k * (s[i] - '0');
+            k *= 10;
+        }
+        tk.val.integer = r;
+    }
+    else if (tokenType == "TK_RNUM")
+    {
+        // do something
+    }
+    else
+    {
+        tk.val.identifier = s;
+    }
+    printf("type:= %s  val := %s\n",tk.type,s);
 }
 
+
+// ? DOUBT what to do in case of no new tokens left
 void getNextToken()
 {
+    int flag=0;
     char ch = buffer1[forward];
     int state = 0;
     while (state != -1)
@@ -129,7 +134,7 @@ void getNextToken()
                 state = 36;
             else if (ch == '\n')
                 state = 38;
-            else if (ch == '\b' || ch == '\t')
+            else if (ch == '\b' || ch == '\t' || ch==32)
                 state = 39;
             forward++;
             break;
@@ -176,8 +181,9 @@ void getNextToken()
             }
             else
             {
-                Tokenize(begin, forward - 1, "TK_NUM", line);
+                Tokenize(begin, forward, "TK_NUM", line);
                 begin = forward;
+                state = -1;
             }
             break;
 
@@ -215,7 +221,7 @@ void getNextToken()
             }
             else
             {
-                Tokenize(begin, forward - 1, "TK_RNUM", line);
+                Tokenize(begin, forward, "TK_RNUM", line);
                 begin = forward;
                 state = -1;
             }
@@ -257,7 +263,7 @@ void getNextToken()
                 forward++;
             else
             {
-                Tokenize(begin, forward - 1, "TK_RNUM", line);
+                Tokenize(begin, forward, "TK_RNUM", line);
                 begin = forward;
                 state = -1;
             }
@@ -289,7 +295,7 @@ void getNextToken()
                 state=14;
             }
             else{
-                Tokenize(begin, forward - 1, "TK_MUL", line);
+                Tokenize(begin, forward, "TK_MUL", line);
                 begin = forward;
                 state = -1;
             }
@@ -326,13 +332,13 @@ void getNextToken()
                 state=18;
             }
             else {
-                Tokenize(begin, forward - 1, "TK_LT", line);
+                Tokenize(begin, forward, "TK_LT", line);
                 begin = forward;
                 state = -1;
             }
             break;
         case 18:
-            Tokenize(begin, forward - 1, "TK_LE", line);
+            Tokenize(begin, forward, "TK_LE", line);
             begin = forward;
             state = -1;
             break;
@@ -343,14 +349,14 @@ void getNextToken()
                 state=20;
             }
             else {
-            Tokenize(begin, forward - 1, "TK_DEF", line);
+            Tokenize(begin, forward, "TK_DEF", line);
             begin = forward;
             state = -1;
             }
             break;
             
         case 20:
-            Tokenize(begin, forward - 1, "TK_DRIVERDEF", line);
+            Tokenize(begin, forward, "TK_DRIVERDEF", line);
             begin = forward;
             state = -1;
             break;
@@ -361,7 +367,6 @@ void getNextToken()
         //Tokenize Comma and Semicolon
         case 21:
             Tokenize(begin, forward, "TK_COMMA", line);
-            forward ++;
             begin = forward;
             state = -1;
             break;
@@ -379,7 +384,7 @@ void getNextToken()
                 state = 24;
             }
             else{
-                Tokenize(begin, forward - 1, "TK_COLON", line);
+                Tokenize(begin, forward, "TK_COLON", line);
                 begin = forward;
                 state = -1;
             }
@@ -417,13 +422,13 @@ void getNextToken()
                 state=29;
             }
             else {
-                Tokenize(begin, forward - 1, "TK_GT", line);
+                Tokenize(begin, forward, "TK_GT", line);
                 begin = forward;
                 state = -1;
             }
             break;
         case 27:
-            Tokenize(begin, forward - 1, "TK_GE", line);
+            Tokenize(begin, forward, "TK_GE", line);
             begin = forward;
             state = -1;
             break;
@@ -434,20 +439,20 @@ void getNextToken()
                 state=30;
             }
             else {
-            Tokenize(begin, forward - 1, "TK_ENDDEF", line);
+            Tokenize(begin, forward, "TK_ENDDEF", line);
             begin = forward;
             state = -1;
             }
             break;
             
         case 30:
-            Tokenize(begin, forward - 1, "TK_DRIVERENDDEF", line);
+            Tokenize(begin, forward, "TK_DRIVERENDDEF", line);
             begin = forward;
             state = -1;
             break;
 
         case 31:
-            Tokenize(begin, forward - 1, "TK_SQBO", line);
+            Tokenize(begin, forward, "TK_SQBO", line);
             // forward ++;
             begin = forward;
             state = -1;
@@ -514,7 +519,8 @@ void getNextToken()
         // updates line no
         case 38:
             line++;
-            state = -1;
+            state = 0;
+            begin = forward;
             break;
 
         // ignores whitespaces
@@ -527,7 +533,8 @@ void getNextToken()
             }
             else
             {
-                state = -1;
+                begin = forward;
+                state = 0;
                 break;
             }
 
@@ -535,28 +542,61 @@ void getNextToken()
             printf("ERROR: State does not exist\n");
             exit(1);
         }
-        // character update
-        if (forward < 32)
-            ch = buffer1[forward];
-        else
-        {
-            // case when forward in buf2 nd begin in buf1
-            forward %= 32;
+        // printf("%d,%d\n",begin,forward);
+        forward %=31;
+        if(forward<begin){
+            flag = 1;
             ch = buffer2[forward];
+        }else {
+            if(flag){
+                strcpy(buffer1,buffer2);
+                ptr = getStream(ptr);
+                printf("%s", buffer1);
+                printf("END");
+                printf("%s\n", buffer2);
+                printf("END");
+                flag = 0;
+            }
+            ch = buffer1[forward];
         }
     }
 }
 
 int main()
 {
+    init_hash();
     ptr = getStream(ptr);
-    strcpy(buffer1, buffer2);
-    ptr = getStream(ptr);
+    // strcpy(buffer1, buffer2);
+    // ptr = getStream(ptr);
 
-    printf("%s\n", buffer1);
-    printf("%s\n", buffer2);
+    // printf("%s", buffer1);
+    // printf("END");
+    // printf("%s\n", buffer2);
+    // printf("END");
+    char s[] = "boolean";
+    printf("%d\n",search_hash(s));
 
-    getNextToken();
+    // getNextToken();
+    // getNextToken();
+    // getNextToken();
+    // getNextToken();
+    // getNextToken();
+    // getNextToken();
+    // getNextToken();
+    // getNextToken();
+    // getNextToken();
+    // getNextToken();
+    // getNextToken();
+    // getNextToken();
+    // getNextToken();
+    // getNextToken();
+    // getNextToken();
+    // getNextToken();
+    // getNextToken();
+    // getNextToken();
+    // getNextToken();
+    // getNextToken();
+    // getNextToken();
 
     return 0;
 }

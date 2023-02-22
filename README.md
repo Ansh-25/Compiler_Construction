@@ -25,7 +25,7 @@ February 14     Lexical Analysis Module Development
 February 16     Testing of lexer with given test cases        
 February 19     Grammar Modifications                            
 February 21     Grammar Representation (for Parser)       
-February 22     FIRST and FOLLOW sets implementation 
+February 22     FIRST and FOLLOW sets implementation
 February 23     Predictive Parsing Table Creation             
 February 23     Testing the table creation                         
 February 24     Stack ADT and Parsing                              
