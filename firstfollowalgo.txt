@@ -105,7 +105,7 @@ void createTable() {
         B = R -> head
         do {
             B = B -> next;
-            if (B == NULL) {
+            if (B == NULL || B == epsilon) {
                 for every terminal t in follow[A] add R to T[A,t]
                 break;
             }
