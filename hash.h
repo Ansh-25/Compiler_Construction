@@ -30,11 +30,11 @@ int search_hash(char* str){
     // printf("hello := %d\n",hash[ind]!=NULL);
     while(hash[ind]!=NULL){
         // printf("%s == %s\n",str,hash[ind]);
-        printf("hi:::::");
+        //printf("hi:::::");
         if(strcmp(str,hash[ind])==0) return 1;
         ind++;
     }
-    printf("hello\n");
+    //printf("hello\n");
     return 0;
 }
 

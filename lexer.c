@@ -19,7 +19,7 @@ FILE *getStream(FILE *fp){
     for(int i=0;i<32;++i) buffer2[i]='\0'; 
     // printf("booleal := %s\n",hash[search_hash("booleal")]);
     if (!feof(fp)) fread(buffer2, sizeof(buffer2) - 1 , 1, fp);
-    printf("booleal := %s\n",hash[search_hash("booleal")]);
+    //printf("booleal := %s\n",hash[search_hash("booleal")]);
     return fp;
 }
 
@@ -566,14 +566,14 @@ int main()
 {
     init_hash();
     ptr = getStream(ptr);
-    // strcpy(buffer1, buffer2);
-    // ptr = getStream(ptr);
+    strcpy(buffer1, buffer2);
+    ptr = getStream(ptr);
 
     // printf("%s", buffer1);
     // printf("END");
     // printf("%s\n", buffer2);
     // printf("END");
-    char s[] = "boolean";
+    char s[] = "driver";
     printf("%d\n",search_hash(s));
 
     // getNextToken();
