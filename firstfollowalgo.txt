@@ -1,0 +1,114 @@
+
+GLobal:
+grammar (array of linkedlist of heads of linkedlists(where each linkedlist is RHS of a rule))
+first sets (array of linkedlists)
+follow sets (Array of linkedlists)
+Stack S of nodes
+Array[Array[TreeNode]] of size(nonTerminals * terminals)
+
+TreeNode (Struct consisting of 
+    nodeType
+    rule no. (if non-terminal)
+    line no. (if terminal)
+    Token (if terminal)
+    link to children
+    link to sibling
+)
+Stack node (
+    nodeType
+    link to corresponding TreeNode
+    rule no. (if non-terminal)
+    line no. (if terminal)
+    Token (if terminal)
+)
+
+
+//derivesEpsilon should be an O(1) operation (can be done by modifying the linkedListNodes)
+void parse() {
+    TreeNode <program>
+    S.push($); S.push(<program>);
+    L = getNextToken();
+    while(L!=null) {
+        X = S.top().
+        if(X.nodeType==terminal){
+            if(X.token.Type==L.Type) {Convert X.treeNode to leafnode; //add line no. and token to tree node// S.pop(); L=getNextToken();}
+            else reportError;
+        }
+        else if(X.nodeType==nonTerminal){
+            if(T[X,L]!=null) {X.treeNode.child=T[X,L]; X.ruleNo = ruleNo; S.pop(); S.pushRule(T[X,L]);} //pushRule pushes the rule in such that first char is at top of Stack
+            else reportError;
+        }
+        else if(S.empty()==true) reportError;
+        else continue;
+    }
+    if S.empty()==false reportError;
+}
+
+computefirstandfollow {
+    for all non terminals t:
+        computefirst(t);
+    for all non terminals t:
+        computefollow(t);
+}
+
+void computeFirst (non terminal A)
+ {
+    if first[A]!=null return;
+    go through each rule in for that non-terminal
+        if first is terminal, 
+            add the terminal to first[A];
+        if first is non terminal B
+            computeFirst (B)
+            add everything in first(B) to first(A) except epsilon
+            while (derivesepsilon(B)) {
+                B -> next(B) in the same rule
+                if (isNullB) {
+                    add epsilon
+                    break;
+                }
+                else if (B is terminal)
+                    add terminal to first set
+                else {
+                    computeFirst(B)
+                    add everything from first[B] to first[A]
+                }
+            }
+            check next term/non term
+    return;
+ }
+
+first[0] 
+
+void computeFollow(nonTerminal A) {
+    if Follow[A]!=null return;
+    go through all rules of all grammar and encounter A. Keep track of LHS while going through the rules
+        if next char after A is terminal {Follow[A].add(terminal)}
+        else if(next char after A is non-terminal B) {
+            add everything in first(B) to follow(A) except epsilon
+            while (derivesepsilon(B)) {
+                B -> next(B) in the same rule
+                if (isNullB) {
+                    computeFollow[LHS];
+                    add follow[LHS];
+                    break;
+                }
+                else if (B is terminal)
+                    add terminal to follow set
+                else {
+                    computeFirst(B)
+                    add everything from first[B] to follow[A]
+                }
+            }
+        }
+}
+
+void createTable() {
+    for each non-Terminal A in array{
+        bool eps=false
+        for each element x in the firstSet{
+            T[A,x] = 
+        }
+    }
+}
+
+
