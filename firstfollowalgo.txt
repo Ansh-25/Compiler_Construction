@@ -1,8 +1,8 @@
 
 GLobal:
 grammar (array of linkedlist of heads of linkedlists(where each linkedlist is RHS of a rule))
-first sets (array of sets)
-follow sets (Array of sets)
+first sets (array of linkedLists)
+follow sets (Array of linkedLists)
 Stack S of nodes
 Array[Array[TreeNode]] of size(nonTerminals * terminals)
 
