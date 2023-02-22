@@ -56,16 +56,20 @@ struct Token Tokenize(int begin, int forward, char *tokenType, int lineNo){
         tk.type = temp;
     }
     else if (tokenType == "TK_NUM"){
+        int n = 0;
+        if(s[0]=='-')
+            n = 1;
         int r = 0, k = 1;
-        for (int i = size-1; i >= 0; --i)
+        for (int i = size-1; i >= n; --i)
         {
             r += k * (s[i] - '0');
             k *= 10;
         }
+        if(n)
+            r*=-1;
         tk.val.integer = r;
     }
     else if (tokenType == "TK_RNUM"){
-        ++size;
         int i,j;
         for(i=0;i<size;i++){
             if(s[i]=='.')
@@ -92,7 +96,7 @@ struct Token Tokenize(int begin, int forward, char *tokenType, int lineNo){
                     k/=10;
                 }
                 r*=pow(10,t);
-                printf("%f",r);
+                //printf("%f",r);
             }
             else if(s[i]=='-'){
                 i++;
@@ -102,7 +106,7 @@ struct Token Tokenize(int begin, int forward, char *tokenType, int lineNo){
                     k/=10;
                 }
                 r*=pow(0.1,t);
-                printf("\n %lf",r);
+                //printf("\n %lf",r);
             }
             else{
                 int t = 0, k = pow(10,size-i-1);
@@ -111,7 +115,7 @@ struct Token Tokenize(int begin, int forward, char *tokenType, int lineNo){
                     k/=10;
                 }
                 r*=pow(10,t);
-                printf("%f",r);
+                //printf("%f",r);
             }
         }
         tk.val.decimal = r;
