@@ -52,7 +52,7 @@ computefirstandfollow {
 }
 
 void computeFirst (non terminal A)
- {
+{
     if first[A]!=null return;
     go through each rule in for that non-terminal
         if first is terminal, 
@@ -75,7 +75,7 @@ void computeFirst (non terminal A)
             }
             check next term/non term
     return;
- }
+}
 
 first[0] 
 
