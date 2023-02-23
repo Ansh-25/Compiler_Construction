@@ -5,6 +5,7 @@
 char buffer1[32], buffer2[32];
 FILE *ptr;
 int begin = 0, forward = 0, line = 1;
+int m = 0;
 
 // check fp for eof
 FILE *getStream(FILE *fp){
@@ -62,10 +63,11 @@ struct Token Tokenize(int begin, int forward, char *tokenType, int lineNo){
             r += k * (s[i] - '0');
             k *= 10;
         }
+        if(m)
+            r*=-1;
         tk.val.integer = r;
     }
     else if (tokenType == "TK_RNUM"){
-        ++size;
         int i,j;
         for(i=0;i<size;i++){
             if(s[i]=='.')
@@ -92,7 +94,7 @@ struct Token Tokenize(int begin, int forward, char *tokenType, int lineNo){
                     k/=10;
                 }
                 r*=pow(10,t);
-                printf("%f",r);
+                //printf("%f",r);
             }
             else if(s[i]=='-'){
                 i++;
@@ -102,7 +104,7 @@ struct Token Tokenize(int begin, int forward, char *tokenType, int lineNo){
                     k/=10;
                 }
                 r*=pow(0.1,t);
-                printf("\n %lf",r);
+                //printf("\n %lf",r);
             }
             else{
                 int t = 0, k = pow(10,size-i-1);
@@ -111,7 +113,7 @@ struct Token Tokenize(int begin, int forward, char *tokenType, int lineNo){
                     k/=10;
                 }
                 r*=pow(10,t);
-                printf("%f",r);
+                //printf("%f",r);
             }
         }
         tk.val.decimal = r;
@@ -189,6 +191,8 @@ struct Token* getNextToken()
             else
             {
                 *tk = Tokenize(begin, forward, "TK_ID", line);
+                if(m)
+                    m=0;
                 begin = forward;
                 state = -1;
             }
@@ -205,7 +209,8 @@ struct Token* getNextToken()
         // tokenize TK_MINUS
         case 3:
             *tk = Tokenize(begin, forward, "TK_MINUS", line);
-            forward++;
+            //forward++;
+            m=1;
             begin = forward;
             state = -1;
             break;
