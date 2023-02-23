@@ -9,7 +9,7 @@ int begin = 0, forward = 0, line = 1;
 // check fp for eof
 FILE *getStream(FILE *fp){
     if (!fp){
-        fp = fopen("./Program.txt", "r");
+        fp = fopen("testprog.txt", "r");
         if (!fp){
             printf("File cannot be opened\n");
             exit(1);
