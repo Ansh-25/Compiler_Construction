@@ -1,15 +1,15 @@
 #include "lexerDef.h"
 #include <stdlib.h>
 
-typedef enum {<program>,<moduleDeclarations>}non_terminal;
+typedef enum {program,moduleDeclarations}non_terminal;
 
 union grammaritem {
     non_terminal nt;
-    type t;
+    tokentype t;
 };
 
 struct grammarchar {
-    grammaritem g;
+    union grammaritem g;
     int type;
 };
 
@@ -27,14 +27,14 @@ struct StackNode {
     struct StackNode* next;
 };
 
-void insert (ListNode* head, struct grammarchar gc) {
-    ListNode* newnode = (struct ListNode *)malloc(sizeof(struct ListNode));
+void insert (struct ListNode* head, struct grammarchar gc) {
+    struct ListNode* newnode = (struct ListNode *)malloc(sizeof(struct ListNode));
     newnode -> val = gc;
     newnode -> next = NULL;
     if (head == NULL)
         head = newnode;
     else {
-        ListNode* curr = head;
+        struct ListNode* curr = head;
         while (curr -> next != NULL)
             curr = curr -> next;
         curr -> next = newnode;

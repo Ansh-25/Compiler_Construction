@@ -8,3 +8,7 @@
 struct ListNode* grammar[NO_RULES];
 struct ListNode* first[NO_NONTERMS];
 int parseTable [NO_TERMS][NO_NONTERMS];
+
+non_terminal maptoenum(char* s) {
+    
+}
