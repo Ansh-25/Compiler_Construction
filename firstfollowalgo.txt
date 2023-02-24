@@ -99,7 +99,7 @@ void computeFollow(nonTerminal A) {
 
 void createTable() {
 
-    // without epsilon
+    Initialise parse table with -2;
     For every production rule R {
         A = R -> head
         B = R -> head
@@ -113,6 +113,14 @@ void createTable() {
             else for every terminal t in first[B] add R to T[A,t]            
         }while (derivesEpsilon(B))
     }
+
+    For every non terminal A that does not derive epsilon {
+        For every terminal B in the follow set of A {
+            if (T[A,B] == 0) T[A,B] = -1;
+        }
+    }
 }
 
-
+int derivesEpsilon(int index) {
+    iterate throught the linked list and check if epsilon is present in it
+}
