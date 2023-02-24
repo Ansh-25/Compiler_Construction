@@ -1,8 +1,15 @@
 #include "lexerDef.h"
 #include <stdlib.h>
 
+typedef enum {<program>,<moduleDeclarations>}non_terminal;
+
+union grammaritem {
+    non_terminal nt;
+    type t;
+};
+
 struct grammarchar {
-    char* val;
+    grammaritem g;
     int type;
 };
 

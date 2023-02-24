@@ -16,7 +16,7 @@ FILE *getStream(FILE *fp){
             exit(1);
         }
     }
-    for(int i=0;i<32;++i) buffer2[i]='\0'; 
+    for(int i=0;i<32;++i) buffer2[i]='\0';
     if (!feof(fp)) fread(buffer2, sizeof(buffer2) - 1 , 1, fp);
     else return NULL;
     return fp;
@@ -47,14 +47,20 @@ struct Token Tokenize(int begin, int forward, tokentype type, int lineNo){
     s[size]='\0';
 
     // ID to keyword resolution
-    if (type == TK_ID && search_hash(s)){
+    // if (type == TK_ID && search_hash(s)){
+    //     strcpy(tk.val.identifier,s);
+    //     int i = 0;
+    //     // capitalize s
+    //     char temp[64];
+    //     while (i<size) temp[i++] = s[i] + 'A' - 'a';
+    //     temp[i]='\0';
+    //     tk.type = temp;
+    // }
+    if (type == TK_ID) {
+        tokentype keywordtype = search_hash(s);
+        if (keywordtype != -1) 
+            tk.type = keywordtype;
         strcpy(tk.val.identifier,s);
-        int i = 0;
-        // capitalize s
-        char temp[64];
-        while (i<size) temp[i++] = s[i] + 'A' - 'a';
-        temp[i]='\0';
-        tk.type = temp;
     }
     else if (type == TK_NUM){
         int r = 0, k = 1;
@@ -601,16 +607,16 @@ struct Token* getNextToken()
     return tk;
 }
 
-int main()
-{
-    ptr = getStream(ptr);
-    strcpy(buffer1, buffer2);
-    ptr = getStream(ptr);
+// int main()
+// {
+//     ptr = getStream(ptr);
+//     strcpy(buffer1, buffer2);
+//     ptr = getStream(ptr);
 
-    struct Token *tk;
-    do{
-        tk = getNextToken();
-        printToken(tk);
-    }while(tk!=NULL);
-    return 0;
-}
+//     struct Token *tk;
+//     do{
+//         tk = getNextToken();
+//         printToken(tk);
+//     }while(tk!=NULL);
+//     return 0;
+// }
