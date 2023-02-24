@@ -22,12 +22,12 @@ FILE *getStream(FILE *fp){
     return fp;
 }
 
-struct Token Tokenize(int begin, int forward, char *tokenType, int lineNo){
+struct Token Tokenize(int begin, int forward, tokentype type, int lineNo){
     // printf("begin:= %d  end:= %d  type:= %s  line:=%d  ",begin,forward,tokenType,lineNo);
     char s[64];
     int size = 0;
     struct Token tk;
-    tk.type = tokenType;
+    tk.type = type;
     tk.lineNo = lineNo;
     init_hash();
     // assuming id size < 32
@@ -47,7 +47,7 @@ struct Token Tokenize(int begin, int forward, char *tokenType, int lineNo){
     s[size]='\0';
 
     // ID to keyword resolution
-    if (tokenType == "TK_ID" && search_hash(s)){
+    if (type == TK_ID && search_hash(s)){
         strcpy(tk.val.identifier,s);
         int i = 0;
         // capitalize s
@@ -56,7 +56,7 @@ struct Token Tokenize(int begin, int forward, char *tokenType, int lineNo){
         temp[i]='\0';
         tk.type = temp;
     }
-    else if (tokenType == "TK_NUM"){
+    else if (type == TK_NUM){
         int r = 0, k = 1;
         for (int i = size-1; i >= 0; --i)
         {
@@ -67,7 +67,7 @@ struct Token Tokenize(int begin, int forward, char *tokenType, int lineNo){
             r*=-1;
         tk.val.integer = r;
     }
-    else if (tokenType == "TK_RNUM"){
+    else if (type == TK_RNUM){
         int i,j;
         for(i=0;i<size;i++){
             if(s[i]=='.')
@@ -190,7 +190,7 @@ struct Token* getNextToken()
             // if whitespace encountered
             else
             {
-                *tk = Tokenize(begin, forward, "TK_ID", line);
+                *tk = Tokenize(begin, forward, TK_ID, line);
                 if(m)
                     m=0;
                 begin = forward;
@@ -200,7 +200,7 @@ struct Token* getNextToken()
 
         // tokenize TK_PLUS
         case 2:
-            *tk = Tokenize(begin, forward, "TK_PLUS", line);
+            *tk = Tokenize(begin, forward, TK_PLUS, line);
             forward++;
             begin = forward;
             state = -1;
@@ -208,7 +208,7 @@ struct Token* getNextToken()
 
         // tokenize TK_MINUS
         case 3:
-            *tk = Tokenize(begin, forward, "TK_MINUS", line);
+            *tk = Tokenize(begin, forward, TK_MINUS, line);
             //forward++;
             m=1;
             begin = forward;
@@ -228,7 +228,7 @@ struct Token* getNextToken()
             }
             else
             {
-                *tk = Tokenize(begin, forward, "TK_NUM", line);
+                *tk = Tokenize(begin, forward, TK_NUM, line);
                 begin = forward;
                 state = -1;
             }
@@ -243,7 +243,7 @@ struct Token* getNextToken()
             }
             else if (ch == '.')
             {
-                *tk = Tokenize(begin, forward - 2, "TK_NUM", line);
+                *tk = Tokenize(begin, forward - 2, TK_NUM, line);
                 forward -= 1;
                 begin = forward;
                 state = -1;
@@ -268,7 +268,7 @@ struct Token* getNextToken()
             }
             else
             {
-                *tk = Tokenize(begin, forward, "TK_RNUM", line);
+                *tk = Tokenize(begin, forward, TK_RNUM, line);
                 begin = forward;
                 state = -1;
             }
@@ -310,7 +310,7 @@ struct Token* getNextToken()
                 forward++;
             else
             {
-                *tk = Tokenize(begin, forward, "TK_RNUM", line);
+                *tk = Tokenize(begin, forward, TK_RNUM, line);
                 begin = forward;
                 state = -1;
             }
@@ -330,7 +330,7 @@ struct Token* getNextToken()
             break;
         
         case 12:
-            *tk = Tokenize(begin, forward, "TK_EQ", line);
+            *tk = Tokenize(begin, forward, TK_EQ, line);
             forward++;
             begin = forward;
             state = -1;
@@ -342,7 +342,7 @@ struct Token* getNextToken()
                 state=14;
             }
             else{
-                *tk = Tokenize(begin, forward, "TK_MUL", line);
+                *tk = Tokenize(begin, forward, TK_MUL, line);
                 begin = forward;
                 state = -1;
             }
@@ -379,13 +379,13 @@ struct Token* getNextToken()
                 state=18;
             }
             else {
-                *tk = Tokenize(begin, forward, "TK_LT", line);
+                *tk = Tokenize(begin, forward, TK_LT, line);
                 begin = forward;
                 state = -1;
             }
             break;
         case 18:
-            *tk = Tokenize(begin, forward, "TK_LE", line);
+            *tk = Tokenize(begin, forward, TK_LE, line);
             begin = forward;
             state = -1;
             break;
@@ -396,14 +396,14 @@ struct Token* getNextToken()
                 state=20;
             }
             else {
-                *tk = Tokenize(begin, forward, "TK_DEF", line);
+                *tk = Tokenize(begin, forward, TK_DEF, line);
                 begin = forward;
                 state = -1;
             }
             break;
             
         case 20:
-            *tk = Tokenize(begin, forward, "TK_DRIVERDEF", line);
+            *tk = Tokenize(begin, forward, TK_DRIVERDEF, line);
             begin = forward;
             state = -1;
             break;
@@ -413,13 +413,13 @@ struct Token* getNextToken()
         //Sriram Cases: 21 to 30
         //Tokenize Comma and Semicolon
         case 21:
-            *tk = Tokenize(begin, forward, "TK_COMMA", line);
+            *tk = Tokenize(begin, forward, TK_COMMA, line);
             begin = forward;
             state = -1;
             break;
 
         case 22:
-            *tk = Tokenize(begin, forward, "TK_SEMICOLON", line);
+            *tk = Tokenize(begin, forward, TK_SEMICOLON, line);
             begin = forward;
             state = -1;
             break;
@@ -431,26 +431,26 @@ struct Token* getNextToken()
                 state = 24;
             }
             else{
-                *tk = Tokenize(begin, forward, "TK_COLON", line);
+                *tk = Tokenize(begin, forward, TK_COLON, line);
                 begin = forward;
                 state = -1;
             }
             break;
 
         case 24:
-            *tk = Tokenize(begin, forward, "TK_ASSIGNOP", line);
+            *tk = Tokenize(begin, forward, TK_ASSIGNOP, line);
             begin = forward;
             state = -1;
             break;
 
         case 25:
-            *tk = Tokenize(begin, forward, "TK_BO", line);
+            *tk = Tokenize(begin, forward, TK_BO, line);
             begin = forward;
             state = -1;
             break;
 
         case 26:
-            *tk = Tokenize(begin, forward, "TK_BC", line);
+            *tk = Tokenize(begin, forward, TK_BC, line);
             begin = forward;
             state = -1;
             break;
@@ -466,13 +466,13 @@ struct Token* getNextToken()
                 state=29;
             }
             else {
-                *tk = Tokenize(begin, forward, "TK_GT", line);
+                *tk = Tokenize(begin, forward, TK_GT, line);
                 begin = forward;
                 state = -1;
             }
             break;
         case 27:
-            *tk = Tokenize(begin, forward, "TK_GE", line);
+            *tk = Tokenize(begin, forward, TK_GE, line);
             begin = forward;
             state = -1;
             break;
@@ -483,27 +483,27 @@ struct Token* getNextToken()
                 state=30;
             }
             else {
-                *tk = Tokenize(begin, forward, "TK_ENDDEF", line);
+                *tk = Tokenize(begin, forward, TK_ENDDEF, line);
                 begin = forward;
                 state = -1;
             }
             break;
             
         case 30:
-            *tk = Tokenize(begin, forward, "TK_DRIVERENDDEF", line);
+            *tk = Tokenize(begin, forward, TK_DRIVERENDDEF, line);
             begin = forward;
             state = -1;
             break;
 
         case 31:
-            *tk = Tokenize(begin, forward, "TK_SQBO", line);
+            *tk = Tokenize(begin, forward, TK_SQBO, line);
             begin = forward;
             state = -1;
             break;
 
         // tokenize close sq bracket
         case 32:
-            *tk = Tokenize(begin, forward - 1, "TK_SQBC", line);
+            *tk = Tokenize(begin, forward - 1, TK_SQBC, line);
             begin = forward;
             state = -1;
             break;
@@ -523,7 +523,7 @@ struct Token* getNextToken()
 
         // tokenize not equal
         case 34:
-            *tk = Tokenize(begin, forward, "TK_NE", line);
+            *tk = Tokenize(begin, forward, TK_NE, line);
             forward++;
             begin = forward;
             state = -1;
@@ -531,7 +531,7 @@ struct Token* getNextToken()
 
         // tokenize div operator
         case 35:
-            *tk = Tokenize(begin, forward - 1, "TK_DIV", line);
+            *tk = Tokenize(begin, forward - 1, TK_DIV, line);
             begin = forward;
             state = -1;
             break;
@@ -551,7 +551,7 @@ struct Token* getNextToken()
 
         // tokenize range op
         case 37:
-            *tk = Tokenize(begin, forward, "TK_RANGEOP", line);
+            *tk = Tokenize(begin, forward, TK_RANGEOP, line);
             forward++;
             begin = forward;
             state = -1;
@@ -601,16 +601,16 @@ struct Token* getNextToken()
     return tk;
 }
 
-// int main()
-// {
-//     ptr = getStream(ptr);
-//     strcpy(buffer1, buffer2);
-//     ptr = getStream(ptr);
+int main()
+{
+    ptr = getStream(ptr);
+    strcpy(buffer1, buffer2);
+    ptr = getStream(ptr);
 
-//     struct Token *tk;
-//     do{
-//         tk = getNextToken();
-//         printToken(tk);
-//     }while(tk!=NULL);
-//     return 0;
-// }
+    struct Token *tk;
+    do{
+        tk = getNextToken();
+        printToken(tk);
+    }while(tk!=NULL);
+    return 0;
+}

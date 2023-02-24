@@ -3,6 +3,7 @@ GLobal:
 grammar (array of linkedlist of heads of linkedlists(where each linkedlist is RHS of a rule))
 first sets (array of linkedLists)
 follow sets (Array of linkedLists)
+Synchronising set (array of sets)
 Stack S of nodes
 Array[Array[TreeNode]] of size(nonTerminals * terminals)
 
@@ -19,6 +20,15 @@ Stack node (
 
 
 //derivesEpsilon should be an O(1) operation (can be done by modifying the linkedListNodes)
+void createSynchronizingSet(){
+    create array of sets
+    for(int i=0; i<followSet.size(); i++) {
+        traverse through linkedList of that specific non-terminal
+            array[i].add(followSet[i].val); //adding the element of that followset to the synchronising set
+    }
+    //rest is hardcoding
+}
+
 void parse() {
     TreeNode <program>
     S.push($); S.push(<program>);
@@ -27,11 +37,16 @@ void parse() {
         X = S.top().
         if(X.nodeType==terminal){
             if(X.token.Type==L.Type) {Convert X.treeNode to leafnode; //add line no. and token to tree node// S.pop(); L=getNextToken();}
-            else reportError;
+            else {
+                S.pop();
+            };
         }
         else if(X.nodeType==nonTerminal){
-            if(T[X,L]!=null) {X.treeNode.child=T[X,L]; X.ruleNo = ruleNo; S.pop(); S.pushRule(T[X,L]);} //pushRule pushes the rule in such that first char is at top of Stack
-            else reportError;
+            if(T[X,L]>=0) {X.treeNode.child=T[X,L]; X.ruleNo = ruleNo; S.pop(); S.pushRule(T[X,L]);} //pushRule pushes the rule in such that first char is at top of Stack
+            else if(SynchronizingSet[X].contains(L)){
+                S.pop();
+            }
+            else{L=getNextToken();}
         }
         else if(S.empty()==true) reportError;
         else continue;
@@ -112,12 +127,6 @@ void createTable() {
             if (B is a terminal) add R in T[A,B]
             else for every terminal t in first[B] add R to T[A,t]            
         }while (derivesEpsilon(B))
-    }
-
-    For every non terminal A that does not derive epsilon {
-        For every terminal B in the follow set of A {
-            if (T[A,B] == 0) T[A,B] = -1;
-        }
     }
 }
 
