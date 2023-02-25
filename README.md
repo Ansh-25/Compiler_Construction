@@ -4,7 +4,7 @@
 - [x] DFA making
 - [x] hash function code
 - [ ] lexer inplementation
-- [ ] grammar completion
+- [x] grammar completion
 - [ ] parser implementation
 
 ### Basic Git Commands ###
