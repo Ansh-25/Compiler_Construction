@@ -45,8 +45,8 @@
 
 <expression><arithmeticOrBooleanExpr> | <U>
 <U>  <unary_op> <new_NT>
-<new_NT>  BO <arithmeticExpr> BC | <var_id_num> 
 <unary_op>  PLUS | MINUS 
+<new_NT>  BO <arithmeticExpr> BC | <var_id_num> 
 <arithmeticOrBooleanExpr> <AnyTerm> <N7>
 <N7>  <logicalOp> <AnyTerm> <N7> | ε
 <AnyTerm> <arithmeticExpr> <N8> | <boolConstt> <N8>
