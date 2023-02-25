@@ -20,18 +20,27 @@ void loadgrammar(char* filename) {
         exit(1);
     }
     char ch;
-    int index = 0;
+    int index = 0, rule = 0;
     char currinput[MAXTERMLEN];
     for (int i = 0; i < MAXTERMLEN; i ++)
         currinput[i] = '\0';
     while (!feof(fp)) {
         ch = fgetc(fp);
         if (ch == ' ' || ch == '\n') {
-            struct ListNode* newnode = (struct ListNode*)malloc(sizeof(struct ListNode));
+            struct grammarchar* gc = (struct ListNode*)malloc(sizeof(struct ListNode));
             if (currinput[0] == '<') {
-                newchar -> t = NONTERMINAL;
-
+                gc -> t = NONTERMINAL;
+                strncpy(currinput, currinput + 1, index - 2);
             }
+            else
+                gc -> t = TERMINAL;
+            gc -> g.nt = maptoenum(currinput);
+            insertlast(grammar[rule],*gc);
+            if (ch == '\n')
+                line++;
+            for (int i = 0; i < MAXTERMLEN; i ++)
+                currinput[i] = '\0';
+            index = 0;
         }
         else {
             currinput[index] = ch;
