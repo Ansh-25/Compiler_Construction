@@ -7,6 +7,7 @@
 
 struct ListNode* grammar[NO_RULES];
 struct ListNode* first[NO_NONTERMS];
+struct ListNode* follow[NO_NONTERMS];
 int parseTable [NO_TERMS][NO_NONTERMS];
 
 non_terminal maptoenum(char* s) {

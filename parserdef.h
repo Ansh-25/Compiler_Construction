@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 typedef enum {program,moduleDeclarations}non_terminal;
+typedef enum {TERMINAL, NONTERMINAL}type;
 
 union grammaritem {
     non_terminal nt;
@@ -10,7 +11,7 @@ union grammaritem {
 
 struct grammarchar {
     union grammaritem g;
-    int type;
+    type t;
 };
 
 struct ListNode {
@@ -27,7 +28,7 @@ struct StackNode {
     struct StackNode* next;
 };
 
-void insert (struct ListNode* head, struct grammarchar gc) {
+void insertlast (struct ListNode* head, struct grammarchar gc) {
     struct ListNode* newnode = (struct ListNode *)malloc(sizeof(struct ListNode));
     newnode -> val = gc;
     newnode -> next = NULL;
