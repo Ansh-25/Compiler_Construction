@@ -125,7 +125,7 @@ void createTable() {
                 break;
             }
             if (B is a terminal) add R in T[A,B]
-            else for every terminal t in first[B] add R to T[A,t]            
+            else for every terminal t(!=epsilon) in first[B] add R to T[A,t]            
         }while (derivesEpsilon(B))
     }
 }

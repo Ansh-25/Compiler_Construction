@@ -9,15 +9,15 @@ union grammaritem {
     tokentype t;
 };
 
-struct grammarchar {
+typedef struct grammarchar {
     union grammaritem g;
     type t;
-};
+}grammarchar;
 
-struct ListNode {
-    struct grammarchar val;
-    struct ListNode* next;
-};
+typedef struct ListNode {
+    grammarchar val;
+    ListNode* next;
+}ListNode;
 
 struct TreeNode {
     int test;
