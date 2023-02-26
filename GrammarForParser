@@ -11,17 +11,17 @@
 <input_plist> ID COLON <dataType> <_input_plist>
 <_input_plist> COMMA ID COLON <dataType> <_input_plist>
 <_input_plist> EPS
-<output_plist> ID COLON <type> <_output_plist>
-<_output_plist> COMMA ID COLON <type> <_output_plist>
+<output_plist> ID COLON <_type> <_output_plist>
+<_output_plist> COMMA ID COLON <_type> <_output_plist>
 <_output_plist> EPS
 <dataType> INTEGER
 <dataType> REAL
 <dataType> BOOLEAN
-<dataType> ARRAY SQBO <range_arrays> SQBC OF <type>
+<dataType> ARRAY SQBO <range_arrays> SQBC OF <_type>
 <range_arrays> <index_arr> RANGEOP <index_arr> 
-<type> INTEGER
-<type> REAL 
-<type> BOOLEAN
+<_type> INTEGER
+<_type> REAL 
+<_type> BOOLEAN
 <moduleDef> START <statements> END
 <statements> <statement> <statements>
 <statements> EPS
