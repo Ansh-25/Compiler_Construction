@@ -6,9 +6,9 @@
 #define NO_NONTERMS 50
 #define MAXTERMLEN 20
 
-struct ListNode* grammar[NO_RULES];
-struct ListNode* first[NO_NONTERMS];
-struct ListNode* follow[NO_NONTERMS];
+ListNode* grammar[NO_RULES];
+ListNode* first[NO_NONTERMS];
+ListNode* follow[NO_NONTERMS];
 int parseTable [NO_TERMS][NO_NONTERMS];
 
 non_terminal maptoenum(char* s) {}
@@ -27,7 +27,7 @@ void loadgrammar(char* filename) {
     while (!feof(fp)) {
         ch = fgetc(fp);
         if (ch == ' ' || ch == '\n') {
-            struct grammarchar* gc = (struct grammarchar*)malloc(sizeof(struct grammarchar));
+            grammarchar* gc = (grammarchar*)malloc(sizeof(grammarchar));
             if (currinput[0] == '<') {
                 gc -> t = NONTERMINAL;
                 strncpy(currinput, currinput + 1, index - 2);
