@@ -37,7 +37,7 @@ typedef struct StackNode {
     struct StackNode* next;
 }StackNode;
 
-void insertlast (ListNode* head, grammarchar gc) {
+ListNode* insertlast (ListNode* head, grammarchar gc) {
     ListNode* newnode = (ListNode *)malloc(sizeof(ListNode));
     newnode -> val = gc;
     newnode -> next = NULL;
@@ -49,6 +49,7 @@ void insertlast (ListNode* head, grammarchar gc) {
             curr = curr -> next;
         curr -> next = newnode;
     }
+    return head;
 }
 
 void deletelast (ListNode* head) {

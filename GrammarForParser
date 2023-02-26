@@ -18,9 +18,9 @@
 <dataType> REAL
 <dataType> BOOLEAN
 <dataType> ARRAY SQBO <range_arrays> SQBC OF <_type>
-<range_arrays> <index_arr> RANGEOP <index_arr> 
+<range_arrays> <index_arr> RANGEOP <index_arr>
 <_type> INTEGER
-<_type> REAL 
+<_type> REAL
 <_type> BOOLEAN
 <moduleDef> START <statements> END
 <statements> <statement> <statements>
@@ -97,7 +97,7 @@
 <N_11> EPS
 <element_index_with_expressions> <sign> <N_10>
 <element_index_with_expressions> <arrExpr>
-<N_10> <new_index> 
+<N_10> <new_index>
 <N_10> BO <arrExpr> BC
 <arrExpr> <arrTerm> <arr_N4>
 <arr_N4> <op1> <arrTerm> <arr_N4>
@@ -135,7 +135,7 @@
 <iterativeStmt> WHILE BO <arithmeticOrBooleanExpr> BC START <statements> END
 <range_for_loop> <index_for_loop> RANGEOP <index_for_loop>
 <index_for_loop> <sign_for_loop> <new_index_for_loop>
-<new_index_for_loop > NUM
-<sign_for_loop > PLUS
-<sign_for_loop > MINUS
-<sign_for_loop > EPS
+<new_index_for_loop> NUM
+<sign_for_loop> PLUS
+<sign_for_loop> MINUS
+<sign_for_loop> EPS
