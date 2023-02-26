@@ -29,14 +29,19 @@ void createSynchronizingSet(){
     //rest is hardcoding
 }
 
-void parse() {
-    TreeNode <program>
-    S.push($); S.push(<program>);
+TreeNode* parse() {
+    Initialize TreeNode Root with Program;
+    TreeNode X = program;
+    S.push(X);
     L = getNextToken();
     while(L!=null) {
+        if(S.empty()==true) {
+            reportError;
+            break;
+        }
         X = S.top().
         if(X.nodeType==terminal){
-            if(X.token.Type==L.Type) {Convert X.treeNode to leafnode; //add line no. and token to tree node// S.pop(); L=getNextToken();}
+            if(X.token.Type==L.Type) {X.t = TERMINAL; X.val.t = L; S.pop(); L=getNextToken();}
             else {
                 S.pop();
             };
@@ -48,10 +53,10 @@ void parse() {
             }
             else{L=getNextToken();}
         }
-        else if(S.empty()==true) reportError;
         else continue;
     }
     if S.empty()==false reportError;
+    return Root;
 }
 
 computefirstandfollow {
