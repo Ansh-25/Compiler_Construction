@@ -10,7 +10,7 @@ int m = 0;
 // check fp for eof
 FILE *getStream(FILE *fp){
     if (!fp){
-        fp = fopen("testprog.txt", "r");
+        fp = fopen("Program.txt", "r");
         if (!fp){
             printf("File cannot be opened\n");
             exit(1);
@@ -29,7 +29,7 @@ struct Token Tokenize(int begin, int forward, tokentype type, int lineNo){
     struct Token tk;
     tk.type = type;
     tk.lineNo = lineNo;
-    init_hash();
+    
     // assuming id size < 32
     if (begin < forward){
         strncpy(s, buffer1 + begin, forward - begin);
@@ -57,9 +57,14 @@ struct Token Tokenize(int begin, int forward, tokentype type, int lineNo){
     //     tk.type = temp;
     // }
     if (type == TK_ID) {
-        tokentype keywordtype = search_hash(s);
-        if (keywordtype != -1) 
-            tk.type = keywordtype;
+        // printf("%s\n",hash[8] -> str);
+        // printf("%s\n",s);
+        // printf("%d\n",search_hash("driver"));
+        // printf("%d\n",search_hash("program"));
+        init_hash();
+        int hashresult = search_hash(s);
+        if (hashresult != -1) 
+            tk.type = hashresult;
         strcpy(tk.val.identifier,s);
     }
     else if (type == TK_NUM){
@@ -607,16 +612,18 @@ struct Token* getNextToken()
     return tk;
 }
 
-// int main()
-// {
-//     ptr = getStream(ptr);
-//     strcpy(buffer1, buffer2);
-//     ptr = getStream(ptr);
+int main()
+{
+    ptr = getStream(ptr);
+    strcpy(buffer1, buffer2);
+    ptr = getStream(ptr);
 
-//     struct Token *tk;
-//     do{
-//         tk = getNextToken();
-//         printToken(tk);
-//     }while(tk!=NULL);
-//     return 0;
-// }
+    struct Token *tk;
+    do{
+        tk = getNextToken();
+        printToken(tk);
+            // printf("hi - %d\n",search_hash("driver"));
+            // printf("%d\n",search_hash("program"));
+    }while(tk!=NULL);
+    return 0;
+}
