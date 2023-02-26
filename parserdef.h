@@ -20,12 +20,13 @@ typedef struct ListNode {
 }ListNode;
 
 union treenodeval {
-    int ruleno;
+    non_terminal nt;
     struct Token t;
 };
 
 typedef struct TreeNode {
     type t;
+    int ruleno;
     union treenodeval val;
     struct TreeNode* child;
     struct TreeNode* sibling;
