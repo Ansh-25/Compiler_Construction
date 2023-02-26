@@ -9,18 +9,26 @@ union grammaritem {
     tokentype t;
 };
 
-typedef struct grammarchar {
+struct grammarchar {
     union grammaritem g;
     type t;
-}grammarchar;
+};
 
-typedef struct ListNode {
-    grammarchar val;
-    ListNode* next;
-}ListNode;
+struct ListNode {
+    struct grammarchar val;
+    struct ListNode* next;
+};
+
+union treenodeval {
+    int ruleno;
+    struct Token t;
+};
 
 struct TreeNode {
-    int test;
+    type t;
+    union treenodeval val;
+    struct TreeNode* child;
+    struct TreeNode* sibling;
 };
 
 struct StackNode {

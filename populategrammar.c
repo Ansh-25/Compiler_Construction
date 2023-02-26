@@ -27,7 +27,7 @@ void loadgrammar(char* filename) {
     while (!feof(fp)) {
         ch = fgetc(fp);
         if (ch == ' ' || ch == '\n') {
-            struct grammarchar* gc = (struct ListNode*)malloc(sizeof(struct ListNode));
+            struct grammarchar* gc = (struct grammarchar*)malloc(sizeof(struct grammarchar));
             if (currinput[0] == '<') {
                 gc -> t = NONTERMINAL;
                 strncpy(currinput, currinput + 1, index - 2);
