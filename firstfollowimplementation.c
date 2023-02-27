@@ -11,12 +11,12 @@ struct ListNode* first[NO_NONTERMS];
 struct ListNode* follow[NO_NONTERMS];
 int parseTable [NO_NONTERMS][NO_TERMS];
 
-/*computefirstandfollow (grammar){
-    for all non terminals t:
-        computefirst(t);
-    for all non terminals t:
-        computefollow(t);
-}*/
+computefirstandfollow (grammar){
+    for(int i=0; i<NO_NONTERMS; i++)
+        computefirst(i);
+    for(int i=0; i<NO_NONTERMS; i++)
+        computefollow(i);
+}
 
 int derivesepsilon(grammarchar gc){
     if (gc.t == TERMINAL)
