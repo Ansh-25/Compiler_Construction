@@ -18,10 +18,12 @@ int parseTable [NO_NONTERMS][NO_TERMS];
         computefollow(t);
 }*/
 
-int derivesepsilon(non_terminal B){
-    if (first[B] == NULL)
+int derivesepsilon(grammarchar gc){
+    if (gc.t == TERMINAL)
         return 0;
-    ListNode* curr = first[B];
+    if (first[gc.g.nt] == NULL)
+        return 0;
+    ListNode* curr = first[gc.g.nt];
     while (curr -> next != NULL)
         curr = curr -> next;
     if (curr -> val.g.t == EPS)
@@ -47,7 +49,7 @@ void computeFirst (non_terminal A)
                         first[i] = insertlast(first[i], first_rhs_current -> val);
                     first_rhs_current = first_rhs_current -> next;
                 }
-                while (derivesepsilon(rhs_current -> val.g.nt)){
+                while (derivesepsilon(rhs_current -> val)){
                     rhs_current = rhs_current -> next;
                     if (rhs_current == NULL){
                         grammarchar add_eps;
@@ -74,25 +76,41 @@ void computeFirst (non_terminal A)
 }
 
 
-void computeFollow(nonTerminal A) {
-    if Follow[A]!=null return;
-    go through all rules of all grammar and encounter A. Keep track of LHS while going through the rules
-        if next char after A is terminal {Follow[A].add(terminal)}
-        else if(next char after A is non-terminal B) {
-            add everything in first(B) to follow(A) except epsilon
-            while (derivesepsilon(B)) {
-                B -> next(B) in the same rule
-                if (isNullB) {
-                    computeFollow[LHS];
-                    add follow[LHS];
-                    break;
+void computeFollow(non_terminal A) {
+    if (follow[A]!=NULL) return;
+    for(int i=0; i<NO_RULES; i++){
+        ListNode* lhs_current = grammar[i];
+        ListNode* rhs_current = grammar[i] -> next;
+        if (rhs_current -> val.t == TERMINAL){
+            follow[i] = insertLast(follow[i], rhs_current -> val);
+        }
+        else if(rhs_current -> val.t == NONTERMINAL){
+            ListNode* first_rhs_current = first[rhs_current -> val.g.nt];
+            while (first_rhs_current != NULL) {
+                if (first_rhs_current -> val.g.t != EPS){
+                    follow[i] = insertlast(follow[i], first_rhs_current -> val);
+                    first_rhs_current = first_rhs_current -> next;
                 }
-                else if (B is terminal)
-                    add terminal to follow set
-                else {
-                    computeFirst(B)
-                    add everything from first[B] to follow[A]
+            }
+
+            while(derivesepsilon(rhs_current -> val)){
+                rhs_current = rhs_current -> next;
+                if (rhs_current == NULL){
+                    computeFollow(lhs_current -> val.g.nt);
+                    follow[i] = insertLast(follow[i], lhs_current -> val);
+                }
+                else if (rhs_current -> val.t == TERMINAL){
+                    follow[i] = insertLast(follow[i], rhs_current -> val);
+                }
+                else{
+                    computeFirst(rhs_current -> val.g.nt);
+                    ListNode* first_rhs_current = first[rhs_current -> val.g.nt];
+                    while (first_rhs_current != NULL) {
+                        follow[i] = insertlast(follow[i], first_rhs_current -> val);
+                        first_rhs_current = first_rhs_current -> next;
+                    }
                 }
             }
         }
+    }
 }
