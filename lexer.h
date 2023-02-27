@@ -612,18 +612,18 @@ struct Token* getNextToken()
     return tk;
 }
 
-int main()
-{
-    ptr = getStream(ptr);
-    strcpy(buffer1, buffer2);
-    ptr = getStream(ptr);
+// int main()
+// {
+//     ptr = getStream(ptr);
+//     strcpy(buffer1, buffer2);
+//     ptr = getStream(ptr);
 
-    struct Token *tk;
-    do{
-        tk = getNextToken();
-        printToken(tk);
-            // printf("hi - %d\n",search_hash("driver"));
-            // printf("%d\n",search_hash("program"));
-    }while(tk!=NULL);
-    return 0;
-}
+//     struct Token *tk;
+//     do{
+//         tk = getNextToken();
+//         printToken(tk);
+//             // printf("hi - %d\n",search_hash("driver"));
+//             // printf("%d\n",search_hash("program"));
+//     }while(tk!=NULL);
+//     return 0;
+// }

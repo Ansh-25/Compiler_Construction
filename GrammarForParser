@@ -37,15 +37,15 @@
 <var_print> RNUM
 <var_print> <boolConstt>
 <var_print> <array_element_for_print>
-<boolConstt> TRUE 
+<boolConstt> TRUE
 <boolConstt> FALSE
 <array_element_for_print> ID SQBO <index_arr> SQBC
 <P1> SQBO <new_index> SQBC
 <P1> EPS
 <simpleStmt> <assignmentStmt>
-<simpleStmt> <moduleReuseStmt> 
-<assignmentStmt> ID <whichStmt> 
-<whichStmt> <lvalueIDStmt> 
+<simpleStmt> <moduleReuseStmt>
+<assignmentStmt> ID <whichStmt>
+<whichStmt> <lvalueIDStmt>
 <whichStmt> <lvalueARRStmt>
 <lvalueIDStmt> ASSIGNOP <expression> SEMICOL
 <lvalueARRStmt> SQBO <element_index_with_expressions> SQBC ASSIGNOP <expression> SEMICOL
@@ -122,7 +122,7 @@
 <relationalOp> EQ
 <relationalOp> NE
 <declareStmt> DECLARE <idList> COLON <dataType> SEMICOL
-<condionalStmt> SWITCH BO ID BC START <caseStmts> <_default> END 
+<conditionalStmt> SWITCH BO ID BC START <caseStmts> <_default> END
 <caseStmts> CASE <value> COLON <statements> BREAK SEMICOL <N9>
 <N9> CASE <value> COLON <statements> BREAK SEMICOL <N9>
 <N9> EPS

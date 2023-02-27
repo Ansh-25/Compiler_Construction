@@ -3,7 +3,7 @@
 
 #define NO_RULES 141
 #define NO_TERMS 57
-#define NO_NONTERMS 71
+#define NO_NONTERMS 72
 #define MAXTERMLEN 31
 
 struct ListNode* grammar[NO_RULES];
@@ -105,6 +105,7 @@ non_terminal mapnttoenum(char* s) {
     else if (strcmp(s,"whichStmt") == 0) return whichStmt;
     else if (strcmp(s,"lvalueIDStmt") == 0) return lvalueIDStmt;
     else if (strcmp(s,"lvalueARRStmt") == 0) return lvalueARRStmt;
+    else if (strcmp(s,"expression") == 0) return expression;
     else if (strcmp(s,"element_index_with_expressions") == 0) return element_index_with_expressions;
     else if (strcmp(s,"sign") == 0) return sign;
     else if (strcmp(s,"optional") == 0) return optional;
