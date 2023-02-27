@@ -2,7 +2,7 @@
 #include "parserdef.h"
 
 #define NO_RULES 141
-#define NO_TERMS 55
+#define NO_TERMS 57
 #define NO_NONTERMS 71
 #define MAXTERMLEN 31
 
@@ -64,6 +64,8 @@ tokentype mapttoenum(char* s) {
     if (strcmp(s,"BREAK") == 0) return TK_BREAK;
     if (strcmp(s,"DEFAULT") == 0) return TK_DEFAULT;
     if (strcmp(s,"WHILE") == 0) return TK_WHILE;
+    if (strcmp(s,"AND") == 0) return TK_AND;
+    if (strcmp(s,"OR") == 0) return TK_OR;
     if (strcmp(s,"TRUE") == 0) return TK_TRUE;
     if (strcmp(s,"FALSE") == 0) return TK_FALSE;
     if (strcmp(s,"EPS") == 0) return EPS;

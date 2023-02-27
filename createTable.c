@@ -2,7 +2,7 @@
 #include "parserdef.h"
 
 #define NO_RULES 141
-#define NO_TERMS 55
+#define NO_TERMS 57
 #define NO_NONTERMS 71
 #define MAXTERMLEN 31
 
