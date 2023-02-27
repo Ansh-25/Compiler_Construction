@@ -1,10 +1,10 @@
 #include "lexer.h"
 #include "parserdef.h"
 
-#define NO_RULES 100
-#define NO_TERMS 50
-#define NO_NONTERMS 50
-#define MAXTERMLEN 20
+#define NO_RULES 141
+#define NO_TERMS 55
+#define NO_NONTERMS 71
+#define MAXTERMLEN 31
 
 struct ListNode* grammar[NO_RULES];
 struct ListNode* first[NO_NONTERMS];

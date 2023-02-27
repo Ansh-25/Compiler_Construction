@@ -2,16 +2,74 @@
 #include "parserdef.h"
 
 #define NO_RULES 141
-#define NO_TERMS 51
-#define NO_NONTERMS 70
+#define NO_TERMS 55
+#define NO_NONTERMS 71
 #define MAXTERMLEN 31
 
-ListNode* grammar[NO_RULES];
-ListNode* first[NO_NONTERMS];
-ListNode* follow[NO_NONTERMS];
-int parseTable [NO_TERMS][NO_NONTERMS];
+struct ListNode* grammar[NO_RULES];
+struct ListNode* first[NO_NONTERMS];
+struct ListNode* follow[NO_NONTERMS];
+int parseTable [NO_NONTERMS][NO_TERMS];
 
-non_terminal maptoenum(char* s) {
+tokentype mapttoenum(char* s) {
+    if (strcmp(s,"ID") == 0) return TK_ID;
+    if (strcmp(s,"PLUS") == 0) return TK_PLUS;
+    if (strcmp(s,"MINUS") == 0) return TK_MINUS;
+    if (strcmp(s,"NUM") == 0) return TK_NUM;
+    if (strcmp(s,"RNUM") == 0) return TK_RNUM;
+    if (strcmp(s,"EQ") == 0) return TK_EQ;
+    if (strcmp(s,"MUL") == 0) return TK_MUL;
+    if (strcmp(s,"LT") == 0) return TK_LT;
+    if (strcmp(s,"LE") == 0) return TK_LE;
+    if (strcmp(s,"DEF") == 0) return TK_DEF;
+    if (strcmp(s,"DRIVERDEF") == 0) return TK_DRIVERDEF;
+    if (strcmp(s,"COMMA") == 0) return TK_COMMA;
+    if (strcmp(s,"SEMICOLON") == 0) return TK_SEMICOLON;
+    if (strcmp(s,"COLON") == 0) return TK_COLON;
+    if (strcmp(s,"ASSIGNOP") == 0) return TK_ASSIGNOP;
+    if (strcmp(s,"BO") == 0) return TK_BO;
+    if (strcmp(s,"BC") == 0) return TK_BC;
+    if (strcmp(s,"GT") == 0) return TK_GT;
+    if (strcmp(s,"GE") == 0) return TK_GE;
+    if (strcmp(s,"ENDDEF") == 0) return TK_ENDDEF;
+    if (strcmp(s,"DRIVERENDDEF") == 0) return TK_DRIVERENDDEF;
+    if (strcmp(s,"SQBO") == 0) return TK_SQBO;
+    if (strcmp(s,"SQBC") == 0) return TK_SQBC;
+    if (strcmp(s,"NE") == 0) return TK_NE;
+    if (strcmp(s,"DIV") == 0) return TK_DIV;
+    if (strcmp(s,"RANGEOP") == 0) return TK_RANGEOP;
+    if (strcmp(s,"INTEGER") == 0) return TK_INTEGER;
+    if (strcmp(s,"REAL") == 0) return TK_REAL;
+    if (strcmp(s,"BOOLEAN") == 0) return TK_BOOLEAN;
+    if (strcmp(s,"OF") == 0) return TK_OF;
+    if (strcmp(s,"ARRAY") == 0) return TK_ARRAY;
+    if (strcmp(s,"START") == 0) return TK_START;
+    if (strcmp(s,"END") == 0) return TK_END;
+    if (strcmp(s,"DECLARE") == 0) return TK_DECLARE;
+    if (strcmp(s,"MODULE") == 0) return TK_MODULE;
+    if (strcmp(s,"DRIVER") == 0) return TK_DRIVER;
+    if (strcmp(s,"PROGRAM") == 0) return TK_PROGRAM;
+    if (strcmp(s,"GET_VALUE") == 0) return TK_GET_VALUE;
+    if (strcmp(s,"PRINT") == 0) return TK_PRINT;
+    if (strcmp(s,"USE") == 0) return TK_USE;
+    if (strcmp(s,"WITH") == 0) return TK_WITH;
+    if (strcmp(s,"PARAMETERS") == 0) return TK_PARAMETERS;
+    if (strcmp(s,"TAKES") == 0) return TK_TAKES;
+    if (strcmp(s,"INPUT") == 0) return TK_INPUT;
+    if (strcmp(s,"RETURNS") == 0) return TK_RETURNS;
+    if (strcmp(s,"FOR") == 0) return TK_FOR;
+    if (strcmp(s,"IN") == 0) return TK_IN;
+    if (strcmp(s,"SWITCH") == 0) return TK_SWITCH;
+    if (strcmp(s,"CASE") == 0) return TK_CASE;
+    if (strcmp(s,"BREAK") == 0) return TK_BREAK;
+    if (strcmp(s,"DEFAULT") == 0) return TK_DEFAULT;
+    if (strcmp(s,"WHILE") == 0) return TK_WHILE;
+    if (strcmp(s,"TRUE") == 0) return TK_TRUE;
+    if (strcmp(s,"FALSE") == 0) return TK_FALSE;
+    if (strcmp(s,"EPS") == 0) return EPS;
+}
+
+non_terminal mapnttoenum(char* s) {
     if (strcmp(s,"program") == 0) return program;
     else if (strcmp(s,"moduleDeclarations") == 0) return moduleDeclarations;
     else if (strcmp(s,"otherModules") == 0) return otherModules;
@@ -98,7 +156,6 @@ void loadgrammar(char* filename) {
     char temp[MAXTERMLEN];
     for (int i = 0; i < MAXTERMLEN; i ++)
         currinput[i] = '\0';
-    init_hash();
     while (!feof(fp)) {
         ch = fgetc(fp);
         if (ch == ' ' || ch == '\n') {
@@ -107,16 +164,11 @@ void loadgrammar(char* filename) {
                 gc.t = NONTERMINAL;
                 for (int i = 0; i < MAXTERMLEN; i ++) temp[i] = '\0';
                 strncpy(temp, currinput + 1, index - 2);
-                gc.g.nt = maptoenum(temp);
+                gc.g.nt = mapnttoenum(temp);
             }
             else {
                 gc.t = TERMINAL;
-                if (strcmp(currinput,"EPS") == 0) {
-                    printf("EPS\n");
-                    gc.g.t = EPS;
-                }
-                else 
-                    gc.g.t = search_hash(currinput);
+                gc.g.t = mapttoenum(currinput);
             }
             grammar[rule] = insertlast(grammar[rule],gc);
             if (ch == '\n')
