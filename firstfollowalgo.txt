@@ -97,7 +97,8 @@ first[0]
 void computeFollow(nonTerminal A) {
     if Follow[A]!=null return;
     go through all rules of all grammar and encounter A. Keep track of LHS while going through the rules
-        if next char after A is terminal {Follow[A].add(terminal)}
+        if next char after A is null add follow of lhs
+        else if next char after A is terminal {Follow[A].add(terminal)}
         else if(next char after A is non-terminal B) {
             add everything in first(B) to follow(A) except epsilon
             while (derivesepsilon(B)) {

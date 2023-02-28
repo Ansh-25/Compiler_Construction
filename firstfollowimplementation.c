@@ -2,14 +2,14 @@
 #include "parserdef.h"
 
 #define NO_RULES 141
-#define NO_TERMS 57
+#define NO_TERMS 58
 #define NO_NONTERMS 72
 #define MAXTERMLEN 31
 
 struct ListNode* grammar[NO_RULES];
 struct ListNode* first[NO_NONTERMS];
 struct ListNode* follow[NO_NONTERMS];
-int parseTable [NO_NONTERMS][NO_TERMS];
+int parseTable [NO_NONTERMS][NO_TERMS - 1];
 
 tokentype mapttoenum(char* s) {
     if (strcmp(s,"ID") == 0) return TK_ID;
@@ -249,6 +249,11 @@ void computeFollow(non_terminal A) {
     for(int i=0; i<NO_RULES; i++){
         ListNode* lhs_current = grammar[i];
         ListNode* rhs_current = grammar[i] -> next;
+        while (rhs_current != NULL && !(rhs_current -> val.t == NONTERMINAL && rhs_current -> val.g.nt == A))
+            rhs_current = rhs_current -> next;
+        if (rhs_current == NULL)
+            continue;
+        
         if (rhs_current -> val.t == TERMINAL){
             follow[A] = insertlast(follow[A], rhs_current -> val);
         }
