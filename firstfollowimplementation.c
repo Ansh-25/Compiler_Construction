@@ -147,6 +147,145 @@ non_terminal mapnttoenum(char* s) {
     else return 0;
 }
 
+
+char* mapttokentostring(tokentype t) {
+    if (t == TK_ID) return "TK_ID";
+    if (t == TK_PLUS) return "TK_PLUS";
+    if (t == TK_MINUS) return "TK_MINUS";
+    if (t == TK_NUM) return "TK_NUM";
+    if (t == TK_RNUM) return "TK_RNUM";
+    if (t == TK_EQ) return "TK_EQ";
+    if (t == TK_MUL) return "TK_MUL";
+    if (t == TK_LT) return "TK_LT";
+    if (t == TK_LE) return "TK_LE";
+    if (t == TK_DEF) return "TK_DEF";
+    if (t == TK_DRIVERDEF) return "TK_DRIVERDEF";
+    if (t == TK_COMMA) return "TK_COMMA";
+    if (t == TK_SEMICOLON) return "TK_SEMICOLON";
+    if (t == TK_COLON) return "TK_COLON";
+    if (t == TK_ASSIGNOP) return "TK_ASSIGNOP";
+    if (t == TK_BO) return "TK_BO";
+    if (t == TK_BC) return "TK_BC";
+    if (t == TK_GT) return "TK_GT";
+    if (t == TK_GE) return "TK_GE";
+    if (t == TK_ENDDEF) return "TK_ENDDEF";
+    if (t == TK_DRIVERENDDEF) return "TK_DRIVERENDDEF";
+    if (t == TK_SQBO) return "TK_SQBO";
+    if (t == TK_SQBC) return "TK_SQBC";
+    if (t == TK_NE) return "TK_NE";
+    if (t == TK_DIV) return "TK_DIV";
+    if (t == TK_RANGEOP) return "TK_RANGEOP";
+    if (t == TK_INTEGER) return "TK_INTEGER";
+    if (t == TK_REAL) return "TK_REAL";
+    if (t == TK_BOOLEAN) return "TK_BOOLEAN";
+    if (t == TK_OF) return "TK_OF";
+    if (t == TK_ARRAY) return "TK_ARRAY";
+    if (t == TK_START) return "TK_START";
+    if (t == TK_END) return "TK_END";
+    if (t == TK_DECLARE) return "TK_DECLARE";
+    if (t == TK_MODULE) return "TK_MODULE";
+    if (t == TK_DRIVER) return "TK_DRIVER";
+    if (t == TK_PROGRAM) return "TK_PROGRAM";
+    if (t == TK_GET_VALUE) return "TK_GET_VALUE";
+    if (t == TK_PRINT) return "TK_PRINT";
+    if (t == TK_USE) return "TK_USE";
+    if (t == TK_WITH) return "TK_WITH";
+    if (t == TK_PARAMETERS) return "TK_PARAMETERS";
+    if (t == TK_TAKES) return "TK_TAKES";
+    if (t == TK_INPUT) return "TK_INPUT";
+    if (t == TK_RETURNS) return "TK_RETURNS";
+    if (t == TK_FOR) return "TK_FOR";
+    if (t == TK_IN) return "TK_IN";
+    if (t == TK_SWITCH) return "TK_SWITCH";
+    if (t == TK_CASE) return "TK_CASE";
+    if (t == TK_BREAK) return "TK_BREAK";
+    if (t == TK_DEFAULT) return "TK_DEFAULT";
+    if (t == TK_WHILE) return "TK_WHILE";
+    if (t == TK_AND) return "TK_AND";
+    if (t == TK_OR) return "TK_OR";
+    if (t == TK_TRUE) return "TK_TRUE";
+    if (t == TK_FALSE) return "TK_FALSE";
+    if (t == EPS) return "EPS";
+}
+
+char* mapnttostring(non_terminal n) {
+    if (n == program) return "program";
+    else if (n == moduleDeclarations) return "moduleDeclarations";
+    else if (n == otherModules) return "otherModules";
+    else if (n == driverModule) return "driverModule";
+    else if (n == moduleDeclaration) return "moduleDeclaration";
+    else if (n == module) return "module";
+    else if (n == moduleDef) return "moduleDef";
+    else if (n == input_plist) return "input_plist";
+    else if (n == ret) return "ret";
+    else if (n == output_plist) return "output_plist";
+    else if (n == dataType) return "dataType";
+    else if (n == _input_plist) return "_input_plist";
+    else if (n == _type) return "_type";
+    else if (n == _output_plist) return "_output_plist";
+    else if (n == range_arrays) return "range_arrays";
+    else if (n == index_arr) return "index_arr";
+    else if (n == statements) return "statements";
+    else if (n == statement) return "statement";
+    else if (n == ioStmt) return "ioStmt";
+    else if (n == simpleStmt) return "simpleStmt";
+    else if (n == declareStmt) return "declareStmt";
+    else if (n == conditionalStmt) return "conditionalStmt";
+    else if (n == iterativeStmt) return "iterativeStmt";
+    else if (n == var_print) return "var_print";
+    else if (n == P1) return "P1";
+    else if (n == boolConstt) return "boolConstt";
+    else if (n == array_element_for_print) return "array_element_for_print";
+    else if (n == new_index) return "new_index";
+    else if (n == assignmentStmt) return "assignmentStmt";
+    else if (n == moduleReuseStmt) return "moduleReuseStmt";
+    else if (n == whichStmt) return "whichStmt";
+    else if (n == lvalueIDStmt) return "lvalueIDStmt";
+    else if (n == lvalueARRStmt) return "lvalueARRStmt";
+    else if (n == expression) return "expression";
+    else if (n == element_index_with_expressions) return "element_index_with_expressions";
+    else if (n == sign) return "sign";
+    else if (n == optional) return "optional";
+    else if (n == actual_para_list) return "actual_para_list";
+    else if (n == N_11) return "N_11";
+    else if (n == idList) return "idList";
+    else if (n == N3) return "N3";
+    else if (n == arithmeticOrBooleanExpr) return "arithmeticOrBooleanExpr";
+    else if (n == U) return "U";
+    else if (n == unary_op) return "unary_op";
+    else if (n == new_NT) return "new_NT";
+    else if (n == arithmeticExpr) return "arithmeticExpr";
+    else if (n == var_id_num) return "var_id_num";
+    else if (n == AnyTerm) return "AnyTerm";
+    else if (n == N7) return "N7";
+    else if (n == logicalOp) return "logicalOp";
+    else if (n == N8) return "N8";
+    else if (n == relationalOp) return "relationalOp";
+    else if (n == term) return "term";
+    else if (n == N4) return "N4";
+    else if (n == op1) return "op1";
+    else if (n == factor) return "factor";
+    else if (n == N5) return "N5";
+    else if (n == op2) return "op2";
+    else if (n == N_10) return "N_10";
+    else if (n == arrExpr) return "arrExpr";
+    else if (n == arrTerm) return "arrTerm";
+    else if (n == arr_N4) return "arr_N4";
+    else if (n == arr_N5) return "arr_N5";
+    else if (n == arrFactor) return "arrFactor";
+    else if (n == caseStmts) return "caseStmts";
+    else if (n == _default) return "_default";
+    else if (n == value) return "value";
+    else if (n == N9) return "N9";
+    else if (n == range_for_loop) return "range_for_loop";
+    else if (n == index_for_loop) return "index_for_loop";
+    else if (n == sign_for_loop) return "sign_for_loop";
+    else if (n == new_index_for_loop) return "new_index_for_loop";
+    else return 0;
+}
+
+
+
 void loadgrammar(char* filename) {
     FILE* fp = fopen(filename,"r");
     if (!fp) {
