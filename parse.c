@@ -102,7 +102,7 @@ TreeNode* parse(){
     X = Root;
     push(S,X);
     struct Token* L = getNextToken();
-    while(!L){
+    while(L!=NULL){
         if(isEmpty(S)){
             //reportError
             break;
