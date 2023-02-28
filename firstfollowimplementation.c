@@ -244,6 +244,16 @@ void computeFirst (non_terminal A)
     }
 }
 
+int contains(ListNode* ln, tokentype term) {
+    if (ln == NULL)
+        return 0;
+    for (ListNode* curr = ln; curr != NULL; curr = curr -> next) {
+        if (curr -> val.t == TERMINAL && curr -> val.g.t == term)
+            return 1;
+    }
+    return 0;
+}
+
 void computeFollow(non_terminal A) {
     if (follow[A]!=NULL) return;
     for(int i=0; i<NO_RULES; i++){
@@ -253,15 +263,28 @@ void computeFollow(non_terminal A) {
             rhs_current = rhs_current -> next;
         if (rhs_current == NULL)
             continue;
-        
-        if (rhs_current -> val.t == TERMINAL){
-            follow[A] = insertlast(follow[A], rhs_current -> val);
+        rhs_current = rhs_current -> next;
+        if (rhs_current == NULL) {
+            if (lhs_current -> val.g.nt != A) {
+                computeFollow(lhs_current -> val.g.nt);
+                ListNode* lhsfollow = follow[lhs_current -> val.g.nt];
+                while (lhsfollow != NULL) {
+                    if (!contains(follow[A], lhsfollow -> val.g.t))
+                        follow[A] = insertlast(follow[A], lhsfollow -> val);
+                    lhsfollow = lhsfollow -> next;
+                }
+            }
+        }
+        else if (rhs_current -> val.t == TERMINAL){
+            if (!contains(follow[A], rhs_current -> val.g.t))
+                follow[A] = insertlast(follow[A], rhs_current -> val);
         }
         else if(rhs_current -> val.t == NONTERMINAL){
-            ListNode* first_rhs_current = first[rhs_current -> val.g.nt];
-            while (first_rhs_current != NULL) {
-                if (first_rhs_current -> val.g.t != EPS){
-                    follow[A] = insertlast(follow[A], first_rhs_current -> val);
+            if (rhs_current -> val.g.nt != A) {
+                ListNode* first_rhs_current = first[rhs_current -> val.g.nt];
+                while (first_rhs_current != NULL) {
+                    if (first_rhs_current -> val.g.t != EPS && !contains(follow[A], first_rhs_current -> val.g.t))
+                        follow[A] = insertlast(follow[A], first_rhs_current -> val);
                     first_rhs_current = first_rhs_current -> next;
                 }
             }
@@ -269,17 +292,26 @@ void computeFollow(non_terminal A) {
             while(derivesepsilon(rhs_current -> val)){
                 rhs_current = rhs_current -> next;
                 if (rhs_current == NULL){
-                    computeFollow(lhs_current -> val.g.nt);
-                    follow[A] = insertlast(follow[A], lhs_current -> val);
+                    if (lhs_current -> val.g.nt != A) {
+                        computeFollow(lhs_current -> val.g.nt);
+                        ListNode* lhsfollow = follow[lhs_current -> val.g.nt];
+                        while (lhsfollow != NULL) {
+                            if (!contains(follow[A], lhsfollow -> val.g.t))
+                                follow[A] = insertlast(follow[A], lhsfollow -> val);
+                            lhsfollow = lhsfollow -> next;
+                        }
+                    }
+                    break;
                 }
-                else if (rhs_current -> val.t == TERMINAL){
+                else if (rhs_current -> val.t == TERMINAL && !contains(follow[A], rhs_current -> val.g.t)){
                     follow[A] = insertlast(follow[A], rhs_current -> val);
                 }
                 else{
                     computeFirst(rhs_current -> val.g.nt);
                     ListNode* first_rhs_current = first[rhs_current -> val.g.nt];
                     while (first_rhs_current != NULL) {
-                        follow[A] = insertlast(follow[A], first_rhs_current -> val);
+                        if (!contains(follow[A], first_rhs_current -> val.g.t))
+                            follow[A] = insertlast(follow[A], first_rhs_current -> val);
                         first_rhs_current = first_rhs_current -> next;
                     }
                 }
@@ -291,8 +323,14 @@ void computeFollow(non_terminal A) {
 void computefirstandfollow (){
     for(int i=0; i<NO_NONTERMS; i++)
         computeFirst(i);
-    for(int i=0; i<NO_NONTERMS; i++)
+    grammarchar gc;
+    gc.t = TERMINAL;
+    gc.g.t = TK_EOF;
+    follow[program] = insertlast(follow[program], gc);
+    for(int i=0; i<NO_NONTERMS; i++) {
         computeFollow(i);
+        printf("%d\n",i);
+    }
 }
 
 int main() {
