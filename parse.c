@@ -61,7 +61,7 @@ void pushRule(int rule, StackNode* S) {
 	//push pointer to a seperate stack
 	push(auxilliary, temp);
 	//child pointer of top of stack points to first grammarchar
-	X->child=temp;
+	top(S)=temp;
 	//go through rest of LHS, creating treeNodes, pointing prev sibling pointer to it, pushing to stack and continue
 	while(LHS->next!=NULL){
 		TreeNode* nextNode = (TreeNode*)malloc(sizeof(TreeNode));
