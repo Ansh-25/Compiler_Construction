@@ -259,12 +259,17 @@ void computeFollow(non_terminal A) {
     for(int i=0; i<NO_RULES; i++){
         ListNode* lhs_current = grammar[i];
         ListNode* rhs_current = grammar[i] -> next;
+
+        //checking if A is in RHS
         while (rhs_current != NULL && !(rhs_current -> val.t == NONTERMINAL && rhs_current -> val.g.nt == A))
             rhs_current = rhs_current -> next;
         if (rhs_current == NULL)
             continue;
         rhs_current = rhs_current -> next;
+
+        //if A is the rightmost element add follow of LHS to follow of A
         if (rhs_current == NULL) {
+            //if A is also the LHS, do not do anything
             if (lhs_current -> val.g.nt != A) {
                 computeFollow(lhs_current -> val.g.nt);
                 ListNode* lhsfollow = follow[lhs_current -> val.g.nt];
@@ -275,18 +280,20 @@ void computeFollow(non_terminal A) {
                 }
             }
         }
+
+        //if there is a terminal after A, add that terminal to the follow set of A
         else if (rhs_current -> val.t == TERMINAL){
             if (!contains(follow[A], rhs_current -> val.g.t))
                 follow[A] = insertlast(follow[A], rhs_current -> val);
         }
-        else if(rhs_current -> val.t == NONTERMINAL){
-            if (rhs_current -> val.g.nt != A) {
-                ListNode* first_rhs_current = first[rhs_current -> val.g.nt];
-                while (first_rhs_current != NULL) {
-                    if (first_rhs_current -> val.g.t != EPS && !contains(follow[A], first_rhs_current -> val.g.t))
-                        follow[A] = insertlast(follow[A], first_rhs_current -> val);
-                    first_rhs_current = first_rhs_current -> next;
-                }
+
+        //if there is a non terminal
+        else{
+            ListNode* first_rhs_current = first[rhs_current -> val.g.nt];
+            while (first_rhs_current != NULL) {
+                if (first_rhs_current -> val.g.t != EPS && !contains(follow[A], first_rhs_current -> val.g.t))
+                    follow[A] = insertlast(follow[A], first_rhs_current -> val);
+                first_rhs_current = first_rhs_current -> next;
             }
 
             while(derivesepsilon(rhs_current -> val)){

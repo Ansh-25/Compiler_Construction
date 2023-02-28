@@ -139,10 +139,3 @@ void createTable() {
 int derivesEpsilon(int index) {
     iterate throught the linked list and check if epsilon is present in it
 }
-
-
-grammarchar gc;
-gc.t = TERMINAL;
-gc.g.t = START;
-
-first[i] = insertLast(first[i],gc);
