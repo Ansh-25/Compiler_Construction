@@ -1,6 +1,7 @@
 #include "lexer.h"
 #include "parserdef.h"
 
+
 #define NO_RULES 141
 #define NO_TERMS 58
 #define NO_NONTERMS 72
@@ -13,7 +14,7 @@ int parseTable [NO_NONTERMS][NO_TERMS - 1];
 
 void createParseTable(){
     int s = (NO_TERMS)*(NO_NONTERMS);
-    memset(parseTable,-2,s*sizeof(int));
+    memset(parseTable,-1,s*sizeof(int));
 
     for(int i=0;i<NO_RULES;i++){
         struct ListNode* A = grammar[i];
@@ -24,7 +25,7 @@ void createParseTable(){
             B = B->next;
             if(B==NULL || (B->val.t==TERMINAL && B->val.g.t==EPS)){
                 struct ListNode* C = follow[a];
-                while(!C){
+                while(C!=NULL){
                     int c = C->val.g.t; 
                     parseTable[a][c] = i;
                     C = C->next;
@@ -46,6 +47,6 @@ void createParseTable(){
                     C = C->next;
                 }
             }
-        } while(derivesEpsilon(b)); //derivesEpsilon returns 0 on input -1
+        } while(derivesepsilon(B->val)); //derivesEpsilon returns 0 on input -1
     }
 }
