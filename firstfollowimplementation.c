@@ -258,47 +258,18 @@ void computeFollow(non_terminal A) {
     if (follow[A]!=NULL) return;
     for(int i=0; i<NO_RULES; i++){
         ListNode* lhs_current = grammar[i];
-        ListNode* rhs_current = grammar[i] -> next;
+        ListNode* rhs_A = grammar[i] -> next;
+        ListNode* rhs_current;
 
-        //checking if A is in RHS
-        while (rhs_current != NULL && !(rhs_current -> val.t == NONTERMINAL && rhs_current -> val.g.nt == A))
-            rhs_current = rhs_current -> next;
-        if (rhs_current == NULL)
-            continue;
-        rhs_current = rhs_current -> next;
+        while (rhs_A != NULL) {
+            //checking if A is in RHS
+            if (rhs_A -> val.t == NONTERMINAL && rhs_A -> val.g.nt == A) {
+                
+                rhs_current = rhs_A -> next;
 
-        //if A is the rightmost element add follow of LHS to follow of A
-        if (rhs_current == NULL) {
-            //if A is also the LHS, do not do anything
-            if (lhs_current -> val.g.nt != A) {
-                computeFollow(lhs_current -> val.g.nt);
-                ListNode* lhsfollow = follow[lhs_current -> val.g.nt];
-                while (lhsfollow != NULL) {
-                    if (!contains(follow[A], lhsfollow -> val.g.t))
-                        follow[A] = insertlast(follow[A], lhsfollow -> val);
-                    lhsfollow = lhsfollow -> next;
-                }
-            }
-        }
-
-        //if there is a terminal after A, add that terminal to the follow set of A
-        else if (rhs_current -> val.t == TERMINAL){
-            if (!contains(follow[A], rhs_current -> val.g.t))
-                follow[A] = insertlast(follow[A], rhs_current -> val);
-        }
-
-        //if there is a non terminal
-        else{
-            ListNode* first_rhs_current = first[rhs_current -> val.g.nt];
-            while (first_rhs_current != NULL) {
-                if (first_rhs_current -> val.g.t != EPS && !contains(follow[A], first_rhs_current -> val.g.t))
-                    follow[A] = insertlast(follow[A], first_rhs_current -> val);
-                first_rhs_current = first_rhs_current -> next;
-            }
-
-            while(derivesepsilon(rhs_current -> val)){
-                rhs_current = rhs_current -> next;
-                if (rhs_current == NULL){
+                //if A is the rightmost element add follow of LHS to follow of A
+                if (rhs_current == NULL) {
+                    //if A is also the LHS, do not do anything
                     if (lhs_current -> val.g.nt != A) {
                         computeFollow(lhs_current -> val.g.nt);
                         ListNode* lhsfollow = follow[lhs_current -> val.g.nt];
@@ -308,21 +279,53 @@ void computeFollow(non_terminal A) {
                             lhsfollow = lhsfollow -> next;
                         }
                     }
-                    break;
                 }
-                else if (rhs_current -> val.t == TERMINAL && !contains(follow[A], rhs_current -> val.g.t)){
-                    follow[A] = insertlast(follow[A], rhs_current -> val);
+
+                //if there is a terminal after A, add that terminal to the follow set of A
+                else if (rhs_current -> val.t == TERMINAL){
+                    if (!contains(follow[A], rhs_current -> val.g.t))
+                        follow[A] = insertlast(follow[A], rhs_current -> val);
                 }
+
+                //if there is a non terminal
                 else{
-                    computeFirst(rhs_current -> val.g.nt);
                     ListNode* first_rhs_current = first[rhs_current -> val.g.nt];
                     while (first_rhs_current != NULL) {
-                        if (!contains(follow[A], first_rhs_current -> val.g.t))
+                        if (first_rhs_current -> val.g.t != EPS && !contains(follow[A], first_rhs_current -> val.g.t))
                             follow[A] = insertlast(follow[A], first_rhs_current -> val);
                         first_rhs_current = first_rhs_current -> next;
                     }
+
+                    while(derivesepsilon(rhs_current -> val)){
+                        rhs_current = rhs_current -> next;
+                        if (rhs_current == NULL){
+                            if (lhs_current -> val.g.nt != A) {
+                                computeFollow(lhs_current -> val.g.nt);
+                                ListNode* lhsfollow = follow[lhs_current -> val.g.nt];
+                                while (lhsfollow != NULL) {
+                                    if (!contains(follow[A], lhsfollow -> val.g.t))
+                                        follow[A] = insertlast(follow[A], lhsfollow -> val);
+                                    lhsfollow = lhsfollow -> next;
+                                }
+                            }
+                            break;
+                        }
+                        else if (rhs_current -> val.t == TERMINAL && !contains(follow[A], rhs_current -> val.g.t)){
+                            follow[A] = insertlast(follow[A], rhs_current -> val);
+                        }
+                        else{
+                            computeFirst(rhs_current -> val.g.nt);
+                            ListNode* first_rhs_current = first[rhs_current -> val.g.nt];
+                            while (first_rhs_current != NULL) {
+                                if (!contains(follow[A], first_rhs_current -> val.g.t))
+                                    follow[A] = insertlast(follow[A], first_rhs_current -> val);
+                                first_rhs_current = first_rhs_current -> next;
+                            }
+                        }
+                    }
                 }
             }
+            rhs_A = rhs_A -> next;
         }
     }
 }
