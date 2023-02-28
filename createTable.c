@@ -13,7 +13,7 @@ struct ListNode* follow[NO_NONTERMS];
 int parseTable [NO_NONTERMS][NO_TERMS - 1];
 
 void createParseTable(){
-    int s = (NO_TERMS)*(NO_NONTERMS-1);
+    int s = (NO_TERMS-1)*(NO_NONTERMS);
     memset(parseTable,-1,s*sizeof(int));
 
     for(int i=0;i<NO_RULES;i++){
