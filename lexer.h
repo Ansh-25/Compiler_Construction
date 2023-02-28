@@ -5,7 +5,6 @@
 char buffer1[32], buffer2[32];
 FILE *ptr;
 int begin = 0, forward = 0, line = 1;
-int m = 0;
 
 // check fp for eof
 FILE *getStream(FILE *fp){
@@ -74,8 +73,6 @@ struct Token Tokenize(int begin, int forward, tokentype type, int lineNo){
             r += k * (s[i] - '0');
             k *= 10;
         }
-        if(m)
-            r*=-1;
         tk.val.integer = r;
     }
     else if (type == TK_RNUM){
@@ -202,8 +199,6 @@ struct Token* getNextToken()
             else
             {
                 *tk = Tokenize(begin, forward, TK_ID, line);
-                if(m)
-                    m=0;
                 begin = forward;
                 state = -1;
             }
@@ -221,7 +216,6 @@ struct Token* getNextToken()
         case 3:
             *tk = Tokenize(begin, forward, TK_MINUS, line);
             //forward++;
-            m=1;
             begin = forward;
             state = -1;
             break;
