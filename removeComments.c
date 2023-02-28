@@ -47,5 +47,4 @@ int main(){
     char* filename = "test.txt";
     char* newfile = "temp.txt";
     removeComments(filename,newfile);
-    //remove_comments(filename);
 }

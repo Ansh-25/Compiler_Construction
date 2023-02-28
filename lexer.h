@@ -6,7 +6,6 @@ char buffer1[32], buffer2[32];
 FILE *ptr;
 int begin = 0, forward = 0, line = 1;
 
-// check fp for eof
 FILE *getStream(FILE *fp){
     if (!fp){
         fp = fopen("Program.txt", "r");
@@ -141,6 +140,7 @@ struct Token* getNextToken()
     int flag=0;
     char ch = buffer1[forward];
     int state = 0;
+    if(ch=='\0') return NULL;
     while (state != -1)
     {
         // printf("state := %d ",state);
@@ -604,6 +604,47 @@ struct Token* getNextToken()
         }
     }
     return tk;
+}
+
+void removeComments(char *testcaseFile, char *cleanFile){
+    FILE* f1 = fopen(testcaseFile,"r");
+    FILE* f2 = fopen(cleanFile,"w");
+    if (f1 == NULL) {
+        printf("file can't be opened \n");
+        return;
+    }
+    char ch;
+    while (!feof(f1)) {
+        ch = fgetc(f1);
+        if(ch == '*' && !feof(f1)){
+            ch = fgetc(f1);
+            if(ch == '*' && !feof(f1)){
+                ch = fgetc(f1);
+                while(!feof(f1)){   
+                    if(ch=='\n'){
+                        fputc(ch,f2);
+                    } 
+                    if(ch=='*' && !feof(f1)){
+                        ch=fgetc(f1);
+                        if(ch=='*')
+                            break;
+                        else
+                            fseek(f1,-1,SEEK_CUR);
+                    }                
+                    ch = fgetc(f1);
+                }
+                continue;
+            }
+            fputc('*',f2);
+            fseek(f1,-1,SEEK_CUR);
+            continue;
+        }
+        fputc(ch,f2);
+    }
+    fseek(f2,-1,SEEK_END);
+    fputc(' ',f2);
+    fclose(f1);
+    fclose(f2);
 }
 
 // int main()
