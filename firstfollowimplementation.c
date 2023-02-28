@@ -327,10 +327,8 @@ void computefirstandfollow (){
     gc.t = TERMINAL;
     gc.g.t = TK_EOF;
     follow[program] = insertlast(follow[program], gc);
-    for(int i=0; i<NO_NONTERMS; i++) {
+    for(int i=0; i<NO_NONTERMS; i++)
         computeFollow(i);
-        printf("%d\n",i);
-    }
 }
 
 int main() {
