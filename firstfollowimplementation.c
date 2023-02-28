@@ -480,9 +480,49 @@ void computefirstandfollow (){
         computeFollow(i);
 }
 
+void createParseTable(){
+    int s = (NO_TERMS-1)*(NO_NONTERMS);
+    memset(parseTable,-1,s*sizeof(int));
+
+    for(int i=0;i<NO_RULES;i++){
+        struct ListNode* A = grammar[i];
+        struct ListNode* B = grammar[i];
+        int a = A->val.g.nt;
+        int b = -1;
+        do{
+            B = B->next;
+            if(B==NULL || (B->val.t==TERMINAL && B->val.g.t==EPS)){
+                struct ListNode* C = follow[a];
+                while(C!=NULL){
+                    int c = C->val.g.t; 
+                    parseTable[a][c] = i;
+                    C = C->next;
+                }
+                break;
+            }
+
+            if(B->val.t==TERMINAL){
+                b = B->val.g.t; 
+                parseTable[a][b] = i;
+            }
+            else{
+                b = B->val.g.nt;
+                struct ListNode* C = first[b];
+                while(C!=NULL){
+                    int c = C->val.g.t; 
+                    if(C->val.g.t!=EPS)
+                        parseTable[a][c] = i;
+                    C = C->next;
+                }
+            }
+        } while(derivesepsilon(B->val)); //derivesEpsilon returns 0 on input -1
+    }
+}
+
 int main() {
     loadgrammar("GrammarForParser");
     computefirstandfollow();
+    createParseTable();
     printf("FIRST :- \n");
     for (int i = 0; i < NO_NONTERMS; i ++) {
         printf("\nFirst set of %d: \n", i);
@@ -496,5 +536,14 @@ int main() {
         for (ListNode* curr = follow[i]; curr != NULL; curr = curr -> next) {
             printf("%d ",curr -> val.g.t);
         }
+    }
+
+    printf("\n");
+
+    for (int i = 0; i < NO_NONTERMS; i ++) {
+        for (int j = 0; j < NO_TERMS - 1; j ++) {
+            printf("%d ",parseTable[i][j]);
+        }
+        printf("\n");
     }
 }
