@@ -80,8 +80,8 @@ void createSynchronizingSet(){
 // 	}
 // }
 
-void pushrule(int rule, StackNode* S){
-	StackNode* aux;
+StackNode* pushrule(int rule, StackNode* S){
+	StackNode* aux = NULL;
     //printf("%d",grammar[rule]==NULL);
 	ListNode* x = grammar[rule]->next;
     TreeNode* prev = (TreeNode*)malloc(sizeof(TreeNode));
@@ -108,15 +108,27 @@ void pushrule(int rule, StackNode* S){
         x = x->next;
     }
     S = pop(S);
-    while(!isEmpty(aux)){
+    while(isEmpty(aux) == 0){
         S = push(S,top(aux));
         aux = pop(aux);
+    }
+    return S;
+}
+
+void printStack(StackNode* S) {
+    StackNode* curr = S;
+    while (curr != NULL) {
+        if (S -> val -> t == TERMINAL)
+            printf("TERMINAL: %d ",S->val->val.t);
+        else
+            printf("NON-TERMINAL: %d ",S->val->val.nt);
+        curr = curr -> next;
     }
 }
 
 TreeNode* parse(){
     //createSynchronizingSet();
-    StackNode* S;
+    StackNode* S = NULL;
     TreeNode* Root = (TreeNode*)malloc(sizeof(TreeNode));
     Root->val.nt = program;
     Root->t = NONTERMINAL;
@@ -155,14 +167,15 @@ TreeNode* parse(){
             if(parseTable[X->val.nt][L->type]>=0){
                 X->ruleno = parseTable[X->val.nt][L->type];
                 //X->child = grammar[parseTable[X->val.nt][L->type]]->next;
-                //pushrule(X->ruleno, S);
+                S = pushrule(X->ruleno, S);
+                // printStack(S);
             }
 
-            if(contains(synchronizingSet[X->val.t.type],L->type)){
+            else if(contains(synchronizingSet[X->val.t.type],L->type)){
                 S = pop(S);
             }
 
-            {
+            else {
                 L = getNextToken();
             }
         }
