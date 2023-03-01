@@ -283,8 +283,6 @@ char* mapnttostring(non_terminal n) {
     else return 0;
 }
 
-
-
 void loadgrammar(char* filename) {
     FILE* fp = fopen(filename,"r");
     if (!fp) {

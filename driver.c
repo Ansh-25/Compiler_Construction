@@ -1,5 +1,7 @@
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 #include "lexer.h"
-#include "ff.h"
 
 int main(int argc, char *argv[]){
     int choice; 
@@ -19,7 +21,7 @@ int main(int argc, char *argv[]){
 
     // printing menu
     do{
-        printf("IMPLEMENTATION STATUS \n");
+        printf("IMPLEMENTATION STATUS \n\n");
         printf("\t\t MAIN MENU \n Press \n");
         printf("'0' For exiting the program\n");
         printf("'1' For removal of comments\n");
