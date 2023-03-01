@@ -1,4 +1,5 @@
 #include "lexer.h"
+#include "ff.h"
 
 int main(int argc, char *argv[]){
     int choice; 

@@ -147,8 +147,7 @@ non_terminal mapnttoenum(char* s) {
     else return 0;
 }
 
-
-char* mapttokentostring(tokentype t) {
+char* map_token_to_string(tokentype t) {
     if (t == TK_ID) return "TK_ID";
     if (t == TK_PLUS) return "TK_PLUS";
     if (t == TK_MINUS) return "TK_MINUS";
@@ -518,32 +517,3 @@ void createParseTable(){
         } while(derivesepsilon(B->val)); //derivesEpsilon returns 0 on input -1
     }
 }
-
-// int main() {
-//     loadgrammar("GrammarForParser");
-//     computefirstandfollow();
-//     createParseTable();
-//     printf("FIRST :- \n");
-//     for (int i = 0; i < NO_NONTERMS; i ++) {
-//         printf("\nFirst set of %d: \n", i);
-//         for (ListNode* curr = first[i]; curr != NULL; curr = curr -> next) {
-//             printf("%d ",curr -> val.g.t);
-//         }
-//     }
-//     printf("\n\n\nFOLLOW :- \n");
-//     for (int i = 0; i < NO_NONTERMS; i ++) {
-//         printf("\nFollow set of %d: \n", i);
-//         for (ListNode* curr = follow[i]; curr != NULL; curr = curr -> next) {
-//             printf("%d ",curr -> val.g.t);
-//         }
-//     }
-
-//     printf("\n");
-//     printf("%d",parseTable[0][10]);
-//     // for (int i = 0; i < NO_NONTERMS; i ++) {
-//     //     for (int j = 0; j < NO_TERMS - 1; j ++) {
-//     //         printf("%d ",parseTable[i][j]);
-//     //     }
-//     //     printf("\n");
-//     // }
-// }
