@@ -7,11 +7,8 @@ char* buffer1; char* buffer2;
 
 FILE *getStream(FILE *fp){
     if (!fp){
-        fp = fopen("Program.txt", "r");
-        if (!fp){
-            printf("File cannot be opened\n");
-            exit(1);
-        }
+        printf("ERROR: File not opened\n");
+        exit(1);
     }
     for(int i=0;i<bufferSize;++i) buffer2[i]='\0';
     if (!feof(fp)) fread(buffer2, bufferSize - 1 , 1, fp);
@@ -139,7 +136,6 @@ struct Token* getNextToken()
     if(ch=='\0') return NULL;
     while (state != -1)
     {
-        // printf("state := %d ",state);
         switch (state)
         {
         // start state
@@ -354,7 +350,10 @@ struct Token* getNextToken()
                 forward++;
                 state=15;
             }
-            else {forward++;}
+            else {
+                if(ch == '\n') line++;
+                forward++;
+            }
             break;
         case 15:
             if(ch=='*'){
@@ -364,6 +363,7 @@ struct Token* getNextToken()
                 state=0;
             }
             else {
+                if(ch == '\n') line++;
                 forward++;
                 state=14;
             }
@@ -584,7 +584,7 @@ struct Token* getNextToken()
             printf("ERROR: State does not exist\n");
             exit(1);
         }
-        // printf("%d,%d\n",begin,forward);
+
         forward %= bufferSize - 1;
         if(forward<begin){
             flag = 1;
@@ -656,18 +656,20 @@ FILE* initLexer(FILE* ptr, int buffSize) {
 }
 
 void printToken(struct Token *tk){
+    char *tokens[] = {"TK_ID","TK_PLUS","TK_MINUS","TK_NUM","TK_RNUM","TK_EQ","TK_MUL","TK_LT","TK_LE","TK_DEF","TK_DRIVERDEF","TK_COMMA","TK_SEMICOLON","TK_COLON","TK_ASSIGNOP","TK_BO","TK_BC","TK_GT","TK_GE","TK_ENDDEF","TK_DRIVERENDDEF","TK_SQBO","TK_SQBC","TK_NE","TK_DIV","TK_RANGEOP","TK_INTEGER","TK_REAL","TK_BOOLEAN","TK_OF","TK_ARRAY","TK_START","TK_END","TK_DECLARE","TK_MODULE","TK_DRIVER","TK_PROGRAM","TK_GET_VALUE","TK_PRINT","TK_USE","TK_WITH","TK_PARAMETERS","TK_TAKES","TK_INPUT","TK_RETURNS","TK_FOR","TK_IN","TK_SWITCH","TK_CASE","TK_BREAK","TK_DEFAULT","TK_WHILE","TK_AND","TK_OR","TK_TRUE","TK_FALSE","EPS"};
     if(tk==NULL) {
-        printf("\t ! END OF FILE !\n\n");
+        printf("\t\t\t!!! END OF FILE !!!\n\n");
         return;
     }
-    printf("line := %d  type:= %d  ",tk->lineNo,tk->type);
+    printf("Line_number := %d\t",tk->lineNo);
     if(tk -> type == TK_NUM){
-        printf("val := %d\n",tk->val.integer);
+        printf("lexeme := %d\t\t",tk->val.integer);
     }
     else if(tk -> type == TK_RNUM){
-        printf("val := %f\n",tk->val.decimal);
+        printf("lexeme := %f\t\t",tk->val.decimal);
     }
     else{
-        printf("val := %s\n",tk->val.identifier);
+        printf("lexeme := %s\t\t",tk->val.identifier);
     }
+    printf("Token_name := %s\n",tokens[tk->type]);
 }

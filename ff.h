@@ -147,7 +147,6 @@ non_terminal mapnttoenum(char* s) {
     else return 0;
 }
 
-
 char* mapttokentostring(tokentype t) {
     if (t == TK_ID) return "TK_ID";
     if (t == TK_PLUS) return "TK_PLUS";

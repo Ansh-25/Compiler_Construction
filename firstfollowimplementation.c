@@ -147,67 +147,6 @@ non_terminal mapnttoenum(char* s) {
     else return 0;
 }
 
-
-char* mapttokentostring(tokentype t) {
-    if (t == TK_ID) return "TK_ID";
-    if (t == TK_PLUS) return "TK_PLUS";
-    if (t == TK_MINUS) return "TK_MINUS";
-    if (t == TK_NUM) return "TK_NUM";
-    if (t == TK_RNUM) return "TK_RNUM";
-    if (t == TK_EQ) return "TK_EQ";
-    if (t == TK_MUL) return "TK_MUL";
-    if (t == TK_LT) return "TK_LT";
-    if (t == TK_LE) return "TK_LE";
-    if (t == TK_DEF) return "TK_DEF";
-    if (t == TK_DRIVERDEF) return "TK_DRIVERDEF";
-    if (t == TK_COMMA) return "TK_COMMA";
-    if (t == TK_SEMICOLON) return "TK_SEMICOLON";
-    if (t == TK_COLON) return "TK_COLON";
-    if (t == TK_ASSIGNOP) return "TK_ASSIGNOP";
-    if (t == TK_BO) return "TK_BO";
-    if (t == TK_BC) return "TK_BC";
-    if (t == TK_GT) return "TK_GT";
-    if (t == TK_GE) return "TK_GE";
-    if (t == TK_ENDDEF) return "TK_ENDDEF";
-    if (t == TK_DRIVERENDDEF) return "TK_DRIVERENDDEF";
-    if (t == TK_SQBO) return "TK_SQBO";
-    if (t == TK_SQBC) return "TK_SQBC";
-    if (t == TK_NE) return "TK_NE";
-    if (t == TK_DIV) return "TK_DIV";
-    if (t == TK_RANGEOP) return "TK_RANGEOP";
-    if (t == TK_INTEGER) return "TK_INTEGER";
-    if (t == TK_REAL) return "TK_REAL";
-    if (t == TK_BOOLEAN) return "TK_BOOLEAN";
-    if (t == TK_OF) return "TK_OF";
-    if (t == TK_ARRAY) return "TK_ARRAY";
-    if (t == TK_START) return "TK_START";
-    if (t == TK_END) return "TK_END";
-    if (t == TK_DECLARE) return "TK_DECLARE";
-    if (t == TK_MODULE) return "TK_MODULE";
-    if (t == TK_DRIVER) return "TK_DRIVER";
-    if (t == TK_PROGRAM) return "TK_PROGRAM";
-    if (t == TK_GET_VALUE) return "TK_GET_VALUE";
-    if (t == TK_PRINT) return "TK_PRINT";
-    if (t == TK_USE) return "TK_USE";
-    if (t == TK_WITH) return "TK_WITH";
-    if (t == TK_PARAMETERS) return "TK_PARAMETERS";
-    if (t == TK_TAKES) return "TK_TAKES";
-    if (t == TK_INPUT) return "TK_INPUT";
-    if (t == TK_RETURNS) return "TK_RETURNS";
-    if (t == TK_FOR) return "TK_FOR";
-    if (t == TK_IN) return "TK_IN";
-    if (t == TK_SWITCH) return "TK_SWITCH";
-    if (t == TK_CASE) return "TK_CASE";
-    if (t == TK_BREAK) return "TK_BREAK";
-    if (t == TK_DEFAULT) return "TK_DEFAULT";
-    if (t == TK_WHILE) return "TK_WHILE";
-    if (t == TK_AND) return "TK_AND";
-    if (t == TK_OR) return "TK_OR";
-    if (t == TK_TRUE) return "TK_TRUE";
-    if (t == TK_FALSE) return "TK_FALSE";
-    if (t == EPS) return "EPS";
-}
-
 char* mapnttostring(non_terminal n) {
     if (n == program) return "program";
     else if (n == moduleDeclarations) return "moduleDeclarations";

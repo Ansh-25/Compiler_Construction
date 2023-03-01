@@ -50,6 +50,7 @@ int main(int argc, char *argv[]){
             }
             break;
         case 2:
+            ptr = fopen(argv[1],"r");
             ptr = initLexer(ptr, size_of_buffer);
             struct Token *tk;
             do{
