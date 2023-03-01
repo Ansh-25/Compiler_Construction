@@ -133,6 +133,7 @@ struct Token* getNextToken()
     int flag=0;
     char ch = buffer1[forward];
     int state = 0;
+    int is_exceeding=0;
     if(ch=='\0') return NULL;
     while (state != -1)
     {
@@ -185,14 +186,31 @@ struct Token* getNextToken()
 
         // ID/keyword final state
         case 1:
-            if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || (ch >= '0' && ch <= '9'))
+            if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || (ch >= '0' && ch <= '9')){
+                if(forward<begin && (32-begin+forward+1 > 20)){
+                    printf("ERROR: identifier length cannot exceed 20\n");
+                    is_exceeding = 1;
+                    begin = forward;
+                    flag = 1;
+                }else if(forward-begin>20){
+                    printf("ERROR: identifier length cannot exceed 20\n");
+                    is_exceeding = 1;
+                    begin = forward;
+                }
                 forward++;
-            // if whitespace encountered
+            }
             else
             {
-                *tk = Tokenize(begin, forward, TK_ID, line);
-                begin = forward;
-                state = -1;
+                // if whitespace encountered
+                if(is_exceeding){
+                    is_exceeding = 0;
+                    begin = forward;
+                    state = 0;
+                }else{
+                    *tk = Tokenize(begin, forward, TK_ID, line);
+                    begin = forward;
+                    state = -1;
+                }
             }
             break;
 
@@ -246,7 +264,7 @@ struct Token* getNextToken()
             else
             {
                 printf("ERROR: Token not recognized at line %d\n", line);
-                state = -1;
+                state = 0;
                 begin = forward;
             }
             break;
@@ -284,7 +302,7 @@ struct Token* getNextToken()
             else
             {
                 printf("ERROR: Token not recognized at line %d\n", line);
-                state = -1;
+                state = 0;
                 begin = forward;
             }
             break;
@@ -298,7 +316,7 @@ struct Token* getNextToken()
             else
             {
                 printf("ERROR: Token not recognized at line %d\n", line);
-                state = -1;
+                state = 0;
                 begin = forward;   
             }
             break;
@@ -323,14 +341,13 @@ struct Token* getNextToken()
             }
             else {
                 printf("ERROR: Token not recognized at line %d\n", line);
-                state = -1;
+                state = 0;
                 begin = forward;
             }
             break;
         
         case 12:
             *tk = Tokenize(begin, forward, TK_EQ, line);
-            forward++;
             begin = forward;
             state = -1;
             break;
@@ -506,7 +523,7 @@ struct Token* getNextToken()
 
         // tokenize close sq bracket
         case 32:
-            *tk = Tokenize(begin, forward - 1, TK_SQBC, line);
+            *tk = Tokenize(begin, forward, TK_SQBC, line);
             begin = forward;
             state = -1;
             break;
@@ -521,7 +538,7 @@ struct Token* getNextToken()
             else
             {
                 printf("ERROR: Token not recognized at line %d\n", line);
-                state = -1;
+                state = 0;
                 begin = forward;
             }
 
@@ -545,15 +562,14 @@ struct Token* getNextToken()
             if (ch == '.')
             {
                 state = 37;
-                break;
             }
             else
             {
                 printf("ERROR: Token not recognized at line %d\n", line);
-                state = -1;
+                state = 0;
                 begin = forward;
             }
-
+            break;
         // tokenize range op
         case 37:
             forward++;
@@ -586,7 +602,7 @@ struct Token* getNextToken()
 
         default:
                 printf("ERROR: Token not recognized at line %d\n", line);
-                state = -1;
+                state = 0;
                 begin = forward;
         }
         if((forward == bufferSize-1) && (state == 14)){
