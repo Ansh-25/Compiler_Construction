@@ -57,6 +57,7 @@ int main(int argc, char *argv[]){
                 tk = getNextToken();
                 printToken(tk);
             }while(tk!=NULL);
+            fclose(ptr);
             break;
         // case 3:
 

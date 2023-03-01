@@ -187,7 +187,7 @@ struct Token* getNextToken()
         // ID/keyword final state
         case 1:
             if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || (ch >= '0' && ch <= '9')){
-                if(forward<begin && (32-begin+forward+1 > 20)){
+                if(forward<begin && (bufferSize-begin+forward+1 > 20)){
                     printf("ERROR: identifier length cannot exceed 20\n");
                     is_exceeding = 1;
                     begin = forward;
@@ -615,7 +615,7 @@ struct Token* getNextToken()
             ch = buffer2[forward];
         }else {
             if(flag){
-                for(int i=0;i<32;++i) buffer1[i]='\0';
+                for(int i=0;i<bufferSize;++i) buffer1[i]='\0';
                 strcpy(buffer1,buffer2);
                 if(ptr==NULL) return NULL;
                 ptr = getStream(ptr);
@@ -670,6 +670,10 @@ void removeComments(char *testcaseFile, char *cleanFile){
 }
 
 FILE* initLexer(FILE* ptr, int buffSize) {
+    begin = 0, forward = 0, line = 1;
+    for(int i=0;i<bufferSize;++i){
+        buffer1[i] = buffer2[i] = '\0';
+    }
     bufferSize = buffSize;
     buffer1 = realloc(buffer1, bufferSize * sizeof(char));
     buffer2 = realloc(buffer2, bufferSize * sizeof(char));
