@@ -8,7 +8,7 @@
 #define NO_RULES 141
 #define NO_TERMS 57
 #define NO_NONTERMS 72
-#define MAXTERMLEN 31
+#define MAXTERMLEN 50
 
 struct ListNode* grammar[NO_RULES];
 struct ListNode* first[NO_NONTERMS];
