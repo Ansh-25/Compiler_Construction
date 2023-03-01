@@ -10,16 +10,16 @@ struct ListNode* synchronizingSet[NO_NONTERMS];
 void createSynchronizingSet(){
 
     ListNode* follow_set = NULL;
-    for (int i = 0; i < NO_NONTERMS; i ++) 
-        for (follow_set = follow[i]; follow_set != NULL; follow_set = follow_set -> next)
+    for (int i = 0; i < NO_NONTERMS; i ++) //pushes all elements of the follow set into the respective synchronizing set
+        for (follow_set = follow[i]; follow_set != NULL; follow_set = follow_set -> next) 
             synchronizingSet[i] = insertlast(synchronizingSet[i], follow_set -> val);
    
     ListNode* first_set = NULL;
-    for (int i = 0; i < NO_NONTERMS; i ++) 
+    for (int i = 0; i < NO_NONTERMS; i ++) //pushes all elements of the first set into the respective synchronizing set
         for (first_set = first[i]; first_set != NULL; first_set = first_set -> next)
             synchronizingSet[i] = insertlast(synchronizingSet[i], first_set -> val);
 
-    for (int i = 0; i < NO_NONTERMS; i ++){
+    for (int i = 0; i < NO_NONTERMS; i ++){ //pushes ;, >>, >>>, END, EOF into each synchronizing set
 		grammarchar semicol; semicol.t = TERMINAL; semicol.g.t = TK_SEMICOLON;
         synchronizingSet[i] = insertlast(synchronizingSet[i], semicol);
 		grammarchar enddef; enddef.t = TERMINAL; enddef.g.t = TK_ENDDEF;
@@ -34,75 +34,18 @@ void createSynchronizingSet(){
 }
 
 
-
-// void pushRule(int rule, StackNode* S) {
-// 	//find the LHS of the rule in the grammar
-// 	struct ListNode* LHS = grammar[rule]->next;
-// 	//create treenode of first grammarchar
-// 	TreeNode* temp= (TreeNode*)malloc(sizeof(TreeNode));
-// 	if(LHS->val.t==TERMINAL){
-// 		temp->t=TERMINAL;
-// 		temp->ruleno=rule;
-// 		temp->val.t.type=LHS->val.g.t;
-// 		temp->child = NULL;
-// 		temp->sibling=NULL;
-// 	}
-// 	else {
-// 		temp->t=NONTERMINAL;
-// 		temp->ruleno=rule;
-// 		temp->val.nt =LHS->val.g.nt;
-// 		temp->child = NULL;
-// 		temp->sibling=NULL;
-// 	}
-// 	StackNode* auxilliary;
-// 	//push pointer to a seperate stack
-// 	auxilliary = push(auxilliary, temp);
-// 	//child pointer of top of stack points to first grammarchar
-// 	top(S)->child=temp;
-// 	//go through rest of LHS, creating treeNodes, pointing prev sibling pointer to it, pushing to stack and continue
-// 	while(LHS->next!=NULL){
-// 		TreeNode* nextNode = (TreeNode*)malloc(sizeof(TreeNode));
-// 		if(LHS->next->val.t==TERMINAL){
-// 			nextNode->t=TERMINAL;
-// 			nextNode->ruleno=rule;
-// 			nextNode->val.t.type = LHS->next->val.g.t;
-// 			nextNode->child = NULL;
-// 			nextNode->sibling=NULL;
-// 		}
-// 		else {
-// 			nextNode->t=NONTERMINAL;
-// 			nextNode->ruleno = rule;
-// 			nextNode->val.nt = LHS->next->val.g.nt;
-// 			nextNode->child = NULL;
-// 			nextNode->sibling=NULL;
-// 		}
-// 		temp->sibling = nextNode;
-// 		push(auxilliary, nextNode);
-// 		temp=temp->sibling;
-// 		LHS=LHS->next;
-// 	}
-// 	//pop from auxilliary stack and push to main stack
-// 	S = pop(S);
-// 	while(!isEmpty(auxilliary)){
-// 		S = push(S,top(auxilliary));
-//       auxilliary =  pop(auxilliary);
-// 	}
-// }
-
 StackNode* pushrule(int rule, StackNode* S){
-	StackNode* aux = NULL;
-    //printf("%d",grammar[rule]==NULL);
-	ListNode* x = grammar[rule]->next;
+	StackNode* aux = NULL; //creates auxilliary stack
+	ListNode* x = grammar[rule]->next; //takes LHS of the grammar rule
     TreeNode* prev = (TreeNode*)malloc(sizeof(TreeNode));
 
     while(x!=NULL){
         TreeNode* temp = (TreeNode*)malloc(sizeof(TreeNode));
-        if(x==grammar[rule]->next){
+        if(x==grammar[rule]->next){//if this is the first node of the LHS of the rule, then we point the child pointer of the parent(i.e. top of the main stack) to it
 
             top(S)->child = temp;
-            //printf("%d",top(S)->child->val.nt==1);
         }
-        temp->t = x->val.t;
+        temp->t = x->val.t; //initialise the TreeNode with information of the grammar character depending on whether it is a terminal or non-terminal
         if(x->val.t==TERMINAL){
             temp->val.t.type = x->val.g.t;
         }
@@ -111,25 +54,25 @@ StackNode* pushrule(int rule, StackNode* S){
         temp->ruleno = rule;
         temp->child = NULL;
         temp->sibling = NULL;
-        prev->sibling = temp;
+        prev->sibling = temp; //point the previous node's sibling pointer to the current TreeNode
         prev = temp;
-        aux = push(aux,temp);
+        aux = push(aux,temp); //push to auxilliary stack
         x = x->next;
     }
-    S = pop(S);
-    while(isEmpty(aux) == 0){
+    S = pop(S); //remove the top of the main stack
+    while(isEmpty(aux) == 0){ //add the LHS of the rule to the main stack. We add it from the auxilliary stack since we need it to be pushed from right to left
         S = push(S,top(aux));
         aux = pop(aux);
     }
     return S;
 }
 
-void printStack(StackNode* S) {
+void printStack(StackNode* S) { //prints the stack
     StackNode* curr = S;
-    while (curr != NULL) {
-        if (curr -> val -> t == TERMINAL)
+    while (curr != NULL) { //loop until end of stack
+        if (curr -> val -> t == TERMINAL) //if stack contains the terminal, print that
             printf("TERMINAL: %d ",curr->val->val.t.type);
-        else
+        else //else print it as a non-terminal
             printf("NON-TERMINAL: %d ",curr->val->val.nt);
         curr = curr -> next;
     }
@@ -137,51 +80,50 @@ void printStack(StackNode* S) {
 }
 
 TreeNode* parse(){
-    createSynchronizingSet();
-    StackNode* S = NULL;
-    TreeNode* Eof = (TreeNode*)malloc(sizeof(TreeNode));
+    createSynchronizingSet(); //first create the synchronizing set for all non-terminals
+    StackNode* S = NULL; //create stack
+    TreeNode* Eof = (TreeNode*)malloc(sizeof(TreeNode)); //create EOF TreeNode
     Eof->val.t.type = TK_EOF;
     Eof->t = TERMINAL;
     Eof->sibling = NULL;
     Eof->child = NULL;
-    TreeNode* Root = (TreeNode*)malloc(sizeof(TreeNode));
-    Root->val.nt = program;
+    TreeNode* Root = (TreeNode*)malloc(sizeof(TreeNode)); //create Root TreeNode
+    Root->val.nt = program; //our start symbol is program
     Root->t = NONTERMINAL;
     Root->ruleno = 0;
     Root->sibling = NULL;
     TreeNode* X = Root;
-    S = push(S,Eof);
+    S = push(S,Eof); //push into stack, EOF at bottom then program
     S = push(S,X);
-    //printf("%d",top(S)->val.nt);
-    struct Token* L = getNextToken();
+    struct Token* L = getNextToken(); //start at the first token
     while(L!=NULL){
          //printStack(S);
         //printToken(L);
         //printf("hi");
-        if(isEmpty(S)){
-            printf("\n Syntax Error at line no %d ... empty stack\n",L->lineNo);
+        if(isEmpty(S)){ //if stack is empty and we still have a token, it means there is an error
+            printf("\n Syntax Error at line no %d ... empty stack\n",L->lineNo); 
             break;
         }
         //printf("hi");
-        X = top(S);
-        if(X->t==TERMINAL){
+        X = top(S); //get top of stack
+        if(X->t==TERMINAL){ //if top of stack is terminal,
             if(X->val.t.type == L->type){
-                X->t = TERMINAL;
+                X->t = TERMINAL; //we convert the treenode to leafnode,
                 X->val.t = *L;
                 X->ruleno = -1;
                 X->child = NULL;
                 X->sibling = NULL;
-                S = pop(S);
-                if (L -> type == TK_EOF) {
+                S = pop(S); //pop the terminal at the top of the stack
+                if (L -> type == TK_EOF) { //if we reach the end of the file, then break
                     break;
                 }
-                L = getNextToken();
-                if (L == NULL) {
+                L = getNextToken(); //get next token
+                if (L == NULL) { //if we are unable to get next token, then we convert it to EOF token
                     L = malloc(sizeof(struct Token));
                     L -> type = TK_EOF;
                 }
             }
-            else{
+            else{ //if we the top of the stack is a different terminal to the token, then we have an error
                
                 printf("\n Syntax Error at line no %d ... terminal mismatch\n",L->lineNo);
                 printf("actual : %d\n",L->type);
@@ -189,26 +131,26 @@ TreeNode* parse(){
                 S = pop(S);
             }
         }
-        else if(X->t==NONTERMINAL){
+        else if(X->t==NONTERMINAL){ //else if top of stack is a non-terminal
             //printf("hi");
-            if(parseTable[X->val.nt][L->type]>=0){
+            if(parseTable[X->val.nt][L->type]>=0){ //check the parse table for the right rule
                 X->ruleno = parseTable[X->val.nt][L->type];
                 //X->child = grammar[parseTable[X->val.nt][L->type]]->next;
                 if(grammar[parseTable[X->val.nt][L->type]]->next->val.t==TERMINAL && grammar[parseTable[X->val.nt][L->type]]->next->val.g.t==EPS)
-                    S = pop(S);
+                    S = pop(S); //if the rule derives epsilon, just pop S
                 else 
-                    S = pushrule(X->ruleno, S);
+                    S = pushrule(X->ruleno, S); //otherwise push the LHS of the rule (the pushrule function pops S on its own at the end)
                 // printStack(S);
             }
 
-            else if(contains(synchronizingSet[X->val.t.type],L->type)){
+            else if(contains(synchronizingSet[X->val.t.type],L->type)){ //otherwise if we can't find the right rule, check if the non-terminal contains the top of the stack in the synchronizing set. if yes, we can pop the stack and continue
                 printf("\n Syntax Error at line no %d ... non-terminal mismatch, popping stack\n",L->lineNo);
                 S = pop(S);
             }
 
-            else {
+            else { //otherwise get next token
                 printf("\n Syntax Error at line no %d ... non-terminal mismatch, getting new token\n",L->lineNo);
-                if (L -> type == TK_EOF) {
+                if (L -> type == TK_EOF) { //if L is TK_EOF, we can't get next token, so we just break
                     break;
                 }
                 L = getNextToken();
@@ -221,7 +163,7 @@ TreeNode* parse(){
         else    
             continue;
     }
-    if(!isEmpty(S)){
+    if(!isEmpty(S)){ //if stack is not empty after consuming all tokens, we have an error
         printStack(S);
         printf("Error ... stack not empty yet");
     }
