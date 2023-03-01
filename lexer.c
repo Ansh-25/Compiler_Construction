@@ -248,7 +248,6 @@ struct Token* getNextToken()
                 printf("ERROR: Token not recognized at line %d\n", line);
                 state = -1;
                 begin = forward;
-                exit(1);
             }
             break;
 
