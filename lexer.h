@@ -2,9 +2,9 @@
 #include "hash.h"
 #include <math.h>
 
-char buffer1[32], buffer2[32];
 FILE *ptr;
-int begin = 0, forward = 0, line = 1;
+int bufferSize, begin = 0, forward = 0, line = 1;
+char* buffer1; char* buffer2;
 
 FILE *getStream(FILE *fp){
     if (!fp){
@@ -14,51 +14,37 @@ FILE *getStream(FILE *fp){
             exit(1);
         }
     }
-    for(int i=0;i<32;++i) buffer2[i]='\0';
-    if (!feof(fp)) fread(buffer2, sizeof(buffer2) - 1 , 1, fp);
+    for(int i=0;i<bufferSize;++i) buffer2[i]='\0';
+    if (!feof(fp)) fread(buffer2, bufferSize - 1 , 1, fp);
     else return NULL;
     return fp;
 }
 
 struct Token Tokenize(int begin, int forward, tokentype type, int lineNo){
-    // printf("begin:= %d  end:= %d  type:= %s  line:=%d  ",begin,forward,tokenType,lineNo);
-    char s[64];
+    char* s = malloc(2 * bufferSize * sizeof(char));
     int size = 0;
     struct Token tk;
     tk.type = type;
     tk.lineNo = lineNo;
     
-    // assuming id size < 32
+    // assuming id size < BufferSize
     if (begin < forward){
         strncpy(s, buffer1 + begin, forward - begin);
         size = forward - begin;
     }
     else{
-        strncpy(s, buffer1 + begin, 31 - begin);
+        strncpy(s, buffer1 + begin, bufferSize - 1 - begin);
         for (int i = 0; i < forward; i++)
         {
-            s[31 - begin + i] = buffer2[i];
+            s[bufferSize - 1 - begin + i] = buffer2[i];
         }
-        s[31 - begin + forward] = '\0';
-        size = 31 - begin + forward;
+        s[bufferSize - 1 - begin + forward] = '\0';
+        size = bufferSize - 1 - begin + forward;
     }
     s[size]='\0';
 
     // ID to keyword resolution
-    // if (type == TK_ID && search_hash(s)){
-    //     strcpy(tk.val.identifier,s);
-    //     int i = 0;
-    //     // capitalize s
-    //     char temp[64];
-    //     while (i<size) temp[i++] = s[i] + 'A' - 'a';
-    //     temp[i]='\0';
-    //     tk.type = temp;
-    // }
     if (type == TK_ID) {
-        // printf("%s\n",hash[8] -> str);
-        // printf("%s\n",s);
-        // printf("%d\n",search_hash("driver"));
-        // printf("%d\n",search_hash("program"));
         init_hash();
         int hashresult = search_hash(s);
         if (hashresult != -1) 
@@ -101,7 +87,6 @@ struct Token Tokenize(int begin, int forward, tokentype type, int lineNo){
                     k/=10;
                 }
                 r*=pow(10,t);
-                //printf("%f",r);
             }
             else if(s[i]=='-'){
                 i++;
@@ -111,7 +96,6 @@ struct Token Tokenize(int begin, int forward, tokentype type, int lineNo){
                     k/=10;
                 }
                 r*=pow(0.1,t);
-                //printf("\n %lf",r);
             }
             else{
                 int t = 0, k = pow(10,size-i-1);
@@ -120,17 +104,14 @@ struct Token Tokenize(int begin, int forward, tokentype type, int lineNo){
                     k/=10;
                 }
                 r*=pow(10,t);
-                //printf("%f",r);
             }
         }
         tk.val.decimal = r;
     }
     else
     {
-        // printf("hi");
         strcpy(tk.val.identifier,s);
     }
-    // printf("type:= %s  val := %s\n",tk.type,s);
     return tk;
 }
 
@@ -589,7 +570,7 @@ struct Token* getNextToken()
             exit(1);
         }
         // printf("%d,%d\n",begin,forward);
-        forward %=31;
+        forward %= bufferSize - 1;
         if(forward<begin){
             flag = 1;
             ch = buffer2[forward];
@@ -647,18 +628,16 @@ void removeComments(char *testcaseFile, char *cleanFile){
     fclose(f2);
 }
 
-// int main()
-// {
-//     ptr = getStream(ptr);
-//     strcpy(buffer1, buffer2);
-//     ptr = getStream(ptr);
+FILE* initLexer(FILE* ptr, int buffSize) {
+    bufferSize = buffSize;
+    buffer1 = realloc(buffer1, bufferSize * sizeof(char));
+    buffer2 = realloc(buffer2, bufferSize * sizeof(char));
 
-//     struct Token *tk;
-//     do{
-//         tk = getNextToken();
-//         printToken(tk);
-//             // printf("hi - %d\n",search_hash("driver"));
-//             // printf("%d\n",search_hash("program"));
-//     }while(tk!=NULL);
-//     return 0;
-// }
+    printf("%d\n",(sizeof(buffer1) / sizeof(buffer1[0])));
+
+    ptr = getStream(ptr);
+    strcpy(buffer1, buffer2);
+    ptr = getStream(ptr);
+
+    return ptr;
+}

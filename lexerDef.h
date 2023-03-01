@@ -23,6 +23,8 @@ struct Token
     union TokenVal val;
 };
 
+// For Debugging purposes
+
 void printToken(struct Token *tk){
     if(tk==NULL) {
         printf("ERROR: Empty Token\n");
