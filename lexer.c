@@ -615,6 +615,7 @@ struct Token* getNextToken()
             ch = buffer2[forward];
         }else {
             if(flag){
+                for(int i=0;i<32;++i) buffer1[i]='\0';
                 strcpy(buffer1,buffer2);
                 if(ptr==NULL) return NULL;
                 ptr = getStream(ptr);
