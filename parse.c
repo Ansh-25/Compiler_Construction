@@ -170,12 +170,28 @@ TreeNode* parse(){
     return Root;
 }
 
+void printTree(TreeNode* root) {
+    if(root==NULL) return;
+    TreeNode* curr = root->child;
+    printTree(root->child);
+    if(root->t==TERMINAL && root->val.t.type==TK_NUM) printf("Terminal %s with token value %d\n", mapttokentostring(root->val.t.type),root->val.t.val.integer);
+    else if(root->t==TERMINAL && root->val.t.type==TK_RNUM) {printf("Terminal %s with token value %lf\n", mapttokentostring(root->val.t.type),root->val.t.val.decimal);}
+    else if(root->t==TERMINAL) {printf("Terminal %s with token value %d\n", mapttokentostring(root->val.t.type),root->val.t.val.identifier);}
+    else printf("Non-Terminal %s\n",mapnttostring(root->val.nt));
+    if (curr != NULL)
+        curr=curr->sibling;
+    for(;curr!=NULL; curr=curr->sibling){
+        printTree(curr);
+    }
+}
+
 int main(){
     ptr = initLexer(ptr,32);
     loadgrammar("GrammarForParser");
     computefirstandfollow();
     createParseTable();
     //printf("%d",parseTable[0][10]);
-    parse();
+    TreeNode* root = parse();
+    printTree(root);
     return 0;
 }
