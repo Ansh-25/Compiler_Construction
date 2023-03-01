@@ -8,20 +8,12 @@ int parseTable [NO_NONTERMS][NO_TERMS - 1];
 struct ListNode* synchronizingSet[NO_NONTERMS];
 
 void createSynchronizingSet(){
-    for(int i=0; i<NO_NONTERMS; i++) {
-        struct ListNode* temp = follow[i];
-        struct ListNode* head;
-	    synchronizingSet[i] = head;
-	    while(temp!=NULL){
-            ListNode* newnode = (ListNode*)malloc(sizeof(ListNode));
-    	    newnode -> val = temp->val;
-    	    newnode -> next = NULL;
-            head->next = newnode;
-	        head = newnode;
-	        temp = temp->next;
-        }
-    }
-    //rest is hardcoding
+
+    ListNode* follow_set = NULL;
+    for (int i = 0; i < NO_NONTERMS; i ++) 
+        for (follow_set = follow[i]; follow_set != NULL; follow_set = follow_set -> next)
+            synchronizingSet[i] = insertlast(synchronizingSet[i], follow_set -> val);
+            
 }
 
 
@@ -128,7 +120,7 @@ void printStack(StackNode* S) {
 }
 
 TreeNode* parse(){
-    // createSynchronizingSet();
+    createSynchronizingSet();
     StackNode* S = NULL;
     TreeNode* Root = (TreeNode*)malloc(sizeof(TreeNode));
     Root->val.nt = program;

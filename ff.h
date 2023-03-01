@@ -1,4 +1,4 @@
-#include "lexer.h"
+#include "lexer_for_testing.h"
 #include "parserdef.h"
 
 #define NO_RULES 141
@@ -147,7 +147,8 @@ non_terminal mapnttoenum(char* s) {
     else return 0;
 }
 
-char* map_token_to_string(tokentype t) {
+
+char* mapttokentostring(tokentype t) {
     if (t == TK_ID) return "TK_ID";
     if (t == TK_PLUS) return "TK_PLUS";
     if (t == TK_MINUS) return "TK_MINUS";
@@ -204,83 +205,83 @@ char* map_token_to_string(tokentype t) {
     if (t == TK_OR) return "TK_OR";
     if (t == TK_TRUE) return "TK_TRUE";
     if (t == TK_FALSE) return "TK_FALSE";
+    if (t == TK_EOF) return "TK_EOF";
     if (t == EPS) return "EPS";
 }
 
 char* mapnttostring(non_terminal n) {
     if (n == program) return "program";
-    else if (n == moduleDeclarations) return "moduleDeclarations";
-    else if (n == otherModules) return "otherModules";
-    else if (n == driverModule) return "driverModule";
-    else if (n == moduleDeclaration) return "moduleDeclaration";
-    else if (n == module) return "module";
-    else if (n == moduleDef) return "moduleDef";
-    else if (n == input_plist) return "input_plist";
-    else if (n == ret) return "ret";
-    else if (n == output_plist) return "output_plist";
-    else if (n == dataType) return "dataType";
-    else if (n == _input_plist) return "_input_plist";
-    else if (n == _type) return "_type";
-    else if (n == _output_plist) return "_output_plist";
-    else if (n == range_arrays) return "range_arrays";
-    else if (n == index_arr) return "index_arr";
-    else if (n == statements) return "statements";
-    else if (n == statement) return "statement";
-    else if (n == ioStmt) return "ioStmt";
-    else if (n == simpleStmt) return "simpleStmt";
-    else if (n == declareStmt) return "declareStmt";
-    else if (n == conditionalStmt) return "conditionalStmt";
-    else if (n == iterativeStmt) return "iterativeStmt";
-    else if (n == var_print) return "var_print";
-    else if (n == P1) return "P1";
-    else if (n == boolConstt) return "boolConstt";
-    else if (n == array_element_for_print) return "array_element_for_print";
-    else if (n == new_index) return "new_index";
-    else if (n == assignmentStmt) return "assignmentStmt";
-    else if (n == moduleReuseStmt) return "moduleReuseStmt";
-    else if (n == whichStmt) return "whichStmt";
-    else if (n == lvalueIDStmt) return "lvalueIDStmt";
-    else if (n == lvalueARRStmt) return "lvalueARRStmt";
-    else if (n == expression) return "expression";
-    else if (n == element_index_with_expressions) return "element_index_with_expressions";
-    else if (n == sign) return "sign";
-    else if (n == optional) return "optional";
-    else if (n == actual_para_list) return "actual_para_list";
-    else if (n == N_11) return "N_11";
-    else if (n == idList) return "idList";
-    else if (n == N3) return "N3";
-    else if (n == arithmeticOrBooleanExpr) return "arithmeticOrBooleanExpr";
-    else if (n == U) return "U";
-    else if (n == unary_op) return "unary_op";
-    else if (n == new_NT) return "new_NT";
-    else if (n == arithmeticExpr) return "arithmeticExpr";
-    else if (n == var_id_num) return "var_id_num";
-    else if (n == AnyTerm) return "AnyTerm";
-    else if (n == N7) return "N7";
-    else if (n == logicalOp) return "logicalOp";
-    else if (n == N8) return "N8";
-    else if (n == relationalOp) return "relationalOp";
-    else if (n == term) return "term";
-    else if (n == N4) return "N4";
-    else if (n == op1) return "op1";
-    else if (n == factor) return "factor";
-    else if (n == N5) return "N5";
-    else if (n == op2) return "op2";
-    else if (n == N_10) return "N_10";
-    else if (n == arrExpr) return "arrExpr";
-    else if (n == arrTerm) return "arrTerm";
-    else if (n == arr_N4) return "arr_N4";
-    else if (n == arr_N5) return "arr_N5";
-    else if (n == arrFactor) return "arrFactor";
-    else if (n == caseStmts) return "caseStmts";
-    else if (n == _default) return "_default";
-    else if (n == value) return "value";
-    else if (n == N9) return "N9";
-    else if (n == range_for_loop) return "range_for_loop";
-    else if (n == index_for_loop) return "index_for_loop";
-    else if (n == sign_for_loop) return "sign_for_loop";
-    else if (n == new_index_for_loop) return "new_index_for_loop";
-    else return 0;
+    if (n == moduleDeclarations) return "moduleDeclarations";
+    if (n == otherModules) return "otherModules";
+    if (n == driverModule) return "driverModule";
+    if (n == moduleDeclaration) return "moduleDeclaration";
+    if (n == module) return "module";
+    if (n == moduleDef) return "moduleDef";
+    if (n == input_plist) return "input_plist";
+    if (n == ret) return "ret";
+    if (n == output_plist) return "output_plist";
+    if (n == dataType) return "dataType";
+    if (n == _input_plist) return "_input_plist";
+    if (n == _type) return "_type";
+    if (n == _output_plist) return "_output_plist";
+    if (n == range_arrays) return "range_arrays";
+    if (n == index_arr) return "index_arr";
+    if (n == statements) return "statements";
+    if (n == statement) return "statement";
+    if (n == ioStmt) return "ioStmt";
+    if (n == simpleStmt) return "simpleStmt";
+    if (n == declareStmt) return "declareStmt";
+    if (n == conditionalStmt) return "conditionalStmt";
+    if (n == iterativeStmt) return "iterativeStmt";
+    if (n == var_print) return "var_print";
+    if (n == P1) return "P1";
+    if (n == boolConstt) return "boolConstt";
+    if (n == array_element_for_print) return "array_element_for_print";
+    if (n == new_index) return "new_index";
+    if (n == assignmentStmt) return "assignmentStmt";
+    if (n == moduleReuseStmt) return "moduleReuseStmt";
+    if (n == whichStmt) return "whichStmt";
+    if (n == lvalueIDStmt) return "lvalueIDStmt";
+    if (n == lvalueARRStmt) return "lvalueARRStmt";
+    if (n == expression) return "expression";
+    if (n == element_index_with_expressions) return "element_index_with_expressions";
+    if (n == sign) return "sign";
+    if (n == optional) return "optional";
+    if (n == actual_para_list) return "actual_para_list";
+    if (n == N_11) return "N_11";
+    if (n == idList) return "idList";
+    if (n == N3) return "N3";
+    if (n == arithmeticOrBooleanExpr) return "arithmeticOrBooleanExpr";
+    if (n == U) return "U";
+    if (n == unary_op) return "unary_op";
+    if (n == new_NT) return "new_NT";
+    if (n == arithmeticExpr) return "arithmeticExpr";
+    if (n == var_id_num) return "var_id_num";
+    if (n == AnyTerm) return "AnyTerm";
+    if (n == N7) return "N7";
+    if (n == logicalOp) return "logicalOp";
+    if (n == N8) return "N8";
+    if (n == relationalOp) return "relationalOp";
+    if (n == term) return "term";
+    if (n == N4) return "N4";
+    if (n == op1) return "op1";
+    if (n == factor) return "factor";
+    if (n == N5) return "N5";
+    if (n == op2) return "op2";
+    if (n == N_10) return "N_10";
+    if (n == arrExpr) return "arrExpr";
+    if (n == arrTerm) return "arrTerm";
+    if (n == arr_N4) return "arr_N4";
+    if (n == arr_N5) return "arr_N5";
+    if (n == arrFactor) return "arrFactor";
+    if (n == caseStmts) return "caseStmts";
+    if (n == _default) return "_default";
+    if (n == value) return "value";
+    if (n == N9) return "N9";
+    if (n == range_for_loop) return "range_for_loop";
+    if (n == index_for_loop) return "index_for_loop";
+    if (n == sign_for_loop) return "sign_for_loop";
+    if (n == new_index_for_loop) return "new_index_for_loop";
 }
 
 void loadgrammar(char* filename) {
@@ -290,35 +291,40 @@ void loadgrammar(char* filename) {
         exit(1);
     }
     char ch;
-    int index = 0, rule = 0;
+    int buff_index = 0, input_index = 0, rule = 0;
     char currinput[MAXTERMLEN];
     char temp[MAXTERMLEN];
-    for (int i = 0; i < MAXTERMLEN; i ++)
-        currinput[i] = '\0';
+    char grammar_buff[2 * MAXTERMLEN];
+    for (int i = 0; i < 2 * MAXTERMLEN; i ++) grammar_buff[i] == '\0';
     while (!feof(fp)) {
-        ch = fgetc(fp);
-        if (ch == ' ' || ch == '\n') {
-            grammarchar gc ;
-            if (currinput[0] == '<') {
-                gc.t = NONTERMINAL;
-                for (int i = 0; i < MAXTERMLEN; i ++) temp[i] = '\0';
-                strncpy(temp, currinput + 1, index - 2);
-                gc.g.nt = mapnttoenum(temp);
+        fread(grammar_buff, 1, 2 * MAXTERMLEN - 1, fp);
+        buff_index = 0;
+        while (buff_index < 2 * MAXTERMLEN - 1) {
+            ch = grammar_buff[buff_index];
+            if (ch == ' ' || ch == '\n') {
+                grammarchar gc ;
+                if (currinput[0] == '<') {
+                    gc.t = NONTERMINAL;
+                    for (int i = 0; i < MAXTERMLEN; i ++) temp[i] = '\0';
+                    strncpy(temp, currinput + 1, input_index - 2);
+                    gc.g.nt = mapnttoenum(temp);
+                }
+                else {
+                    gc.t = TERMINAL;
+                    gc.g.t = mapttoenum(currinput);
+                }
+                grammar[rule] = insertlast(grammar[rule],gc);
+                if (ch == '\n')
+                    rule++;
+                for (int i = 0; i < MAXTERMLEN; i ++)
+                    currinput[i] = '\0';
+                input_index = 0;
             }
             else {
-                gc.t = TERMINAL;
-                gc.g.t = mapttoenum(currinput);
+                currinput[input_index] = ch;
+                input_index ++;
             }
-            grammar[rule] = insertlast(grammar[rule],gc);
-            if (ch == '\n')
-                rule++;
-            for (int i = 0; i < MAXTERMLEN; i ++)
-                currinput[i] = '\0';
-            index = 0;
-        }
-        else {
-            currinput[index] = ch;
-            index ++;
+            buff_index ++;
         }
     }
 }

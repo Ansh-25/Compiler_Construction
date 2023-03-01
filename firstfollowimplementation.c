@@ -1,4 +1,4 @@
-#include "lexer.h"
+#include "lexer_for_testing.h"
 #include "parserdef.h"
 
 #define NO_RULES 141
@@ -284,8 +284,6 @@ char* mapnttostring(non_terminal n) {
     else return 0;
 }
 
-
-
 void loadgrammar(char* filename) {
     FILE* fp = fopen(filename,"r");
     if (!fp) {
@@ -293,35 +291,40 @@ void loadgrammar(char* filename) {
         exit(1);
     }
     char ch;
-    int index = 0, rule = 0;
+    int buff_index = 0, input_index = 0, rule = 0;
     char currinput[MAXTERMLEN];
     char temp[MAXTERMLEN];
-    for (int i = 0; i < MAXTERMLEN; i ++)
-        currinput[i] = '\0';
+    char grammar_buff[2 * MAXTERMLEN];
+    for (int i = 0; i < 2 * MAXTERMLEN; i ++) grammar_buff[i] == '\0';
     while (!feof(fp)) {
-        ch = fgetc(fp);
-        if (ch == ' ' || ch == '\n') {
-            grammarchar gc ;
-            if (currinput[0] == '<') {
-                gc.t = NONTERMINAL;
-                for (int i = 0; i < MAXTERMLEN; i ++) temp[i] = '\0';
-                strncpy(temp, currinput + 1, index - 2);
-                gc.g.nt = mapnttoenum(temp);
+        fread(grammar_buff, 1, 2 * MAXTERMLEN - 1, fp);
+        buff_index = 0;
+        while (buff_index < 2 * MAXTERMLEN - 1) {
+            ch = grammar_buff[buff_index];
+            if (ch == ' ' || ch == '\n') {
+                grammarchar gc ;
+                if (currinput[0] == '<') {
+                    gc.t = NONTERMINAL;
+                    for (int i = 0; i < MAXTERMLEN; i ++) temp[i] = '\0';
+                    strncpy(temp, currinput + 1, input_index - 2);
+                    gc.g.nt = mapnttoenum(temp);
+                }
+                else {
+                    gc.t = TERMINAL;
+                    gc.g.t = mapttoenum(currinput);
+                }
+                grammar[rule] = insertlast(grammar[rule],gc);
+                if (ch == '\n')
+                    rule++;
+                for (int i = 0; i < MAXTERMLEN; i ++)
+                    currinput[i] = '\0';
+                input_index = 0;
             }
             else {
-                gc.t = TERMINAL;
-                gc.g.t = mapttoenum(currinput);
+                currinput[input_index] = ch;
+                input_index ++;
             }
-            grammar[rule] = insertlast(grammar[rule],gc);
-            if (ch == '\n')
-                rule++;
-            for (int i = 0; i < MAXTERMLEN; i ++)
-                currinput[i] = '\0';
-            index = 0;
-        }
-        else {
-            currinput[index] = ch;
-            index ++;
+            buff_index ++;
         }
     }
 }
@@ -539,11 +542,11 @@ int main() {
     }
 
     printf("\n");
-    printf("%d",parseTable[0][10]);
-    // for (int i = 0; i < NO_NONTERMS; i ++) {
-    //     for (int j = 0; j < NO_TERMS - 1; j ++) {
-    //         printf("%d ",parseTable[i][j]);
-    //     }
-    //     printf("\n");
-    // }
+    
+    for (int i = 0; i < NO_NONTERMS; i ++) {
+        for (int j = 0; j < NO_TERMS - 1; j ++) {
+            printf("%d ",parseTable[i][j]);
+        }
+        printf("\n");
+    }
 }
