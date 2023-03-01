@@ -124,10 +124,11 @@ void printStack(StackNode* S) {
             printf("NON-TERMINAL: %d ",S->val->val.nt);
         curr = curr -> next;
     }
+    printf("\n");
 }
 
 TreeNode* parse(){
-    //createSynchronizingSet();
+    // createSynchronizingSet();
     StackNode* S = NULL;
     TreeNode* Root = (TreeNode*)malloc(sizeof(TreeNode));
     Root->val.nt = program;
@@ -142,7 +143,7 @@ TreeNode* parse(){
         printToken(L);
         printf("hi");
         if(isEmpty(S)){
-            printf("\n Syntax Error at line no %d",L->lineNo);
+            printf("\n Syntax Error at line no %d ... empty stack\n",L->lineNo);
             break;
         }
         printf("hi");
@@ -158,7 +159,7 @@ TreeNode* parse(){
                 L = getNextToken();
             }
             else{
-                printf("\n Syntax Error at line no %d",L->lineNo);
+                printf("\n Syntax Error at line no %d ... terminal mismatch\n",L->lineNo);
                 S = pop(S);
             }
         }
@@ -172,10 +173,12 @@ TreeNode* parse(){
             }
 
             else if(contains(synchronizingSet[X->val.t.type],L->type)){
+                printf("\n Syntax Error at line no %d ... non-terminal mismatch, popping stack\n",L->lineNo);
                 S = pop(S);
             }
 
             else {
+                printf("\n Syntax Error at line no %d ... non-terminal mismatch, getting new token\n",L->lineNo);
                 L = getNextToken();
             }
         }
@@ -183,20 +186,17 @@ TreeNode* parse(){
             continue;
     }
     if(!isEmpty(S)){
-        printf("Error");
+        printf("Error ... stack not empty yet");
     }
     return Root;
 }
 
 int main(){
-    ptr = getStream(ptr);
-    strcpy(buffer1, buffer2);
-    ptr = getStream(ptr);
+    ptr = initLexer(ptr,32);
     loadgrammar("GrammarForParser");
     computefirstandfollow();
     createParseTable();
     printf("%d",parseTable[0][10]);
     parse();
-    
     return 0;
 }
