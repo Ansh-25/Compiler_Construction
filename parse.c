@@ -78,6 +78,28 @@ StackNode* pushrule(int rule, StackNode* S){
     return S;
 }
 
+void printTreeInOrder(TreeNode* root) {
+    if (root == NULL)
+        return;
+    if (root -> t == TERMINAL) {
+        printf("Terminal %s with token value ", mapttokentostring(root -> val.t.type));
+        if (root -> val.t.type == TK_NUM)
+            printf("%d\n", root -> val.t.val.integer);
+        else if (root -> val.t.type == TK_RNUM)
+            printf("%lf\n", root -> val.t.val.decimal);
+        else
+            printf("%s\n", root -> val.t.val.identifier);
+    }
+    else {
+        printf("NonTerminal %s\n",mapnttostring(root->val.nt));
+        TreeNode* curr = root -> child;
+        while (curr != NULL) {
+            printTreeInOrder(curr);
+            curr = curr -> sibling;
+        }
+    }
+}
+
 
 TreeNode* parse(){
     createSynchronizingSet(); //first create the synchronizing set for all non-terminals
@@ -97,9 +119,6 @@ TreeNode* parse(){
     S = push(S,X);
     struct Token* L = getNextToken(); //start at the first token
     while(L!=NULL){
-         //printStack(S);
-        //printToken(L);
-        //printf("hi");
         if(isEmpty(S)){ //if stack is empty and we still have a token, it means there is an error
             printf("\n Syntax Error at line no %d ... empty stack\n",L->lineNo); 
             break;
@@ -110,9 +129,6 @@ TreeNode* parse(){
             if(X->val.t.type == L->type){
                 X->t = TERMINAL; //we convert the treenode to leafnode,
                 X->val.t = *L;
-                X->ruleno = -1;
-                X->child = NULL;
-                X->sibling = NULL;
                 S = pop(S); //pop the terminal at the top of the stack
                 if (L -> type == TK_EOF) { //if we reach the end of the file, then break
                     break;
@@ -170,27 +186,7 @@ TreeNode* parse(){
     return Root;
 }
 
-void printTreeInOrder(TreeNode* root) {
-    if (root == NULL)
-        return;
-    if (root -> t == TERMINAL) {
-        printf("Terminal %s with token value ", mapttokentostring(root -> val.t.type));
-        if (root -> val.t.type == TK_NUM)
-            printf("%d\n", root -> val.t.val.integer);
-        else if (root -> val.t.type == TK_RNUM)
-            printf("%lf\n", root -> val.t.val.decimal);
-        else
-            printf("%s\n", root -> val.t.val.identifier);
-    }
-    else {
-        printf("NonTerminal %s\n",mapnttostring(root->val.nt));
-        TreeNode* curr = root -> child;
-        while (curr != NULL) {
-            printTreeInOrder(curr);
-            curr = curr -> sibling;
-        }
-    }
-}
+
 
 void printTree(TreeNode* root) {
     if(root==NULL) return;
