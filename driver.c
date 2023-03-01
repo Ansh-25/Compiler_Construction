@@ -37,14 +37,14 @@ int main(int argc, char *argv[]){
         case 1:
             removeComments(test_file,"commentFreeFile.txt");
             FILE* commentFilePtr = fopen("commentFreeFile.txt","r");
-            char comment_buff[32];
+            char comment_buff[50];
             if(commentFilePtr==NULL) printf("ERROR: comment free file cannot be opened\n");
             else{
-                for(int i=0;i<32;++i) comment_buff[i]='\0';
+                for(int i=0;i<50;++i) comment_buff[i]='\0';
                 while(!feof(commentFilePtr)){
                     fread(comment_buff, sizeof(comment_buff) - 1 , 1, commentFilePtr);
                     printf("%s",comment_buff);
-                    for(int i=0;i<32;++i) comment_buff[i]='\0';
+                    for(int i=0;i<50;++i) comment_buff[i]='\0';
                 }
                 printf("\n\n");
             }
