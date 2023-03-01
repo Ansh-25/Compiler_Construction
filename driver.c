@@ -48,6 +48,7 @@ int main(int argc, char *argv[]){
                 }
                 printf("\n\n");
             }
+            fclose(commentFilePtr);
             break;
         case 2:
             ptr = fopen(argv[1],"r");
