@@ -623,6 +623,7 @@ struct Token* getNextToken()
             }
             ch = buffer1[forward];
         }
+        if(ch=='\0') return NULL;
     }
     return tk;
 }
