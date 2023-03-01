@@ -1,12 +1,5 @@
 #include "ff.h"
 
-<<<<<<< HEAD
-#define NO_RULES 141
-#define NO_TERMS 58
-#define NO_NONTERMS 72
-#define MAXTERMLEN 50
-=======
->>>>>>> fe8b9819d0f300768041215afae80728a833b14a
 
 struct ListNode* grammar[NO_RULES];
 struct ListNode* first[NO_NONTERMS];
