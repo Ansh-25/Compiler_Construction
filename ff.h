@@ -1,17 +1,17 @@
 #include "lexer_for_testing.h"
 #include "parserdef.h"
 
-#define NO_RULES 141
-#define NO_TERMS 58
-#define NO_NONTERMS 72
-#define MAXTERMLEN 50
+#define NO_RULES 141 //No. of grammar rules: 141
+#define NO_TERMS 58 //No. of terminals: 58
+#define NO_NONTERMS 72 //No. of Non Terminals: 72
+#define MAXTERMLEN 50 
 
 struct ListNode* grammar[NO_RULES];
 struct ListNode* first[NO_NONTERMS];
 struct ListNode* follow[NO_NONTERMS];
 int parseTable [NO_NONTERMS][NO_TERMS - 1];
 
-tokentype mapttoenum(char* s) {
+tokentype mapttoenum(char* s) { //maps string of token name with token
     if (strcmp(s,"ID") == 0) return TK_ID;
     if (strcmp(s,"PLUS") == 0) return TK_PLUS;
     if (strcmp(s,"MINUS") == 0) return TK_MINUS;
@@ -71,7 +71,7 @@ tokentype mapttoenum(char* s) {
     if (strcmp(s,"EPS") == 0) return EPS;
 }
 
-non_terminal mapnttoenum(char* s) {
+non_terminal mapnttoenum(char* s) { //maps string of non-terminal to nonterminal 
     if (strcmp(s,"program") == 0) return program;
     else if (strcmp(s,"moduleDeclarations") == 0) return moduleDeclarations;
     else if (strcmp(s,"otherModules") == 0) return otherModules;
@@ -147,7 +147,7 @@ non_terminal mapnttoenum(char* s) {
     else return 0;
 }
 
-char* mapttokentostring(tokentype t) {
+char* mapttokentostring(tokentype t) { //maps token to string of token name
     if (t == TK_ID) return "TK_ID";
     if (t == TK_PLUS) return "TK_PLUS";
     if (t == TK_MINUS) return "TK_MINUS";
@@ -208,7 +208,7 @@ char* mapttokentostring(tokentype t) {
     if (t == EPS) return "EPS";
 }
 
-char* mapnttostring(non_terminal n) {
+char* mapnttostring(non_terminal n) { //maps non-terminal to string of non-terminal name
     if (n == program) return "program";
     if (n == moduleDeclarations) return "moduleDeclarations";
     if (n == otherModules) return "otherModules";
@@ -283,7 +283,7 @@ char* mapnttostring(non_terminal n) {
     if (n == new_index_for_loop) return "new_index_for_loop";
 }
 
-void loadgrammar(char* filename) {
+void loadgrammar(char* filename) { //reads through the grammar file and converts it into an array of linkedlists that our code can use
     FILE* fp = fopen(filename,"r");
     if (!fp) {
         printf("Grammar file cannot be opnened\n");
@@ -295,14 +295,14 @@ void loadgrammar(char* filename) {
     char temp[MAXTERMLEN];
     char grammar_buff[2 * MAXTERMLEN];
     for (int i = 0; i < 2 * MAXTERMLEN; i ++) grammar_buff[i] == '\0';
-    while (!feof(fp)) {
+    while (!feof(fp)) { //read through entire file
         fread(grammar_buff, 1, 2 * MAXTERMLEN - 1, fp);
         buff_index = 0;
         while (buff_index < 2 * MAXTERMLEN - 1) {
             ch = grammar_buff[buff_index];
             if (ch == ' ' || ch == '\n') {
                 grammarchar gc ;
-                if (currinput[0] == '<') {
+                if (currinput[0] == '<') { //recognises non-terminals with the <> around the word
                     gc.t = NONTERMINAL;
                     for (int i = 0; i < MAXTERMLEN; i ++) temp[i] = '\0';
                     strncpy(temp, currinput + 1, input_index - 2);
@@ -312,7 +312,7 @@ void loadgrammar(char* filename) {
                     gc.t = TERMINAL;
                     gc.g.t = mapttoenum(currinput);
                 }
-                grammar[rule] = insertlast(grammar[rule],gc);
+                grammar[rule] = insertlast(grammar[rule],gc); //adds to array
                 if (ch == '\n')
                     rule++;
                 for (int i = 0; i < MAXTERMLEN; i ++)
@@ -328,13 +328,13 @@ void loadgrammar(char* filename) {
     }
 }
 
-int derivesepsilon(grammarchar gc){
+int derivesepsilon(grammarchar gc){ //checks whether the particular grammar character derives an epsilon - helpful for deriving the first and follow sets
     if (gc.t == TERMINAL)
         return 0;
     if (first[gc.g.nt] == NULL)
         return 0;
     ListNode* curr = first[gc.g.nt];
-    while (curr -> next != NULL)
+    while (curr -> next != NULL) //goes through the first set and checks iif it contains epsilon
         curr = curr -> next;
     if (curr -> val.g.t == EPS)
         return 1;
@@ -343,15 +343,15 @@ int derivesepsilon(grammarchar gc){
 
 void computeFirst (non_terminal A)
 {
-    if (first[A]!=NULL) return;
-    for(int i=0; i<NO_RULES; i++){
-        if (grammar[i] -> val.g.nt == A){
+    if (first[A]!=NULL) return; //using dp
+    for(int i=0; i<NO_RULES; i++){ //for all the rules in the grammar
+        if (grammar[i] -> val.g.nt == A){//if lhs of rule is A
             ListNode* rhs_current = grammar[i] -> next;
-            if (rhs_current -> val.t == TERMINAL){
+            if (rhs_current -> val.t == TERMINAL){//if rhs starts with terminal, add that to first set
                 first[A] = insertlast(first[A], rhs_current -> val);
             }
 
-            else if (rhs_current -> val.t == NONTERMINAL){
+            else if (rhs_current -> val.t == NONTERMINAL){ //else add the first set of the first non-terminal
                 computeFirst(rhs_current -> val.g.nt);
                 ListNode* first_rhs_current = first[rhs_current -> val.g.nt];
                 while (first_rhs_current != NULL) {
@@ -359,7 +359,7 @@ void computeFirst (non_terminal A)
                         first[A] = insertlast(first[A], first_rhs_current -> val);
                     first_rhs_current = first_rhs_current -> next;
                 }
-                while (derivesepsilon(rhs_current -> val)){
+                while (derivesepsilon(rhs_current -> val)){ //if it derives epsilon, we go to the next character
                     rhs_current = rhs_current -> next;
                     if (rhs_current == NULL){
                         grammarchar add_eps;
@@ -367,11 +367,11 @@ void computeFirst (non_terminal A)
                         add_eps.g.t = EPS;
                         first[A] = insertlast(first[A], add_eps);
                     }
-                    else if (rhs_current -> val.t == TERMINAL){
+                    else if (rhs_current -> val.t == TERMINAL){ //if its a terminal
                         first[A] = insertlast(first[A], rhs_current -> val);
                     }
                     else{
-                        computeFirst(rhs_current -> val.g.nt);
+                        computeFirst(rhs_current -> val.g.nt); //if not a terminal, do computefirst of the non-terminal, and add that and continue
                         ListNode* first_rhs_current = first[rhs_current -> val.g.nt];
                         while (first_rhs_current != NULL) {
                             if (first_rhs_current -> val.g.t != EPS)
@@ -385,7 +385,7 @@ void computeFirst (non_terminal A)
     }
 }
 
-int contains(ListNode* ln, tokentype term) {
+int contains(ListNode* ln, tokentype term) { //check if the terminal is contained in the list
     if (ln == NULL)
         return 0;
     for (ListNode* curr = ln; curr != NULL; curr = curr -> next) {
@@ -396,7 +396,7 @@ int contains(ListNode* ln, tokentype term) {
 }
 
 void computeFollow(non_terminal A) {
-    if (follow[A]!=NULL) return;
+    if (follow[A]!=NULL) return; //using DP
     for(int i=0; i<NO_RULES; i++){
         ListNode* lhs_current = grammar[i];
         ListNode* rhs_A = grammar[i] -> next;
@@ -437,7 +437,7 @@ void computeFollow(non_terminal A) {
                         first_rhs_current = first_rhs_current -> next;
                     }
 
-                    while(derivesepsilon(rhs_current -> val)){
+                    while(derivesepsilon(rhs_current -> val)){ //if the non-terminal derives epsilon, we continue to the next non-terminal
                         rhs_current = rhs_current -> next;
                         if (rhs_current == NULL){
                             if (lhs_current -> val.g.nt != A) {
@@ -473,50 +473,50 @@ void computeFollow(non_terminal A) {
 
 void computefirstandfollow (){
     for(int i=0; i<NO_NONTERMS; i++)
-        computeFirst(i);
+        computeFirst(i); //compute all first sets first
     grammarchar gc;
     gc.t = TERMINAL;
     gc.g.t = TK_EOF;
     follow[program] = insertlast(follow[program], gc);
     for(int i=0; i<NO_NONTERMS; i++)
-        computeFollow(i);
+        computeFollow(i); //then compute all follow sets
 }
 
-void createParseTable(){
+void createParseTable(){ //creating the parse table
     int s = (NO_TERMS-1)*(NO_NONTERMS);
     memset(parseTable,-1,s*sizeof(int));
 
-    for(int i=0;i<NO_RULES;i++){
+    for(int i=0;i<NO_RULES;i++){ //checking all the rules
         struct ListNode* A = grammar[i];
         struct ListNode* B = grammar[i];
-        int a = A->val.g.nt;
+        int a = A->val.g.nt; //A is RHS of rule
         int b = -1;
         do{
             B = B->next;
-            if(B==NULL || (B->val.t==TERMINAL && B->val.g.t==EPS)){
+            if(B==NULL || (B->val.t==TERMINAL && B->val.g.t==EPS)){ //if the rule derives epsilon, add that rule into the table for all the terminals in A's follow set 
                 struct ListNode* C = follow[a];
                 while(C!=NULL){
                     int c = C->val.g.t; 
                     parseTable[a][c] = i;
                     C = C->next;
                 }
-                break;
+                break; //if it derives epsilon, then we move on to the next rule
             }
 
-            if(B->val.t==TERMINAL){
+            if(B->val.t==TERMINAL){ //if LHS of the rule gives a terminal, add that rule into thee table under the terminal's column
                 b = B->val.g.t; 
                 parseTable[a][b] = i;
             }
             else{
                 b = B->val.g.nt;
-                struct ListNode* C = first[b];
+                struct ListNode* C = first[b]; //otherwise add that rule into the columns of all the terminals in A's first set
                 while(C!=NULL){
                     int c = C->val.g.t; 
                     if(C->val.g.t!=EPS)
                         parseTable[a][c] = i;
                     C = C->next;
                 }
-            }
+            } //if the first non-terminal on the RHS derives epsilon, then go on to the next non-terminal
         } while(derivesepsilon(B->val)); //derivesEpsilon returns 0 on input -1
     }
 }
