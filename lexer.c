@@ -57,7 +57,7 @@ struct Token Tokenize(int begin, int forward, tokentype type, int lineNo){
         tk.val.integer = r;
     }
     else if (type == TK_RNUM){
-        int i,j;
+        long long i,j;
         for(i=0;i<size;i++){
             if(s[i]=='.')
             break;
@@ -75,7 +75,7 @@ struct Token Tokenize(int begin, int forward, tokentype type, int lineNo){
         }
         if(j!=size){
             i=++j;
-            int pow10=1;
+            double pow10=1;
             if(s[i]=='+'){
                 i++;
                 for(int p=1;p<=size-i-1;++p){
@@ -199,7 +199,6 @@ struct Token* getNextToken()
         // tokenize TK_PLUS
         case 2:
             *tk = Tokenize(begin, forward, TK_PLUS, line);
-            forward++;
             begin = forward;
             state = -1;
             break;
@@ -207,7 +206,6 @@ struct Token* getNextToken()
         // tokenize TK_MINUS
         case 3:
             *tk = Tokenize(begin, forward, TK_MINUS, line);
-            //forward++;
             begin = forward;
             state = -1;
             break;
@@ -240,8 +238,8 @@ struct Token* getNextToken()
             }
             else if (ch == '.')
             {
-                *tk = Tokenize(begin, forward - 2, TK_NUM, line);
-                forward -= 1;
+                forward --;
+                *tk = Tokenize(begin, forward, TK_NUM, line);
                 begin = forward;
                 state = -1;
             }
@@ -532,7 +530,7 @@ struct Token* getNextToken()
 
         // tokenize div operator
         case 35:
-            *tk = Tokenize(begin, forward - 1, TK_DIV, line);
+            *tk = Tokenize(begin, forward, TK_DIV, line);
             begin = forward;
             state = -1;
             break;
@@ -552,8 +550,8 @@ struct Token* getNextToken()
 
         // tokenize range op
         case 37:
-            *tk = Tokenize(begin, forward, TK_RANGEOP, line);
             forward++;
+            *tk = Tokenize(begin, forward, TK_RANGEOP, line);
             begin = forward;
             state = -1;
             break;
@@ -584,7 +582,10 @@ struct Token* getNextToken()
             printf("ERROR: State does not exist\n");
             exit(1);
         }
-
+        if((forward == bufferSize-1) && (state == 14)){
+            begin = forward = 0;
+            flag = 1;
+        }
         forward %= bufferSize - 1;
         if(forward<begin){
             flag = 1;
