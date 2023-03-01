@@ -33,15 +33,26 @@ void createSynchronizingSet(){
 	}
 }
 
+void printStack(StackNode* S) { //prints the stack
+    StackNode* curr = S;
+    while (curr != NULL) { //loop until end of stack
+        if (curr -> val -> t == TERMINAL) //if stack contains the terminal, print that
+            printf("TERMINAL: %d ",curr->val->val.t.type);
+        else //else print it as a non-terminal
+            printf("NON-TERMINAL: %d ",curr->val->val.nt);
+        curr = curr -> next;
+    }
+    printf("\n");
+}
 
 StackNode* pushrule(int rule, StackNode* S){
 	StackNode* aux = NULL; //creates auxilliary stack
-	ListNode* x = grammar[rule]->next; //takes LHS of the grammar rule
+	ListNode* x = grammar[rule]->next; //takes RHS of the grammar rule
     TreeNode* prev = (TreeNode*)malloc(sizeof(TreeNode));
 
     while(x!=NULL){
         TreeNode* temp = (TreeNode*)malloc(sizeof(TreeNode));
-        if(x==grammar[rule]->next){//if this is the first node of the LHS of the rule, then we point the child pointer of the parent(i.e. top of the main stack) to it
+        if(x==grammar[rule]->next){//if this is the first node of the RHS of the rule, then we point the child pointer of the parent(i.e. top of the main stack) to it
 
             top(S)->child = temp;
         }
@@ -67,17 +78,6 @@ StackNode* pushrule(int rule, StackNode* S){
     return S;
 }
 
-void printStack(StackNode* S) { //prints the stack
-    StackNode* curr = S;
-    while (curr != NULL) { //loop until end of stack
-        if (curr -> val -> t == TERMINAL) //if stack contains the terminal, print that
-            printf("TERMINAL: %d ",curr->val->val.t.type);
-        else //else print it as a non-terminal
-            printf("NON-TERMINAL: %d ",curr->val->val.nt);
-        curr = curr -> next;
-    }
-    printf("\n");
-}
 
 TreeNode* parse(){
     createSynchronizingSet(); //first create the synchronizing set for all non-terminals
@@ -183,6 +183,7 @@ void printTreeInOrder(TreeNode* root) {
             printf("%s\n", root -> val.t.val.identifier);
     }
     else {
+        printf("NonTerminal %s\n",mapnttostring(root->val.nt));
         TreeNode* curr = root -> child;
         while (curr != NULL) {
             printTreeInOrder(curr);
