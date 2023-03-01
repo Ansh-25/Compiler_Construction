@@ -6,7 +6,7 @@ typedef enum {TK_ID, TK_PLUS, TK_MINUS, TK_NUM, TK_RNUM, TK_EQ, TK_MUL, TK_LT, T
 union TokenVal
 {
     int integer;
-    float decimal;
+    double decimal;
     char identifier[32];
 };
 

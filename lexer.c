@@ -246,6 +246,8 @@ struct Token* getNextToken()
             else
             {
                 printf("ERROR: Token not recognized at line %d\n", line);
+                state = -1;
+                begin = forward;
                 exit(1);
             }
             break;
@@ -283,7 +285,8 @@ struct Token* getNextToken()
             else
             {
                 printf("ERROR: Token not recognized at line %d\n", line);
-                exit(1);
+                state = -1;
+                begin = forward;
             }
             break;
         // <num>.<num>E(+/-)
@@ -296,7 +299,8 @@ struct Token* getNextToken()
             else
             {
                 printf("ERROR: Token not recognized at line %d\n", line);
-                exit(1);
+                state = -1;
+                begin = forward;   
             }
             break;
         // scientific notation final state
@@ -320,7 +324,8 @@ struct Token* getNextToken()
             }
             else {
                 printf("ERROR: Token not recognized at line %d\n", line);
-                exit(1);
+                state = -1;
+                begin = forward;
             }
             break;
         
@@ -517,7 +522,8 @@ struct Token* getNextToken()
             else
             {
                 printf("ERROR: Token not recognized at line %d\n", line);
-                exit(1);
+                state = -1;
+                begin = forward;
             }
 
         // tokenize not equal
@@ -545,7 +551,8 @@ struct Token* getNextToken()
             else
             {
                 printf("ERROR: Token not recognized at line %d\n", line);
-                exit(1);
+                state = -1;
+                begin = forward;
             }
 
         // tokenize range op
@@ -579,8 +586,9 @@ struct Token* getNextToken()
             }
 
         default:
-            printf("ERROR: State does not exist\n");
-            exit(1);
+                printf("ERROR: Token not recognized at line %d\n", line);
+                state = -1;
+                begin = forward;
         }
         if((forward == bufferSize-1) && (state == 14)){
             begin = forward = 0;
