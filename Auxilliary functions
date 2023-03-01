@@ -86,3 +86,4 @@ void pushRule(int rule, StackNode* S) {
 		push(S,pop(auxilliary));
 	}
 }
+

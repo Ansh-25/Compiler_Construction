@@ -67,23 +67,26 @@ int isEmpty (StackNode* top) {
     return top == NULL;
 }
 
-void push (StackNode* top, TreeNode* newnode) {
+StackNode* push (StackNode* top, TreeNode* newnode) {
+    //printf("hi");
     StackNode* newstacknode = (StackNode*)malloc(sizeof(StackNode));
     newstacknode -> val = newnode;
     newstacknode -> next = top;
     top = newstacknode;
+    //printf("%d",newstacknode->val->val.nt);
+    return top;
 }
 
 TreeNode* top (StackNode* top) {
     if (isEmpty(top))
         return NULL;
-    return top -> val;
+    return top->val;
 }
 
-TreeNode* pop (StackNode* top) {
+StackNode* pop (StackNode* top) {
     if (isEmpty(top))
         return NULL;
     StackNode* curr = top;
     top = top -> next;
-    return curr -> val;
+    return top;
 }
