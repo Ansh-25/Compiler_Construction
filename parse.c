@@ -83,7 +83,7 @@ StackNode* pushrule(int rule, StackNode* S){
         if(x==grammar[rule]->next){
 
             top(S)->child = temp;
-            printf("%d",top(S)->child->val.nt==1);
+            //printf("%d",top(S)->child->val.nt==1);
         }
         temp->t = x->val.t;
         if(x->val.t==TERMINAL){
@@ -110,10 +110,10 @@ StackNode* pushrule(int rule, StackNode* S){
 void printStack(StackNode* S) {
     StackNode* curr = S;
     while (curr != NULL) {
-        if (S -> val -> t == TERMINAL)
-            printf("TERMINAL: %d ",S->val->val.t);
+        if (curr -> val -> t == TERMINAL)
+            printf("TERMINAL: %d ",curr->val->val.t.type);
         else
-            printf("NON-TERMINAL: %d ",S->val->val.nt);
+            printf("NON-TERMINAL: %d ",curr->val->val.nt);
         curr = curr -> next;
     }
     printf("\n");
@@ -132,13 +132,14 @@ TreeNode* parse(){
     //printf("%d",top(S)->val.nt);
     struct Token* L = getNextToken();
     while(L!=NULL){
-        printToken(L);
-        printf("hi");
+         //printStack(S);
+        //printToken(L);
+        //printf("hi");
         if(isEmpty(S)){
             printf("\n Syntax Error at line no %d ... empty stack\n",L->lineNo);
             break;
         }
-        printf("hi");
+        //printf("hi");
         X = top(S);
         if(X->t==TERMINAL){
             if(X->val.t.type == L->type){
@@ -151,16 +152,22 @@ TreeNode* parse(){
                 L = getNextToken();
             }
             else{
+               
                 printf("\n Syntax Error at line no %d ... terminal mismatch\n",L->lineNo);
+                printf("actual : %d\n",L->type);
+                printf("exp : %d\n",X->val.t.type);
                 S = pop(S);
             }
         }
         else if(X->t==NONTERMINAL){
-            printf("hi");
+            //printf("hi");
             if(parseTable[X->val.nt][L->type]>=0){
                 X->ruleno = parseTable[X->val.nt][L->type];
                 //X->child = grammar[parseTable[X->val.nt][L->type]]->next;
-                S = pushrule(X->ruleno, S);
+                if(grammar[parseTable[X->val.nt][L->type]]->next->val.t==TERMINAL && grammar[parseTable[X->val.nt][L->type]]->next->val.g.t==EPS)
+                    S = pop(S);
+                else 
+                    S = pushrule(X->ruleno, S);
                 // printStack(S);
             }
 
@@ -178,6 +185,7 @@ TreeNode* parse(){
             continue;
     }
     if(!isEmpty(S)){
+        printStack(S);
         printf("Error ... stack not empty yet");
     }
     return Root;
@@ -188,7 +196,7 @@ int main(){
     loadgrammar("GrammarForParser");
     computefirstandfollow();
     createParseTable();
-    printf("%d",parseTable[0][10]);
+    //printf("%d",parseTable[0][10]);
     parse();
     return 0;
 }

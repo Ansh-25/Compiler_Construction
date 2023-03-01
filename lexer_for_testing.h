@@ -633,7 +633,7 @@ FILE* initLexer(FILE* ptr, int buffSize) {
     buffer1 = realloc(buffer1, bufferSize * sizeof(char));
     buffer2 = realloc(buffer2, bufferSize * sizeof(char));
 
-    printf("%d\n",(sizeof(buffer1) / sizeof(buffer1[0])));
+    //printf("%d\n",(sizeof(buffer1) / sizeof(buffer1[0])));
 
     ptr = getStream(ptr);
     strcpy(buffer1, buffer2);

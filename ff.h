@@ -24,7 +24,7 @@ tokentype mapttoenum(char* s) {
     if (strcmp(s,"DEF") == 0) return TK_DEF;
     if (strcmp(s,"DRIVERDEF") == 0) return TK_DRIVERDEF;
     if (strcmp(s,"COMMA") == 0) return TK_COMMA;
-    if (strcmp(s,"SEMICOLON") == 0) return TK_SEMICOLON;
+    if (strcmp(s,"SEMICOL") == 0) return TK_SEMICOLON;
     if (strcmp(s,"COLON") == 0) return TK_COLON;
     if (strcmp(s,"ASSIGNOP") == 0) return TK_ASSIGNOP;
     if (strcmp(s,"BO") == 0) return TK_BO;
