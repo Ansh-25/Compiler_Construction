@@ -1,11 +1,8 @@
-#include "lexer.h"
+#include "lexervarbuff.h"
 
 int main()
 {
-    ptr = getStream(ptr);
-    strcpy(buffer1, buffer2);
-    ptr = getStream(ptr);
-
+    ptr = initLexer(ptr, 128);
     struct Token *tk;
     do{
         tk = getNextToken();
