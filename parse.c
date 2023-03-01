@@ -170,13 +170,34 @@ TreeNode* parse(){
     return Root;
 }
 
+void printTreeInOrder(TreeNode* root) {
+    if (root == NULL)
+        return;
+    if (root -> t == TERMINAL) {
+        printf("Terminal %s with token value ", mapttokentostring(root -> val.t.type));
+        if (root -> val.t.type == TK_NUM)
+            printf("%d\n", root -> val.t.val.integer);
+        else if (root -> val.t.type == TK_RNUM)
+            printf("%lf\n", root -> val.t.val.decimal);
+        else
+            printf("%s\n", root -> val.t.val.identifier);
+    }
+    else {
+        TreeNode* curr = root -> child;
+        while (curr != NULL) {
+            printTreeInOrder(curr);
+            curr = curr -> sibling;
+        }
+    }
+}
+
 void printTree(TreeNode* root) {
     if(root==NULL) return;
     TreeNode* curr = root->child;
     printTree(root->child);
     if(root->t==TERMINAL && root->val.t.type==TK_NUM) printf("Terminal %s with token value %d\n", mapttokentostring(root->val.t.type),root->val.t.val.integer);
     else if(root->t==TERMINAL && root->val.t.type==TK_RNUM) {printf("Terminal %s with token value %lf\n", mapttokentostring(root->val.t.type),root->val.t.val.decimal);}
-    else if(root->t==TERMINAL) {printf("Terminal %s with token value %d\n", mapttokentostring(root->val.t.type),root->val.t.val.identifier);}
+    else if(root->t==TERMINAL) {printf("Terminal %s with token value %s\n", mapttokentostring(root->val.t.type),root->val.t.val.identifier);}
     else printf("Non-Terminal %s\n",mapnttostring(root->val.nt));
     if (curr != NULL)
         curr=curr->sibling;
@@ -192,6 +213,6 @@ int main(){
     createParseTable();
     //printf("%d",parseTable[0][10]);
     TreeNode* root = parse();
-    printTree(root);
+    printTreeInOrder(root);
     return 0;
 }
