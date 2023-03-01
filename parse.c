@@ -13,7 +13,24 @@ void createSynchronizingSet(){
     for (int i = 0; i < NO_NONTERMS; i ++) 
         for (follow_set = follow[i]; follow_set != NULL; follow_set = follow_set -> next)
             synchronizingSet[i] = insertlast(synchronizingSet[i], follow_set -> val);
-            
+   
+    ListNode* first_set = NULL;
+    for (int i = 0; i < NO_NONTERMS; i ++) 
+        for (first_set = first[i]; first_set != NULL; first_set = first_set -> next)
+            synchronizingSet[i] = insertlast(synchronizingSet[i], first_set -> val);
+
+    for (int i = 0; i < NO_NONTERMS; i ++){
+		grammarchar semicol; semicol.t = TERMINAL; semicol.g.t = TK_SEMICOLON;
+        synchronizingSet[i] = insertlast(synchronizingSet[i], semicol);
+		grammarchar enddef; enddef.t = TERMINAL; enddef.g.t = TK_ENDDEF;
+        synchronizingSet[i] = insertlast(synchronizingSet[i], enddef);
+		grammarchar enddriverdef; enddriverdef.t = TERMINAL; enddriverdef.g.t = TK_DRIVERENDDEF;
+        synchronizingSet[i] = insertlast(synchronizingSet[i], enddriverdef);
+		grammarchar end; end.t = TERMINAL; end.g.t = TK_END;
+        synchronizingSet[i] = insertlast(synchronizingSet[i], end);
+		grammarchar eof; eof.t = TERMINAL; eof.g.t = TK_EOF;
+        synchronizingSet[i] = insertlast(synchronizingSet[i], eof);
+	}
 }
 
 
