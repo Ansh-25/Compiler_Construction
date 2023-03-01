@@ -139,12 +139,18 @@ void printStack(StackNode* S) {
 TreeNode* parse(){
     createSynchronizingSet();
     StackNode* S = NULL;
+    TreeNode* Eof = (TreeNode*)malloc(sizeof(TreeNode));
+    Eof->val.t.type = TK_EOF;
+    Eof->t = TERMINAL;
+    Eof->sibling = NULL;
+    Eof->child = NULL;
     TreeNode* Root = (TreeNode*)malloc(sizeof(TreeNode));
     Root->val.nt = program;
     Root->t = NONTERMINAL;
     Root->ruleno = 0;
     Root->sibling = NULL;
     TreeNode* X = Root;
+    S = push(S,Eof);
     S = push(S,X);
     //printf("%d",top(S)->val.nt);
     struct Token* L = getNextToken();
@@ -166,7 +172,14 @@ TreeNode* parse(){
                 X->child = NULL;
                 X->sibling = NULL;
                 S = pop(S);
+                if (L -> type == TK_EOF) {
+                    break;
+                }
                 L = getNextToken();
+                if (L == NULL) {
+                    L = malloc(sizeof(struct Token));
+                    L -> type = TK_EOF;
+                }
             }
             else{
                
@@ -195,7 +208,14 @@ TreeNode* parse(){
 
             else {
                 printf("\n Syntax Error at line no %d ... non-terminal mismatch, getting new token\n",L->lineNo);
+                if (L -> type == TK_EOF) {
+                    break;
+                }
                 L = getNextToken();
+                if (L == NULL) {
+                    L = malloc(sizeof(struct Token));
+                    L -> type = TK_EOF;
+                }
             }
         }
         else    
