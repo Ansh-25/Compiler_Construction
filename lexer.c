@@ -696,7 +696,7 @@ void printToken(struct Token *tk){
         printf("lexeme := %d\t\t",tk->val.integer);
     }
     else if(tk -> type == TK_RNUM){
-        printf("lexeme := %f\t\t",tk->val.decimal);
+        printf("lexeme := %30.17lf\t\t",tk->val.decimal);
     }
     else{
         printf("lexeme := %s\t\t",tk->val.identifier);
