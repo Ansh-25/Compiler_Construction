@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "lexer.h"
 #include "parse.h"
+#include <time.h>
 
 int main(int argc, char *argv[]){
     int choice; 
@@ -72,9 +73,28 @@ int main(int argc, char *argv[]){
             printf("\n\n");
             fclose(ptr);
             break;
-        // case 4:
+        case 4:
+            ptr = fopen(argv[1],"r");
+            clock_t start_time, end_time;
 
-        //     break;
+            start_time = clock();
+
+            ptr = initLexer(ptr, size_of_buffer);
+            loadgrammar("GrammarForParser");
+            computefirstandfollow();
+            createParseTable();
+            parse();
+
+            end_time = clock();
+
+            fclose(ptr);
+
+            double total_CPU_time = (double) (end_time - start_time);
+            double total_CPU_time_in_seconds = total_CPU_time / CLOCKS_PER_SEC;
+
+            printf("\ntotal_CPU_time := %lf \ntotal_CPU_time_in_sec := %lf\n\n",total_CPU_time,total_CPU_time_in_seconds);
+            
+            break;
         default:
             printf("ERROR: INVALID OPERATION CODE\n");
             break;
