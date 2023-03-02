@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "lexer.h"
+#include "parse.h"
 
 int main(int argc, char *argv[]){
     int choice; 
@@ -60,9 +61,17 @@ int main(int argc, char *argv[]){
             }while(tk!=NULL);
             fclose(ptr);
             break;
-        // case 3:
-
-        //     break;
+        case 3:
+            ptr = fopen(argv[1],"r");
+            ptr = initLexer(ptr, size_of_buffer);
+            loadgrammar("GrammarForParser");
+            computefirstandfollow();
+            createParseTable();
+            TreeNode* root = parse();
+            printTree(root);
+            printf("\n\n");
+            fclose(ptr);
+            break;
         // case 4:
 
         //     break;

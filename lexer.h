@@ -2,6 +2,7 @@
 #define lexer_H
 
 #include "lexerDef.h"
+#include "stdio.h"
 
 extern FILE *ptr;
 extern int bufferSize, begin , forward , line ;
