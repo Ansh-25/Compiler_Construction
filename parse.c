@@ -603,6 +603,8 @@ void createSynchronizingSet(){
     for (int i = 0; i < NO_NONTERMS; i ++) //pushes all elements of the follow set into the respective synchronizing set
         for (follow_set = follow[i]; follow_set != NULL; follow_set = follow_set -> next)
             synchronizingSet[i] = insertlast(synchronizingSet[i], follow_set -> val);
+
+    
 }
 
 StackNode* pushrule(int rule, StackNode* S){
@@ -676,6 +678,10 @@ TreeNode* parse(){
                     L -> type = TK_EOF;
                 }
             }
+            else if(X->val.t.type==TK_SEMICOLON && L->type==TK_END){
+                printf("ERROR : Expected semicolon at line no %d \n",L->lineNo);
+                S = pop(S);
+            }
             else{ //if we the top of the stack is a different terminal to the token, then we have an error
                
                 printf("\n Syntax Error at line no %d ... terminal mismatch\n",L->lineNo);
@@ -706,9 +712,10 @@ TreeNode* parse(){
 
             else if(contains(synchronizingSet[X->val.t.type],L->type)){ //otherwise if we can't find the right rule, check if the non-terminal contains the top of the stack in the synchronizing set. if yes, we can pop the stack and continue
                 printf("\n Syntax Error at line no %d ... non-terminal mismatch, popping stack\n",L->lineNo);
-                while(top(S)!=NULL && ((top(S)->t == NONTERMINAL && contains(first[top(S)->val.t.type],L->type)==0) || (top(S)->t == TERMINAL && top(S)->val.t.type==L->type))){
-                    // printToken(L);
-                    // printStack(S);
+                while(top(S)!=NULL && (((top(S)->t == NONTERMINAL && contains(first[top(S)->val.t.type],L->type)==0) || (top(S)->t == TERMINAL && top(S)->val.t.type==L->type)))){
+                    printToken(L);
+                    printStack(S);
+                    printf("%d HI",L->lineNo);
                     S = pop(S);
                 }
                 if (L -> type == TK_EOF) { //if we reach the end of the file, then break
@@ -733,6 +740,7 @@ TreeNode* parse(){
                 }
             }
         }
+        printf("%d %s: ",L->lineNo,mapttokentostring(L->type));
         //printStack(S);
     }
     if(!isEmpty(S)){ //if stack is not empty after consuming all tokens, we have an error
