@@ -1,97 +1,35 @@
-Terminal TK_DECLARE with token value declare
-Non-Terminal moduleDeclaration
-Terminal TK_MODULE with token value module
-Terminal TK_ID with token value readArr
-Terminal TK_SEMICOLON with token value ;
-Non-Terminal moduleDeclarations
 Non-Terminal moduleDeclarations
 Non-Terminal program
+Non-Terminal otherModules
+Terminal TK_DRIVERDEF with token value <<<
+Non-Terminal driverModule
+Terminal TK_DRIVER with token value driver
+Terminal TK_PROGRAM with token value program
+Terminal TK_DRIVERENDDEF with token value >>>
+Terminal TK_START with token value start
+Non-Terminal moduleDef
+Non-Terminal statements
+Terminal TK_END with token value end
 Terminal TK_DEF with token value <<
 Non-Terminal module
 Terminal TK_MODULE with token value module
-Terminal TK_ID with token value arraySum
+Terminal TK_ID with token value empty
 Terminal TK_ENDDEF with token value >>
 Terminal TK_TAKES with token value takes
 Terminal TK_INPUT with token value input
 Terminal TK_SQBO with token value [
-Terminal TK_ID with token value list
+Terminal TK_ID with token value a
 Non-Terminal input_plist
-Terminal TK_COLON with token value :
-Terminal TK_ARRAY with token value array
-Non-Terminal dataType
-Terminal TK_SQBO with token value [
-Non-Terminal sign
-Non-Terminal index_arr
-Terminal TK_NUM with token value 1
-Non-Terminal new_index
-Non-Terminal range_arrays
-Terminal TK_RANGEOP with token value ..
-Non-Terminal sign
-Non-Terminal index_arr
-Terminal TK_NUM with token value 15
-Non-Terminal new_index
-Terminal TK_SQBC with token value ]
-Terminal TK_OF with token value of
-Terminal TK_REAL with token value real
-Non-Terminal _type
-Terminal TK_COMMA with token value ,
-Non-Terminal _input_plist
-Terminal TK_ID with token value n
-Terminal TK_COLON with token value 
-Non-Terminal dataType
-Non-Terminal _input_plist
-Terminal TK_SQBC with token value 
-Terminal TK_SEMICOLON with token value ;
-Terminal TK_RETURNS with token value returns
-Non-Terminal ret
-Terminal TK_SQBO with token value [
-Terminal TK_ID with token value sum
-Non-Terminal output_plist
-Terminal TK_COLON with token value :
-Terminal TK_REAL with token value real
-Non-Terminal _type
-Non-Terminal _output_plist
-Terminal TK_SQBC with token value ]
-Terminal TK_SEMICOLON with token value ;
-Terminal TK_START with token value start
-Non-Terminal moduleDef
-Terminal TK_DECLARE with token value declare
-Non-Terminal declareStmt
-Terminal TK_ID with token value index
-Non-Terminal idList
-Non-Terminal N3
-Terminal TK_COLON with token value :
-Terminal TK_INTEGER with token value integer
-Non-Terminal dataType
-Terminal TK_SEMICOLON with token value ;
-Non-Terminal statement
-Non-Terminal statements
-Terminal TK_DECLARE with token value declare
-Non-Terminal declareStmt
-Terminal TK_ID with token value t
-Non-Terminal idList
-Non-Terminal N3
 Terminal TK_COLON with token value :
 Terminal TK_BOOLEAN with token value boolean
 Non-Terminal dataType
+Non-Terminal _input_plist
+Terminal TK_SQBC with token value ]
 Terminal TK_SEMICOLON with token value ;
-Non-Terminal statement
+Non-Terminal ret
+Terminal TK_START with token value start
+Non-Terminal moduleDef
 Non-Terminal statements
-Terminal TK_ID with token value sum
-Non-Terminal assignmentStmt
-Non-Terminal whichStmt
-Non-Terminal simpleStmt
-Non-Terminal statement
-Non-Terminal statements
-Terminal TK_ID with token value index
-Non-Terminal assignmentStmt
-Non-Terminal whichStmt
-Non-Terminal simpleStmt
-Non-Terminal statement
-Non-Terminal statements
-Non-Terminal statements
-Terminal TK_END with token value 
+Terminal TK_END with token value end
 Non-Terminal otherModules
-Non-Terminal otherModules
-Non-Terminal driverModule
 Non-Terminal otherModules

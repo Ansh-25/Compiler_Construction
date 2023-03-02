@@ -1,6 +1,6 @@
 
 test: driver 
-	./driver ./test_cases/t6.txt testOutput.txt 32
+	./driver ./test_cases/t2.txt testOutput.txt 32
 
 driver: driver.c lexer.c parse.c
 	gcc driver.c lexer.c parse.c -o driver

@@ -599,73 +599,10 @@ void printStack(StackNode* S) {
 }
 
 void createSynchronizingSet(){
-
     ListNode* follow_set = NULL;
     for (int i = 0; i < NO_NONTERMS; i ++) //pushes all elements of the follow set into the respective synchronizing set
         for (follow_set = follow[i]; follow_set != NULL; follow_set = follow_set -> next)
             synchronizingSet[i] = insertlast(synchronizingSet[i], follow_set -> val);
-   
-    ListNode* first_set = NULL;
-    for (int i = 0; i < NO_NONTERMS; i ++) //pushes all elements of the first set into the respective synchronizing set
-        for (first_set = first[i]; first_set != NULL; first_set = first_set -> next)
-            synchronizingSet[i] = insertlast(synchronizingSet[i], first_set -> val);
-
-    for (int i = 0; i < NO_NONTERMS; i ++){ //pushes various delimiters into each synchronizing set
-// grammarchar semicol; semicol.t = TERMINAL; semicol.g.t = TK_SEMICOLON;
-//         synchronizingSet[i] = insertlast(synchronizingSet[i], semicol);
-
-// grammarchar enddef; enddef.t = TERMINAL; enddef.g.t = TK_ENDDEF;
-//         synchronizingSet[i] = insertlast(synchronizingSet[i], enddef);
-
-// grammarchar enddriverdef; enddriverdef.t = TERMINAL; enddriverdef.g.t = TK_DRIVERENDDEF;
-//         synchronizingSet[i] = insertlast(synchronizingSet[i], enddriverdef);
-
-// grammarchar end; end.t = TERMINAL; end.g.t = TK_END;
-//         synchronizingSet[i] = insertlast(synchronizingSet[i], end);
-
-// grammarchar eof; eof.t = TERMINAL; eof.g.t = TK_EOF;
-//         synchronizingSet[i] = insertlast(synchronizingSet[i], eof);
-
-grammarchar start; start.t = TERMINAL; start.g.t = TK_START;
-        synchronizingSet[i] = insertlast(synchronizingSet[i], start);
-
-grammarchar def; def.t = TERMINAL; def.g.t = TK_DEF;
-        synchronizingSet[i] = insertlast(synchronizingSet[i], def);
-
-grammarchar driverdef; driverdef.t = TERMINAL; driverdef.g.t = TK_DRIVERDEF;
-        synchronizingSet[i] = insertlast(synchronizingSet[i], driverdef);
-
-grammarchar takes; takes.t = TERMINAL; takes.g.t = TK_TAKES;
-        synchronizingSet[i] = insertlast(synchronizingSet[i], takes);
-
-grammarchar use; use.t = TERMINAL; use.g.t = TK_USE;
-        synchronizingSet[i] = insertlast(synchronizingSet[i], use);
-
-grammarchar declare; declare.t = TERMINAL; declare.g.t = TK_DECLARE;
-        synchronizingSet[i] = insertlast(synchronizingSet[i], declare);
-
-grammarchar print; print.t = TERMINAL; print.g.t = TK_PRINT;
-        synchronizingSet[i] = insertlast(synchronizingSet[i], print);
-
-grammarchar returns; returns.t = TERMINAL; returns.g.t = TK_RETURNS;
-        synchronizingSet[i] = insertlast(synchronizingSet[i], returns);
-
-grammarchar getv; getv.t = TERMINAL; getv.g.t = TK_GET_VALUE;
-        synchronizingSet[i] = insertlast(synchronizingSet[i], getv);
-
-grammarchar sqbo; sqbo.t = TERMINAL; sqbo.g.t = TK_SQBO;
-        synchronizingSet[i] = insertlast(synchronizingSet[i], sqbo);
-
-grammarchar forr; forr.t = TERMINAL; forr.g.t = TK_FOR;
-        synchronizingSet[i] = insertlast(synchronizingSet[i], forr);
-
-grammarchar swit; swit.t = TERMINAL; swit.g.t = TK_SWITCH;
-        synchronizingSet[i] = insertlast(synchronizingSet[i], swit);
-
-grammarchar whil; whil.t = TERMINAL; whil.g.t = TK_WHILE;
-        synchronizingSet[i] = insertlast(synchronizingSet[i], whil);
-
-    }
 }
 
 StackNode* pushrule(int rule, StackNode* S){
