@@ -73,6 +73,7 @@ tokentype mapttoenum(char* s) { //maps string of token name with token
     if (strcmp(s,"TRUE") == 0) return TK_TRUE;
     if (strcmp(s,"FALSE") == 0) return TK_FALSE;
     if (strcmp(s,"EPS") == 0) return EPS;
+    return -1;
 }
 
 non_terminal mapnttoenum(char* s) { //maps string of non-terminal to nonterminal 
@@ -148,7 +149,7 @@ non_terminal mapnttoenum(char* s) { //maps string of non-terminal to nonterminal
     else if (strcmp(s,"index_for_loop") == 0) return index_for_loop;
     else if (strcmp(s,"sign_for_loop") == 0) return sign_for_loop;
     else if (strcmp(s,"new_index_for_loop") == 0) return new_index_for_loop;
-    else return 0;
+    else return -1;
 }
 
 char* mapttokentostring(tokentype t) { //maps token to string of token name
@@ -210,6 +211,7 @@ char* mapttokentostring(tokentype t) { //maps token to string of token name
     if (t == TK_FALSE) return "TK_FALSE";
     if (t == TK_EOF) return "TK_EOF";
     if (t == EPS) return "EPS";
+    return NULL;
 }
 
 char* mapnttostring(non_terminal n) { //maps non-terminal to string of non-terminal name
@@ -285,6 +287,7 @@ char* mapnttostring(non_terminal n) { //maps non-terminal to string of non-termi
     if (n == index_for_loop) return "index_for_loop";
     if (n == sign_for_loop) return "sign_for_loop";
     if (n == new_index_for_loop) return "new_index_for_loop";
+    return NULL;
 }
 
 ListNode* insertlast (ListNode* head, grammarchar gc) {
@@ -355,7 +358,7 @@ void loadgrammar(char* filename) { //reads through the grammar file and converts
     char currinput[MAXTERMLEN];
     char temp[MAXTERMLEN];
     char grammar_buff[2 * MAXTERMLEN];
-    for (int i = 0; i < 2 * MAXTERMLEN; i ++) grammar_buff[i] == '\0';
+    for (int i = 0; i < 2 * MAXTERMLEN; i ++) grammar_buff[i] = '\0';
     while (!feof(fp)) { //read through entire file
         fread(grammar_buff, 1, 2 * MAXTERMLEN - 1, fp);
         buff_index = 0;

@@ -1,9 +1,9 @@
 
-test: driver.exe 
-	driver.exe ./test_cases/t2.txt testOutput 32
+test: driver 
+	./driver ./test_cases/t6.txt testOutput 32
 
-driver.exe: driver.c lexer.c parse.c
-	gcc driver.c lexer.c parse.c -o driver.exe
+driver: driver.c lexer.c parse.c
+	gcc driver.c lexer.c parse.c -o driver
 
 parse.c: parseDef.h lexer.h
 	gcc -c parse.c
