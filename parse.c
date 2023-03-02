@@ -4,7 +4,7 @@
 #include "lexer.h"
 
 #define MAXTERMLEN 50 
-#define NO_RULES 145 //No. of grammar rules: 145
+#define NO_RULES 143 //No. of grammar rules: 145
 #define NO_TERMS 58 //No. of terminals: 58
 #define NO_NONTERMS 73 //No. of Non Terminals: 73
 #define MAXTERMLEN 50 
@@ -793,17 +793,17 @@ TreeNode* parse(){
     return Root;
 }
 
-void printTree(TreeNode* root) {
+void printTree(TreeNode* root, FILE* fp) {
     if(root==NULL) return;
     TreeNode* curr = root->child;
-    printTree(root->child);
-    if(root->t==TERMINAL && root->val.t.type==TK_NUM) printf("Terminal %s with token value %d\n", mapttokentostring(root->val.t.type),root->val.t.val.integer);
-    else if(root->t==TERMINAL && root->val.t.type==TK_RNUM) {printf("Terminal %s with token value %lf\n", mapttokentostring(root->val.t.type),root->val.t.val.decimal);}
-    else if(root->t==TERMINAL) {printf("Terminal %s with token value %s\n", mapttokentostring(root->val.t.type),root->val.t.val.identifier);}
-    else printf("Non-Terminal %s\n",mapnttostring(root->val.nt));
+    printTree(root->child,fp);
+    if(root->t==TERMINAL && root->val.t.type==TK_NUM) fprintf(fp,"Terminal %s with token value %d\n", mapttokentostring(root->val.t.type),root->val.t.val.integer);
+    else if(root->t==TERMINAL && root->val.t.type==TK_RNUM) {fprintf(fp,"Terminal %s with token value %lf\n", mapttokentostring(root->val.t.type),root->val.t.val.decimal);}
+    else if(root->t==TERMINAL) {fprintf(fp,"Terminal %s with token value %s\n", mapttokentostring(root->val.t.type),root->val.t.val.identifier);}
+    else fprintf(fp,"Non-Terminal %s\n",mapnttostring(root->val.nt));
     if (curr != NULL)
         curr=curr->sibling;
     for(;curr!=NULL; curr=curr->sibling){
-        printTree(curr);
+        printTree(curr,fp);
     }
 }

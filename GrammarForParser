@@ -56,7 +56,7 @@
 <moduleReuseStmt> <optional> USE MODULE ID WITH PARAMETERS <actual_para_list> SEMICOL
 <actual_para_list> <K> <N_12>
 <actual_para_list> <sign> <K> <N_12>
-<N_12> COMMA <K> <N_12>
+<N_12> COMMA <sign> <K> <N_12>
 <N_12> EPS
 <K> NUM
 <K> RNUM
