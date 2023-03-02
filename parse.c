@@ -586,6 +586,16 @@ void createParseTable(){ //creating the parse table
     }
 }
 
+void printStack(StackNode* S) {
+    for (StackNode* curr = S; curr != NULL; curr = curr -> next) {
+        if (curr->val->t == TERMINAL)
+            printf("TERMINAL: %s\t",mapttokentostring(curr->val->val.t.type));
+        else
+            printf("NONTERMINAL: %s\t",mapttokentostring(curr->val->val.nt));
+    }
+    printf("\n");
+}
+
 void createSynchronizingSet(){
 
     ListNode* follow_set = NULL;
@@ -720,8 +730,7 @@ TreeNode* parse(){
                 }
             }
         }
-        else    
-            continue;
+        printStack(S);
     }
     if(!isEmpty(S)){ //if stack is not empty after consuming all tokens, we have an error
         printf("Error ... stack not empty yet");
