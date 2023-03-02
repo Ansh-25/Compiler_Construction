@@ -69,7 +69,7 @@ int main(int argc, char *argv[]){
             computefirstandfollow();
             createParseTable();
             TreeNode* root = parse();
-            printTree(root);
+            printTree(root,fopen(argv[2],"w"));
             printf("\n\n");
             fclose(ptr);
             break;

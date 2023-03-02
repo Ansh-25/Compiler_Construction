@@ -611,20 +611,20 @@ void createSynchronizingSet(){
             synchronizingSet[i] = insertlast(synchronizingSet[i], first_set -> val);
 
     for (int i = 0; i < NO_NONTERMS; i ++){ //pushes various delimiters into each synchronizing set
-grammarchar semicol; semicol.t = TERMINAL; semicol.g.t = TK_SEMICOLON;
-        synchronizingSet[i] = insertlast(synchronizingSet[i], semicol);
+// grammarchar semicol; semicol.t = TERMINAL; semicol.g.t = TK_SEMICOLON;
+//         synchronizingSet[i] = insertlast(synchronizingSet[i], semicol);
 
-grammarchar enddef; enddef.t = TERMINAL; enddef.g.t = TK_ENDDEF;
-        synchronizingSet[i] = insertlast(synchronizingSet[i], enddef);
+// grammarchar enddef; enddef.t = TERMINAL; enddef.g.t = TK_ENDDEF;
+//         synchronizingSet[i] = insertlast(synchronizingSet[i], enddef);
 
-grammarchar enddriverdef; enddriverdef.t = TERMINAL; enddriverdef.g.t = TK_DRIVERENDDEF;
-        synchronizingSet[i] = insertlast(synchronizingSet[i], enddriverdef);
+// grammarchar enddriverdef; enddriverdef.t = TERMINAL; enddriverdef.g.t = TK_DRIVERENDDEF;
+//         synchronizingSet[i] = insertlast(synchronizingSet[i], enddriverdef);
 
-grammarchar end; end.t = TERMINAL; end.g.t = TK_END;
-        synchronizingSet[i] = insertlast(synchronizingSet[i], end);
+// grammarchar end; end.t = TERMINAL; end.g.t = TK_END;
+//         synchronizingSet[i] = insertlast(synchronizingSet[i], end);
 
-grammarchar eof; eof.t = TERMINAL; eof.g.t = TK_EOF;
-        synchronizingSet[i] = insertlast(synchronizingSet[i], eof);
+// grammarchar eof; eof.t = TERMINAL; eof.g.t = TK_EOF;
+//         synchronizingSet[i] = insertlast(synchronizingSet[i], eof);
 
 grammarchar start; start.t = TERMINAL; start.g.t = TK_START;
         synchronizingSet[i] = insertlast(synchronizingSet[i], start);
@@ -770,8 +770,8 @@ TreeNode* parse(){
             else if(contains(synchronizingSet[X->val.t.type],L->type)){ //otherwise if we can't find the right rule, check if the non-terminal contains the top of the stack in the synchronizing set. if yes, we can pop the stack and continue
                 printf("\n Syntax Error at line no %d ... non-terminal mismatch, popping stack\n",L->lineNo);
                 while(top(S)!=NULL && ((top(S)->t == NONTERMINAL && contains(first[top(S)->val.t.type],L->type)==0) || (top(S)->t == TERMINAL && top(S)->val.t.type==L->type))){
-                    printToken(L);
-                    printStack(S);
+                    // printToken(L);
+                    // printStack(S);
                     S = pop(S);
                 }
                 if (L -> type == TK_EOF) { //if we reach the end of the file, then break
@@ -806,6 +806,10 @@ TreeNode* parse(){
 
 void printTree(TreeNode* root, FILE* fp) {
     if(root==NULL) return;
+    if(!fp){
+        printf("ERROR: file pointer invalid\n\n");
+        exit(1);
+    }
     TreeNode* curr = root->child;
     printTree(root->child,fp);
     if(root->t==TERMINAL && root->val.t.type==TK_NUM) fprintf(fp,"Terminal %s with token value %d\n", mapttokentostring(root->val.t.type),root->val.t.val.integer);
