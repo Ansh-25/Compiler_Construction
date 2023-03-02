@@ -36,11 +36,9 @@
 <var_print> NUM
 <var_print> RNUM
 <var_print> <boolConstt>
-<var_print> <array_element_for_print>
 <boolConstt> TRUE
 <boolConstt> FALSE
-<array_element_for_print> ID SQBO <index_arr> SQBC
-<P1> SQBO <new_index> SQBC
+<P1> SQBO <index_arr> SQBC
 <P1> EPS
 <simpleStmt> <assignmentStmt>
 <simpleStmt> <moduleReuseStmt>

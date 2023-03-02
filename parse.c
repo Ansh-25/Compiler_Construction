@@ -6,7 +6,7 @@
 #define MAXTERMLEN 50 
 #define NO_RULES 145 //No. of grammar rules: 145
 #define NO_TERMS 58 //No. of terminals: 58
-#define NO_NONTERMS 74 //No. of Non Terminals: 74
+#define NO_NONTERMS 73 //No. of Non Terminals: 73
 #define MAXTERMLEN 50 
 
 struct ListNode* grammar[NO_RULES];
@@ -103,7 +103,6 @@ non_terminal mapnttoenum(char* s) { //maps string of non-terminal to nonterminal
     else if (strcmp(s,"var_print") == 0) return var_print;
     else if (strcmp(s,"P1") == 0) return P1;
     else if (strcmp(s,"boolConstt") == 0) return boolConstt;
-    else if (strcmp(s,"array_element_for_print") == 0) return array_element_for_print;
     else if (strcmp(s,"new_index") == 0) return new_index;
     else if (strcmp(s,"assignmentStmt") == 0) return assignmentStmt;
     else if (strcmp(s,"moduleReuseStmt") == 0) return moduleReuseStmt;
@@ -243,7 +242,6 @@ char* mapnttostring(non_terminal n) { //maps non-terminal to string of non-termi
     if (n == var_print) return "var_print";
     if (n == P1) return "P1";
     if (n == boolConstt) return "boolConstt";
-    if (n == array_element_for_print) return "array_element_for_print";
     if (n == new_index) return "new_index";
     if (n == assignmentStmt) return "assignmentStmt";
     if (n == moduleReuseStmt) return "moduleReuseStmt";
