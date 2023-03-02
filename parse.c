@@ -597,14 +597,14 @@ void printStack(StackNode* S) {
         else
             printf("NONTERMINAL: %s\t",mapnttostring(curr->val->val.nt));
     }
-    printf("\n");
+    printf("\n \n");
 }
 
 void createSynchronizingSet(){
 
     ListNode* follow_set = NULL;
     for (int i = 0; i < NO_NONTERMS; i ++) //pushes all elements of the follow set into the respective synchronizing set
-        for (follow_set = follow[i]; follow_set != NULL; follow_set = follow_set -> next) 
+        for (follow_set = follow[i]; follow_set != NULL; follow_set = follow_set -> next)
             synchronizingSet[i] = insertlast(synchronizingSet[i], follow_set -> val);
    
     ListNode* first_set = NULL;
@@ -612,18 +612,62 @@ void createSynchronizingSet(){
         for (first_set = first[i]; first_set != NULL; first_set = first_set -> next)
             synchronizingSet[i] = insertlast(synchronizingSet[i], first_set -> val);
 
-    for (int i = 0; i < NO_NONTERMS; i ++){ //pushes ;, >>, >>>, END, EOF into each synchronizing set
-		grammarchar semicol; semicol.t = TERMINAL; semicol.g.t = TK_SEMICOLON;
+    for (int i = 0; i < NO_NONTERMS; i ++){ //pushes various delimiters into each synchronizing set
+grammarchar semicol; semicol.t = TERMINAL; semicol.g.t = TK_SEMICOLON;
         synchronizingSet[i] = insertlast(synchronizingSet[i], semicol);
-		grammarchar enddef; enddef.t = TERMINAL; enddef.g.t = TK_ENDDEF;
+
+grammarchar enddef; enddef.t = TERMINAL; enddef.g.t = TK_ENDDEF;
         synchronizingSet[i] = insertlast(synchronizingSet[i], enddef);
-		grammarchar enddriverdef; enddriverdef.t = TERMINAL; enddriverdef.g.t = TK_DRIVERENDDEF;
+
+grammarchar enddriverdef; enddriverdef.t = TERMINAL; enddriverdef.g.t = TK_DRIVERENDDEF;
         synchronizingSet[i] = insertlast(synchronizingSet[i], enddriverdef);
-		grammarchar end; end.t = TERMINAL; end.g.t = TK_END;
+
+grammarchar end; end.t = TERMINAL; end.g.t = TK_END;
         synchronizingSet[i] = insertlast(synchronizingSet[i], end);
-		grammarchar eof; eof.t = TERMINAL; eof.g.t = TK_EOF;
+
+grammarchar eof; eof.t = TERMINAL; eof.g.t = TK_EOF;
         synchronizingSet[i] = insertlast(synchronizingSet[i], eof);
-	}
+
+grammarchar start; start.t = TERMINAL; start.g.t = TK_START;
+        synchronizingSet[i] = insertlast(synchronizingSet[i], semicol);
+
+grammarchar def; def.t = TERMINAL; def.g.t = TK_DEF;
+        synchronizingSet[i] = insertlast(synchronizingSet[i], def);
+
+grammarchar driverdef; driverdef.t = TERMINAL; driverdef.g.t = TK_DRIVERDEF;
+        synchronizingSet[i] = insertlast(synchronizingSet[i], driverdef);
+
+grammarchar takes; takes.t = TERMINAL; takes.g.t = TK_TAKES;
+        synchronizingSet[i] = insertlast(synchronizingSet[i], takes);
+
+grammarchar use; use.t = TERMINAL; use.g.t = TK_USE;
+        synchronizingSet[i] = insertlast(synchronizingSet[i], use);
+
+grammarchar declare; declare.t = TERMINAL; declare.g.t = TK_DECLARE;
+        synchronizingSet[i] = insertlast(synchronizingSet[i], declare);
+
+grammarchar print; print.t = TERMINAL; print.g.t = TK_PRINT;
+        synchronizingSet[i] = insertlast(synchronizingSet[i], print);
+
+grammarchar returns; returns.t = TERMINAL; returns.g.t = TK_RETURNS;
+        synchronizingSet[i] = insertlast(synchronizingSet[i], returns);
+
+grammarchar getv; getv.t = TERMINAL; getv.g.t = TK_GET_VALUE;
+        synchronizingSet[i] = insertlast(synchronizingSet[i], getv);
+
+grammarchar sqbo; sqbo.t = TERMINAL; sqbo.g.t = TK_SQBO;
+        synchronizingSet[i] = insertlast(synchronizingSet[i], sqbo);
+
+grammarchar forr; forr.t = TERMINAL; forr.g.t = TK_FOR;
+        synchronizingSet[i] = insertlast(synchronizingSet[i], forr);
+
+grammarchar swit; swit.t = TERMINAL; swit.g.t = TK_SWITCH;
+        synchronizingSet[i] = insertlast(synchronizingSet[i], swit);
+
+grammarchar whil; whil.t = TERMINAL; whil.g.t = TK_WHILE;
+        synchronizingSet[i] = insertlast(synchronizingSet[i], whil);
+
+    }
 }
 
 StackNode* pushrule(int rule, StackNode* S){
@@ -702,7 +746,7 @@ TreeNode* parse(){
                 printf("\n Syntax Error at line no %d ... terminal mismatch\n",L->lineNo);
                 printf("actual : %s\n",mapttokentostring(L->type));
                 printf("exp : %s\n",mapttokentostring(X->val.t.type));
-                S = pop(S);
+                S = pop(S); //we pop the stack and also get the next token
                 if (L -> type == TK_EOF) { //if we reach the end of the file, then break
                     break;
                 }
@@ -727,7 +771,8 @@ TreeNode* parse(){
 
             else if(contains(synchronizingSet[X->val.t.type],L->type)){ //otherwise if we can't find the right rule, check if the non-terminal contains the top of the stack in the synchronizing set. if yes, we can pop the stack and continue
                 printf("\n Syntax Error at line no %d ... non-terminal mismatch, popping stack\n",L->lineNo);
-                S = pop(S);
+                while(top(S)!=NULL && contains(first[top(S)->val.t.type],L->type)==0)
+                    S = pop(S);
             }
 
             else { //otherwise get next token
@@ -742,7 +787,7 @@ TreeNode* parse(){
                 }
             }
         }
-        // printStack(S);
+        //printStack(S);
     }
     if(!isEmpty(S)){ //if stack is not empty after consuming all tokens, we have an error
         printf("Error ... stack not empty yet");
