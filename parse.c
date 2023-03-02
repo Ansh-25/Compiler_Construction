@@ -591,7 +591,7 @@ void printStack(StackNode* S) {
         if (curr->val->t == TERMINAL)
             printf("TERMINAL: %s\t",mapttokentostring(curr->val->val.t.type));
         else
-            printf("NONTERMINAL: %s\t",mapttokentostring(curr->val->val.nt));
+            printf("NONTERMINAL: %s\t",mapnttostring(curr->val->val.nt));
     }
     printf("\n");
 }
@@ -699,6 +699,14 @@ TreeNode* parse(){
                 printf("actual : %s\n",mapttokentostring(L->type));
                 printf("exp : %s\n",mapttokentostring(X->val.t.type));
                 S = pop(S);
+                if (L -> type == TK_EOF) { //if we reach the end of the file, then break
+                    break;
+                }
+                L = getNextToken(); //get next token
+                if (L == NULL) { //if we are unable to get next token, then we convert it to EOF token
+                    L = malloc(sizeof(struct Token));
+                    L -> type = TK_EOF;
+                }
             }
         }
         else if(X->t==NONTERMINAL){ //else if top of stack is a non-terminal
