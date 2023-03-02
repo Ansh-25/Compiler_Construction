@@ -627,7 +627,7 @@ grammarchar eof; eof.t = TERMINAL; eof.g.t = TK_EOF;
         synchronizingSet[i] = insertlast(synchronizingSet[i], eof);
 
 grammarchar start; start.t = TERMINAL; start.g.t = TK_START;
-        synchronizingSet[i] = insertlast(synchronizingSet[i], semicol);
+        synchronizingSet[i] = insertlast(synchronizingSet[i], start);
 
 grammarchar def; def.t = TERMINAL; def.g.t = TK_DEF;
         synchronizingSet[i] = insertlast(synchronizingSet[i], def);
@@ -769,8 +769,19 @@ TreeNode* parse(){
 
             else if(contains(synchronizingSet[X->val.t.type],L->type)){ //otherwise if we can't find the right rule, check if the non-terminal contains the top of the stack in the synchronizing set. if yes, we can pop the stack and continue
                 printf("\n Syntax Error at line no %d ... non-terminal mismatch, popping stack\n",L->lineNo);
-                while(top(S)!=NULL && contains(first[top(S)->val.t.type],L->type)==0)
+                while(top(S)!=NULL && ((top(S)->t == NONTERMINAL && contains(first[top(S)->val.t.type],L->type)==0) || (top(S)->t == TERMINAL && top(S)->val.t.type==L->type))){
+                    printToken(L);
+                    printStack(S);
                     S = pop(S);
+                }
+                if (L -> type == TK_EOF) { //if we reach the end of the file, then break
+                    break;
+                }
+                L = getNextToken(); //get next token
+                if (L == NULL) { //if we are unable to get next token, then we convert it to EOF token
+                    L = malloc(sizeof(struct Token));
+                    L -> type = TK_EOF;
+                }
             }
 
             else { //otherwise get next token
