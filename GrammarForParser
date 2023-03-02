@@ -48,7 +48,7 @@
 <lvalueIDStmt> ASSIGNOP <expression> SEMICOL
 <lvalueARRStmt> SQBO <element_index_with_expressions> SQBC ASSIGNOP <expression> SEMICOL
 <index_arr> <sign> <new_index>
-<new_index> NUM 
+<new_index> NUM
 <new_index> ID
 <sign> PLUS
 <sign> MINUS
