@@ -4,9 +4,9 @@
 #include "lexer.h"
 
 #define MAXTERMLEN 50 
-#define NO_RULES 141 //No. of grammar rules: 141
+#define NO_RULES 145 //No. of grammar rules: 145
 #define NO_TERMS 58 //No. of terminals: 58
-#define NO_NONTERMS 72 //No. of Non Terminals: 72
+#define NO_NONTERMS 74 //No. of Non Terminals: 74
 #define MAXTERMLEN 50 
 
 struct ListNode* grammar[NO_RULES];
@@ -115,6 +115,8 @@ non_terminal mapnttoenum(char* s) { //maps string of non-terminal to nonterminal
     else if (strcmp(s,"sign") == 0) return sign;
     else if (strcmp(s,"optional") == 0) return optional;
     else if (strcmp(s,"actual_para_list") == 0) return actual_para_list;
+    else if (strcmp(s,"K") == 0) return K;
+    else if (strcmp(s,"N_12") == 0) return N_12;
     else if (strcmp(s,"N_11") == 0) return N_11;
     else if (strcmp(s,"idList") == 0) return idList;
     else if (strcmp(s,"N3") == 0) return N3;
@@ -253,6 +255,8 @@ char* mapnttostring(non_terminal n) { //maps non-terminal to string of non-termi
     if (n == sign) return "sign";
     if (n == optional) return "optional";
     if (n == actual_para_list) return "actual_para_list";
+    if (n == K) return "K";
+    if (n == N_12) return "N_12";
     if (n == N_11) return "N_11";
     if (n == idList) return "idList";
     if (n == N3) return "N3";
@@ -738,7 +742,7 @@ TreeNode* parse(){
                 }
             }
         }
-        printStack(S);
+        // printStack(S);
     }
     if(!isEmpty(S)){ //if stack is not empty after consuming all tokens, we have an error
         printf("Error ... stack not empty yet");
