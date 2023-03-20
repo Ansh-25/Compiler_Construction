@@ -1,3 +1,11 @@
+/*
+    ID: 2020A7PS0035P | Name: Shreekar Puranik
+    ID: 2020A7PS1209P | Name: Sriram Ramanathan
+    ID: 2020A7PS1205P | Name: Nikhil Pradhan
+    ID: 2020A7PS0146P | Name: Toshit Jain
+    ID: 2020A7PS0116P | Name: Ansh Gupta
+*/
+
 #include "lexerDef.h"
 #include "hash.h"
 
@@ -181,6 +189,10 @@ struct Token* getNextToken()
                 state = 38;
             else if (ch == '\b' || ch == '\t' || ch==32)
                 state = 39;
+            else {
+                printf("\nERROR: Symbol not recognized at line %d\n\n", line);
+                begin ++;
+            }
             forward++;
             break;
 
@@ -188,12 +200,12 @@ struct Token* getNextToken()
         case 1:
             if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || (ch >= '0' && ch <= '9')){
                 if(forward<begin && (bufferSize-begin+forward+1 > 20)){
-                    printf("ERROR: identifier length cannot exceed 20\n");
+                    if(is_exceeding==0) printf("\nERROR: identifier length cannot exceed 20\n\n");
                     is_exceeding = 1;
                     begin = forward;
                     flag = 1;
                 }else if(forward-begin>20){
-                    printf("ERROR: identifier length cannot exceed 20\n");
+                    if(is_exceeding==0) printf("\nERROR: identifier length cannot exceed 20\n\n");
                     is_exceeding = 1;
                     begin = forward;
                 }
@@ -263,7 +275,7 @@ struct Token* getNextToken()
             }
             else
             {
-                printf("ERROR: Token not recognized at line %d\n", line);
+                printf("\nERROR: Token not recognized at line %d\n\n", line);
                 state = 0;
                 begin = forward;
             }
@@ -301,7 +313,7 @@ struct Token* getNextToken()
             }
             else
             {
-                printf("ERROR: Token not recognized at line %d\n", line);
+                printf("\nERROR: Token not recognized at line %d\n\n", line);
                 state = 0;
                 begin = forward;
             }
@@ -315,7 +327,7 @@ struct Token* getNextToken()
             }
             else
             {
-                printf("ERROR: Token not recognized at line %d\n", line);
+                printf("\nERROR: Token not recognized at line %d\n\n", line);
                 state = 0;
                 begin = forward;   
             }
@@ -340,7 +352,7 @@ struct Token* getNextToken()
                 state = 12;
             }
             else {
-                printf("ERROR: Token not recognized at line %d\n", line);
+                printf("\nERROR: Token not recognized at line %d\n\n", line);
                 state = 0;
                 begin = forward;
             }
@@ -537,7 +549,7 @@ struct Token* getNextToken()
             }
             else
             {
-                printf("ERROR: Token not recognized at line %d\n", line);
+                printf("\nERROR: Token not recognized at line %d\n\n", line);
                 state = 0;
                 begin = forward;
             }
@@ -565,7 +577,7 @@ struct Token* getNextToken()
             }
             else
             {
-                printf("ERROR: Token not recognized at line %d\n", line);
+                printf("\nERROR: Token not recognized at line %d\n\n", line);
                 state = 0;
                 begin = forward;
             }
@@ -601,11 +613,11 @@ struct Token* getNextToken()
             }
 
         default:
-                printf("ERROR: Token not recognized at line %d\n", line);
+                printf("\nERROR: Token not recognized at line %d\n\n", line);
                 state = 0;
                 begin = forward;
         }
-        if((forward == bufferSize-1) && (state == 14)){
+        if((forward == bufferSize-1) && (state == 14 || state == 15)){
             begin = forward = 0;
             flag = 1;
         }

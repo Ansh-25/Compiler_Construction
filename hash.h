@@ -1,3 +1,10 @@
+/*
+    ID: 2020A7PS0035P | Name: Shreekar Puranik
+    ID: 2020A7PS1209P | Name: Sriram Ramanathan
+    ID: 2020A7PS1205P | Name: Nikhil Pradhan
+    ID: 2020A7PS0146P | Name: Toshit Jain
+    ID: 2020A7PS0116P | Name: Ansh Gupta
+*/
 #ifndef hash_H
 #define hash_H
 
@@ -15,19 +22,19 @@ struct hashentry {
 };
 
 int is_init=0;
-struct hashentry* hash[50];
+struct hashentry* hash[47];
 
 int sumchars(char* s){
     int res=0;
     for(int i=0;s[i]!='\0';++i){
-        res = (res+s[i])%50;
+        res = (res+s[i])%47;
     }
     return res;
 }
 
 void insert_hash(char* str, tokentype tk){
     int ind = sumchars(str);
-    while(hash[ind] != NULL) {ind++; ind %=50;}
+    while(hash[ind] != NULL) {ind++; ind %=47;}
     hash[ind] = (struct hashentry*)malloc(sizeof(struct hashentry));
     strcpy(hash[ind] -> str,str);
     hash[ind] -> tk = tk;
@@ -41,7 +48,7 @@ int search_hash(char* str){
         // printf("%s",hash[ind]);
         if(strcmp(str,hash[ind] -> str)==0) return hash[ind] -> tk;
         ind++;
-        ind %= 50;
+        ind %= 47;
     }
     //printf("hello\n");
     return -1;

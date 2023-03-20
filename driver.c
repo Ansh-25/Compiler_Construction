@@ -1,9 +1,9 @@
 /*
-ID: 2020A7PS0035P | Name: Shreekar Puranik
-ID: 2020A7PS1209P | Name: Sriram Ramanathan
-ID: 2020A7PS1205P | Name: Nikhil Pradhan
-ID: 2020A7PS0146P | Name: Toshit Jain
-ID: 2020A7PS0116P | Name: Ansh Gupta
+    ID: 2020A7PS0035P | Name: Shreekar Puranik
+    ID: 2020A7PS1209P | Name: Sriram Ramanathan
+    ID: 2020A7PS1205P | Name: Nikhil Pradhan
+    ID: 2020A7PS0146P | Name: Toshit Jain
+    ID: 2020A7PS0116P | Name: Ansh Gupta
 */
 
 
@@ -11,7 +11,7 @@ ID: 2020A7PS0116P | Name: Ansh Gupta
 #include <string.h>
 #include <stdio.h>
 #include "lexer.h"
-#include "parse.h"
+#include "parser.h"
 #include <time.h>
 
 int main(int argc, char *argv[]){
@@ -30,9 +30,20 @@ int main(int argc, char *argv[]){
         mul *= 10;
     }
 
+    if(size_of_buffer<23) {
+        printf("Warning: buffer size should be greater than 22\n");
+        exit(1);
+    }
+
     // printing menu
+    printf("\n\t\tIMPLEMENTATION STATUS \n");
+    printf("1. All files compile and makefile working\n");
+    printf("2. Both lexical and syntax analysis modules implemented\n");
+    printf("3. Module correctly compiles all given test cases\n");
+    printf("4. Lexical and syntactical error reporting along with line numbers sequentially\n");
+    printf("5. Contructs and writes Parse tree to output file correctly\n");
+    printf("6. FIRST and FOLLOW sets automated\n\n");
     do{
-        printf("IMPLEMENTATION STATUS \n\n");
         printf("\t\t MAIN MENU \n");
         printf("Press '0' For exiting the program\n");
         printf("Press '1' For removal of comments\n");
@@ -59,7 +70,7 @@ int main(int argc, char *argv[]){
                 }
                 printf("\n\n");
             }
-            fclose(commentFilePtr);
+                fclose(commentFilePtr);
             break;
         case 2:
             ptr = fopen(argv[1],"r");
@@ -69,18 +80,20 @@ int main(int argc, char *argv[]){
                 tk = getNextToken();
                 printToken(tk);
             }while(tk!=NULL);
-            fclose(ptr);
+            if(ptr != NULL)
+                fclose(ptr);
             break;
         case 3:
             ptr = fopen(argv[1],"r");
             ptr = initLexer(ptr, size_of_buffer);
-            loadgrammar("GrammarForParser");
+            loadgrammar("grammar.txt");
             computefirstandfollow();
             createParseTable();
             TreeNode* root = parse();
             printTree(root,fopen(argv[2],"w"));
             printf("\n\n");
-            fclose(ptr);
+            if(ptr != NULL)
+                fclose(ptr);
             break;
         case 4:
             ptr = fopen(argv[1],"r");
@@ -89,23 +102,24 @@ int main(int argc, char *argv[]){
             start_time = clock();
 
             ptr = initLexer(ptr, size_of_buffer);
-            loadgrammar("GrammarForParser");
+            loadgrammar("grammar.txt");
             computefirstandfollow();
             createParseTable();
             parse();
 
             end_time = clock();
 
-            fclose(ptr);
+            if(ptr != NULL)
+                fclose(ptr);
 
             double total_CPU_time = (double) (end_time - start_time);
             double total_CPU_time_in_seconds = total_CPU_time / CLOCKS_PER_SEC;
 
-            printf("\ntotal_CPU_time := %lf \ntotal_CPU_time_in_sec := %lf\n\n",total_CPU_time,total_CPU_time_in_seconds);
+            printf("\ntotal_CPU_time := %lf ticks \ntotal_CPU_time := %lf s\n\n",total_CPU_time,total_CPU_time_in_seconds);
             
             break;
         default:
-            printf("ERROR: INVALID OPERATION CODE\n");
+            printf("\nERROR: INVALID OPERATION CODE\n");
             break;
         }
     }while(1);

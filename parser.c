@@ -1,4 +1,12 @@
-#include "parseDef.h"
+/*
+    ID: 2020A7PS0035P | Name: Shreekar Puranik
+    ID: 2020A7PS1209P | Name: Sriram Ramanathan
+    ID: 2020A7PS1205P | Name: Nikhil Pradhan
+    ID: 2020A7PS0146P | Name: Toshit Jain
+    ID: 2020A7PS0116P | Name: Ansh Gupta
+*/
+
+#include "parserDef.h"
 #include "stdlib.h"
 #include "string.h"
 #include "lexer.h"
@@ -659,7 +667,7 @@ TreeNode* parse(){
     struct Token* L = getNextToken(); //start at the first token
     while(L!=NULL){
         if(isEmpty(S)){ //if stack is empty and we still have a token, it means there is an error
-            printf("\n Syntax Error at line no %d ... empty stack\n",L->lineNo); 
+            printf("\nSyntax Error at line no %d ... empty stack\n",L->lineNo); 
             break;
         }
         //printf("hi");
@@ -679,12 +687,11 @@ TreeNode* parse(){
                 }
             }
             else if(X->val.t.type==TK_SEMICOLON && L->type==TK_END){
-                printf("ERROR : Expected semicolon at line no %d \n",L->lineNo);
+                printf("\nERROR : Expected semicolon at line no %d \n",L->lineNo);
                 S = pop(S);
             }
             else{ //if we the top of the stack is a different terminal to the token, then we have an error
-               
-                printf("\n Syntax Error at line no %d ... terminal mismatch\n",L->lineNo);
+                printf("\nSyntax Error at line no %d ... terminal mismatch\n",L->lineNo);
                 printf("actual : %s\n",mapttokentostring(L->type));
                 printf("exp : %s\n",mapttokentostring(X->val.t.type));
                 S = pop(S); //we pop the stack and also get the next token
@@ -711,25 +718,12 @@ TreeNode* parse(){
             }
 
             else if(contains(synchronizingSet[X->val.t.type],L->type)){ //otherwise if we can't find the right rule, check if the non-terminal contains the top of the stack in the synchronizing set. if yes, we can pop the stack and continue
-                printf("\n Syntax Error at line no %d ... non-terminal mismatch, popping stack\n",L->lineNo);
-                while(top(S)!=NULL && (((top(S)->t == NONTERMINAL && contains(first[top(S)->val.t.type],L->type)==0) || (top(S)->t == TERMINAL && top(S)->val.t.type==L->type)))){
-                    printToken(L);
-                    printStack(S);
-                    printf("%d HI",L->lineNo);
-                    S = pop(S);
-                }
-                if (L -> type == TK_EOF) { //if we reach the end of the file, then break
-                    break;
-                }
-                L = getNextToken(); //get next token
-                if (L == NULL) { //if we are unable to get next token, then we convert it to EOF token
-                    L = malloc(sizeof(struct Token));
-                    L -> type = TK_EOF;
-                }
+                printf("\nSyntax Error at line no %d ... non-terminal mismatch, popping stack\n",L->lineNo);
+                S = pop(S);
             }
 
             else { //otherwise get next token
-                printf("\n Syntax Error at line no %d ... non-terminal mismatch, getting new token\n",L->lineNo);
+                printf("\nSyntax Error at line no %d ... non-terminal mismatch, getting new token\n",L->lineNo);
                 if (L -> type == TK_EOF) { //if L is TK_EOF, we can't get next token, so we just break
                     break;
                 }
@@ -740,11 +734,11 @@ TreeNode* parse(){
                 }
             }
         }
-        printf("%d %s: ",L->lineNo,mapttokentostring(L->type));
+        // printf("%d %s: ",L->lineNo,mapttokentostring(L->type));
         //printStack(S);
     }
     if(!isEmpty(S)){ //if stack is not empty after consuming all tokens, we have an error
-        printf("Error ... stack not empty yet");
+        printf("\nERROR: stack not empty yet\n");
     }
     return Root;
 }
@@ -752,7 +746,7 @@ TreeNode* parse(){
 void printTree(TreeNode* root, FILE* fp) {
     if(root==NULL) return;
     if(!fp){
-        printf("ERROR: file pointer invalid\n\n");
+        printf("\nERROR: file pointer invalid\n\n");
         exit(1);
     }
     TreeNode* curr = root->child;
