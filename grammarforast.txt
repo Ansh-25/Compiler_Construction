@@ -148,11 +148,3 @@ Shreekar
 <sign_for_loop> PLUS
 <sign_for_loop> MINUS
 <sign_for_loop> EPS
-
-<assignmentStmt>
-<conditionalStmt>
-<iterativeStmt>
-<ioStmt>
-<moduleReuseStmt>
-<declareStmt>
-<module>
