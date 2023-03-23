@@ -131,20 +131,80 @@ Ansh
 <relationalOp> NE
 
 Shreekar
-<conditionalStmt> SWITCH BO ID BC START <caseStmts> <_default> END
-<caseStmts> CASE <value> COLON <statements> BREAK SEMICOL <N9>
-<N9> CASE <value> COLON <statements> BREAK SEMICOL <N9>
-<N9> EPS
-<value> NUM
-<value> TRUE
-<value> FALSE
-<_default> DEFAULT COLON <statements> BREAK SEMICOL
-<_default> EPS
-<iterativeStmt> FOR BO ID IN <range_for_loop> BC START <statements> END
-<iterativeStmt> WHILE BO <arithmeticOrBooleanExpr> BC START <statements> END
-<range_for_loop> <index_for_loop> RANGEOP <index_for_loop>
-<index_for_loop> <sign_for_loop> <new_index_for_loop>
-<new_index_for_loop> NUM
-<sign_for_loop> PLUS
-<sign_for_loop> MINUS
-<sign_for_loop> EPS
+//format of makeNode function
+//makeNode(type of node, value in the node, child node);
+
+<conditionalStmt> SWITCH BO ID BC START <caseStmts> <_default> END  {
+	<caseStmts>.inh_addr=ID.addr
+	<_default>.inh_addr = <caseStmts>.end;
+	<conditionalStmt> = <caseStmts>.addr;
+	free(SWITCH); free(BO); free(BC); free(START); free(END);
+}
+<caseStmts> CASE <value> COLON <statements> BREAK SEMICOL <N9>  {
+	<caseStmts>.addr = makeNode(SWITCH, <caseStmts>.inh_addr, makeNode(CASE,<value>.addr,<statements>.addr));
+	<caseStmts>.addr->child->next = <N9>.syn_addr;
+	if(<N9>.end==NULL) {<caseStmts>.end==<caseStmts>.addr;}
+	else {<caseStmts>.end=<N9>.end;}
+	free(CASE); free(COLON); free(BREAK); free(SEMICOL);
+	//computed going bottom up
+}
+<N9> CASE <value> COLON <statements> BREAK SEMICOL <N9>1  {
+	<N9>.syn_addr = makeNode(CASE,<value>.addr,<statements>.addr);
+	<N9>.syn_addr->next = <N9>1.syn_addr;
+	if(<N9>1.end==NULL) {<N9>.end==<N9>.syn_addr;}
+	else {<N9>.end=<N9>1.end;}
+	free(CASE); free(COLON); free(BREAK); free(SEMICOL);
+	//computed going bottom up
+}
+<N9> EPS  {
+	<N9>.syn_addr = NULL;
+	<N9>.end=<N9.syn_addr>;
+	free(EPS);
+}
+<value> NUM {
+	<value.addr> = NUM.addr;
+}
+<value> TRUE {
+	<value.addr> = TRUE.addr;
+}
+<value> FALSE {
+	<value.addr> = FALSE.addr;
+}
+<_default> DEFAULT COLON <statements> BREAK SEMICOL  {
+	<_default>.inh_addr->next=makeNode(DEFAULT,NULL,<statements>.addr);
+	free(DEFAULT); free(COLON); free(BREAK); free(SEMICOL);
+	//creates Default node
+}
+<_default> EPS  {
+	<_default>.inh_addr->next=NULL;
+	free(EPS);
+}
+
+<iterativeStmt> FOR BO ID IN <range_for_loop> BC START <statements> END {
+	<iterativeStmt>.addr = makeNode(FOR,ID.addr,<range_for_loop>.left_addr);
+	<iterativeStmt>.addr->child->next = <range_for_loop>.right_addr;
+	<iterativeStmt>.addr->child->next->next = <statements>.addr;
+	free(FOR); free(BO); free(BC); free(IN); free(START); free(END);
+}
+<iterativeStmt> WHILE BO <arithmeticOrBooleanExpr> BC START <statements> END {
+	<iterativeStmt>.addr = makeNode(WHILE,NULL,<arithmeticOrBooleanExpr>.addr);
+	<iterativeStmt>.addr->child-next = <statements>.addr;
+	free(WHILE); free(BO); free(BC); free(START); free(END);
+}
+<range_for_loop> <index_for_loop>1 RANGEOP <index_for_loop>2 {
+	<range_for_loop>.left_addr = <index_for_loop>1.addr;
+	<range_for_loop>.right_addr = <index_for_loop>2.addr;
+	free(RANGEOP);
+}
+<index_for_loop> <sign_for_loop> <new_index_for_loop> {
+	<index_for_loop>.addr=makeNode(RANGENUM,<sign_for_loop>.addr,<new_index_for_loop>.addr);
+}
+<new_index_for_loop> NUM {
+	<new_index_for_loop>.addr=NUM.addr;
+}
+<sign_for_loop> PLUS {
+	<sign_for_loop>.addr=PLUS.addr;
+}
+<sign_for_loop> MINUS {
+	<sign_for_loop>.addr=MINUS.addr;
+}
