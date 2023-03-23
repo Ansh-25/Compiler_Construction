@@ -23,6 +23,7 @@ Nikhil
 <_type> INTEGER
 <_type> REAL
 <_type> BOOLEAN
+<declareStmt> DECLARE <idList> COLON <dataType> SEMICOL
 <moduleDef> START <statements> END
 <statements> <statement> <statements>
 <statements> EPS
@@ -130,7 +131,6 @@ Ansh
 <relationalOp> NE
 
 Shreekar
-<declareStmt> DECLARE <idList> COLON <dataType> SEMICOL
 <conditionalStmt> SWITCH BO ID BC START <caseStmts> <_default> END
 <caseStmts> CASE <value> COLON <statements> BREAK SEMICOL <N9>
 <N9> CASE <value> COLON <statements> BREAK SEMICOL <N9>
