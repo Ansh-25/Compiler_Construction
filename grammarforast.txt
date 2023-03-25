@@ -35,11 +35,11 @@ Nikhil
 
 Toshit
 <ioStmt> GET_VALUE BO ID BC SEMICOL {
-	<ioStmt>.addr = ID.addr
+	<ioStmt>.addr = ID.addr //post;keeps only i/p val
 	free(GET_VALUE) free(BO) free(BC) free(SEMICOL)
 }
 <ioStmt> PRINT BO <var_print> BC SEMICOL {
-	<ioStmt>.addr = <var_print>.addr
+	<ioStmt>.addr = <var_print>.addr //post
 	free(PRINT) free(BO) free(BC) free(SEMICOL)
 }
 <var_print> ID <P1> {
@@ -161,7 +161,7 @@ Toshit
 	<K>.addr = insertAtFront(<N_11>.syn_list, ID.addr)
 }
 <optional> SQBO <idList> SQBC ASSIGNOP {
-	optional.addr = makeNode(ASSIGNOP,<optional>.inh_addr,<idList>.addr)
+	optional.addr = makeNode(ASSIGNOP,<idList>.addr, <optional>.inh_addr) //assignop,lhs_addr, rhs_addr
 	free(SQBO,SQBC,ASSIGNOP)
 }
 <optional> EPS {
