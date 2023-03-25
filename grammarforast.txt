@@ -1,45 +1,119 @@
 Nikhil
-<program> <moduleDeclarations> <otherModules> <driverModule> <otherModules>
-<moduleDeclarations> <moduleDeclaration> <moduleDeclarations>
-<moduleDeclarations> EPS
-<moduleDeclaration> DECLARE MODULE ID SEMICOL
-<otherModules> <module> <otherModules>
-<otherModules> EPS
-<driverModule> DRIVERDEF DRIVER PROGRAM DRIVERENDDEF <moduleDef>
-<module> DEF MODULE ID ENDDEF TAKES INPUT SQBO <input_plist> SQBC SEMICOL <ret> <moduleDef>
-<ret> RETURNS SQBO <output_plist> SQBC SEMICOL
-<ret> EPS
-<input_plist> ID COLON <dataType> <_input_plist>
-<_input_plist> COMMA ID COLON <dataType> <_input_plist>
-<_input_plist> EPS
-<output_plist> ID COLON <_type> <_output_plist>
-<_output_plist> COMMA ID COLON <_type> <_output_plist>
-<_output_plist> EPS
-<dataType> INTEGER
-<dataType> REAL
-<dataType> BOOLEAN
-<dataType> ARRAY SQBO <range_arrays> SQBC OF <_type>
-<range_arrays> <index_arr> RANGEOP <index_arr>
-<_type> INTEGER
-<_type> REAL
-<_type> BOOLEAN
-<declareStmt> DECLARE <idList> COLON <dataType> SEMICOL
-<moduleDef> START <statements> END
-<statements> <statement> <statements>
-<statements> EPS
-<statement> <ioStmt>
-<statement> <simpleStmt>
-<statement> <declareStmt>
-<statement> <conditionalStmt>
-<statement> <iterativeStmt>
+<program> <moduleDeclarations> <otherModules> <driverModule> <otherModules> {
+    <program>.syn_list = <moduleDeclarations>.syn_list
+    insertatend(<program>.syn_list, <otherModules1>.syn_list)
+    insertatend(<program>.syn_list, <driverModule>.syn_addr)
+    insertatend(<program>.syn_list, <otherModules2>.syn_list)
+}
+<moduleDeclarations> <moduleDeclaration> <moduleDeclarations> {
+    <moduleDeclarations>1.syn_list = insertatbeginning(<moduleDeclarations>2.syn_list, <moduleDeclaration>.addr)
+}
+<moduleDeclarations> EPS {
+    <moduleDeclarations>.syn_list = NULL
+}
+<moduleDeclaration> DECLARE MODULE ID SEMICOL {
+    <moduleDeclaration>.addr = ID.addr
+}
+<otherModules> <module> <otherModules> {
+    <otherModules>1.syn_list = insertatbeginning(<otherModules>2.syn_list, <module>.addr)
+}
+<otherModules> EPS {
+    <otherModules>.syn_list = NULL
+}
+<driverModule> DRIVERDEF DRIVER PROGRAM DRIVERENDDEF <moduleDef> {
+    <driverModule>.addr = makeNode(DRIVERMODULE, moduleDef.addr)
+}
+<module> DEF MODULE ID ENDDEF TAKES INPUT SQBO <input_plist> SQBC SEMICOL <ret> <moduleDef> {
+    <module>.addr = makeNode(MODULE, ID.addr, <input_plist>.addr, <ret>.addr, <moduleDef>.addr)
+}
+<ret> RETURNS SQBO <output_plist> SQBC SEMICOL {
+    <ret>.addr = <output_plist>.addr
+}
+<ret> EPS {
+    <ret>.addr = NULL
+}
+<input_plist> ID COLON <dataType> <_input_plist> {
+    newnode = makeNode(INPUT_PLIST, ID.addr, <dataType>.addr)
+    <input_plist>.syn_list = insertatbeginning(<_input_plist>.syn_list, newnode)
+}
+<_input_plist> COMMA ID COLON <dataType> <_input_plist> {
+    newnode = makeNode(INPUT_PLIST, ID.addr, <dataType>.addr)
+    <input_plist>1.syn_list = insertatbeginning(<input_plist>2.syn_list, newnode)
+}
+<_input_plist> EPS {
+    <_input_plist>.syn_list = NULL
+}
+<output_plist> ID COLON <_type> <_output_plist> {
+    newnode = makeNode(OUTPUT_PLIST, ID.addr, <_type>.addr)
+    <output_plist>.syn_list = insertatbeginning(<_output_plist>.syn_list, newnode)
+}
+<_output_plist> COMMA ID COLON <_type> <_output_plist> {
+    newnode = makeNode(OUTPUT_PLIST, ID.addr, <_type>.addr)
+    <output_plist>1.syn_list = insertatbeginning(<output_plist>2.syn_list, newnode)
+}
+<_output_plist> EPS {
+    <_output_plist>.syn_list = NULL
+}
+<dataType> INTEGER {
+    <dataType>.addr = INTEGER.addr
+}
+<dataType> REAL {
+    <dataType>.addr = REAL.addr
+}
+<dataType> BOOLEAN {
+    <dataType>.addr = BOOLEAN.addr
+}
+<dataType> ARRAY SQBO <range_arrays> SQBC OF <_type> {
+    <dataType>.addr = makeNode(ARRAY,<range_arrays>.addr,<_type>.addr)
+}
+<range_arrays> <index_arr> RANGEOP <index_arr> {
+    <range_arrays>.addr = makeNode(RANGE,<index_arr>1.addr,<index_arr>2.addr)
+}
+<_type> INTEGER {
+    <_type>.addr = INTEGER.addr
+}
+<_type> REAL {
+    <_type>.addr = REAL.addr
+}
+<_type> BOOLEAN {
+    <_type>.addr = BOOLEAN.addr
+}
+<moduleDef> START <statements> END {
+    <moduleDef>.addr = <statements>.addr
+}
+<statements> <statement> <statements> {
+    <statements>1.syn_list = insertatbeginning(<statements>2.syn_list, <statement>.addr)
+}
+<statements> EPS {
+    <statements>.syn_list = NULL
+}
+<statement> <ioStmt> {
+    <statement>.syn_addr = <ioStmt>.syn_addr
+}
+<statement> <simpleStmt> {
+    <statement>.syn_addr = <simpleStmt>.syn_addr
+}
+<statement> <declareStmt> {
+    <statement>.syn_addr = <declareStmt>.syn_addr
+}
+<statement> <conditionalStmt> {
+    <statement>.syn_addr = <conditionalStmt>.syn_addr
+}
+<statement> <iterativeStmt> {
+    <statement>.syn_addr = <iterativeStmt>.syn_addr
+}
+
+
 
 Toshit
+//  Note: syn->post, inh->pre  //
+
 <ioStmt> GET_VALUE BO ID BC SEMICOL {
-	<ioStmt>.addr = ID.addr //post;keeps only i/p val
+	<post> : <ioStmt>.addr = ID.addr 
 	free(GET_VALUE) free(BO) free(BC) free(SEMICOL)
 }
 <ioStmt> PRINT BO <var_print> BC SEMICOL {
-	<ioStmt>.addr = <var_print>.addr //post
+	<post> : <ioStmt>.addr = <var_print>.addr 
 	free(PRINT) free(BO) free(BC) free(SEMICOL)
 }
 <var_print> ID <P1> {
@@ -47,23 +121,23 @@ Toshit
 	free(P1)
 }
 <var_print> NUM {
-	<var_print>.addr = NUM.addr
+	<post> : <post> <var_print>.addr = NUM.addr
 }
 <var_print> RNUM {
-	<var_print>.addr = RNUM.addr
+	<post> : <var_print>.addr = RNUM.addr
 }
 <var_print> <boolConstt> {
-	<var_print>.addr = <boolConstt>.addr
+	<post> : <var_print>.addr = <boolConstt>.addr
 	free(boolConstt)
 }
 <boolConstt> TRUE {
-	<boolConstt>.addr = TRUE.addr
+	<post> : <boolConstt>.addr = TRUE.addr
 }
 <boolConstt> FALSE {
-	<boolConstt>.addr = FALSE.addr
+	<post> : <boolConstt>.addr = FALSE.addr
 }
 <P1> SQBO <index_arr> SQBC {
-	<P1>.addr = <index_arr>.addr
+	<post> : <P1>.addr = <index_arr>.addr
 	free(index_arr)
 }
 <P1> EPS {
@@ -71,27 +145,27 @@ Toshit
 	free(EPS)
 }
 <simpleStmt> <assignmentStmt> {
-	<simpleStmt>.addr = <assignmentStmt>.syn_addr
+	<post> : <simpleStmt>.addr = <assignmentStmt>.syn_addr
 	free(assignmentStmt)
 }
 <simpleStmt> <moduleReuseStmt> {
-	<simpleStmt>.addr = <moduleReuseStmt>.syn_addr
+	<post> : <simpleStmt>.addr = <moduleReuseStmt>.syn_addr
 	free(moduleReuseStmt)
 }
 <assignmentStmt> ID <whichStmt> {
-	<assignmentStmt>.addr = ID.addr
-	<whichStmt>.inh_addr = <assignmentStmt>.addr
-	<assignmentStmt>.syn_addr = <whichStmt>.syn_addr
+	<post> : <assignmentStmt>.addr = ID.addr
+	<pre> : <whichStmt>.inh_addr = <assignmentStmt>.addr
+	<post> : <assignmentStmt>.syn_addr = <whichStmt>.syn_addr
 	free(whichStmt)
 }
 <whichStmt> <lvalueIDStmt> {
-	<lvalueIDStmt>.inh_addr = <whichStmt>.inh_addr
-	<whichStmt>.syn_addr = <lvalueIDStmt>.addr
+	<pre> : <lvalueIDStmt>.inh_addr = <whichStmt>.inh_addr
+	<post> : <whichStmt>.syn_addr = <lvalueIDStmt>.addr
 	free(lvalueIDStmt)
 }
 <whichStmt> <lvalueARRStmt> {
-	<lvalueARRStmt>.inh_addr = <whichStmt>.inh_addr
-	<whichStmt>.syn_addr = <lvalueARRStmt>.addr
+	<pre> : <lvalueARRStmt>.inh_addr = <whichStmt>.inh_addr
+	<post> : <whichStmt>.syn_addr = <lvalueARRStmt>.addr
 	free(lvalueARRStmt)
 }
 <lvalueIDStmt> ASSIGNOP <expression> SEMICOL {
@@ -106,80 +180,91 @@ Toshit
 	free(SEMICOL)
 }
 <index_arr> <sign> <new_index> {
-	<index_arr>.addr = makeNode(INDEX_ARR,<sign>.addr,<new_index>.addr)
+	<index_arr>.addr = makeNode(ARR_INDEX,<sign>.addr,<new_index>.addr)
 	free(sign)
 	free(new_index)
 }
 <new_index> NUM {
-	<new_index>.addr = NUM.addr
+	<post> : <new_index>.addr = NUM.addr
 }
 <new_index> ID {
-	<new_index>.addr = ID.addr
+	<post> : <new_index>.addr = ID.addr
 }
 <sign> PLUS {
-	<sign>.addr = PLUS.addr
+	<post> : <sign>.addr = PLUS.addr
 }
 <sign> MINUS {
-	<sign>.addr = MINUS.addr
+	<post> : <sign>.addr = MINUS.addr
 }
 <sign> EPS {
 	<sign>.addr = NULL
 	free(EPS)
 }
 <moduleReuseStmt> <optional> USE MODULE ID WITH PARAMETERS <actual_para_list> SEMICOL {
-	<moduleReuseStmt>.syn_addr = <actual_para_list>.addr
-	<actual_para_list>.inh_addr = ID.addr
-	<optional>.inh_addr = <moduleReuseStmt>.syn_addr
-	<moduleReuseStmt>.addr = <optional.addr>
+	<pre> : <actual_para_list>.inh_addr = ID.addr
+	<post> : <moduleReuseStmt>.syn_addr = <actual_para_list>.addr
+	<pre> : <optional>.inh_addr = <moduleReuseStmt>.syn_addr
+	<post> : <moduleReuseStmt>.syn_addr = <optional>.addr
 	free(USE,MODULE,WITH,PARAMETERS,SEMICOL)
 }
 <actual_para_list> <K> <N_12> {
-	<actual_para_list>.syn_list = insertAtFront(<N_12>.syn_list,<K>.addr)
+	<post> : <actual_para_list>.syn_list = insertAtFront(<N_12>.syn_list,<K>.addr)
 	<actual_para_list>.addr = makeNode(MODULE,<actual_para_list>.inh_addr,<actual_para_list>.syn_list)
+	free(K)
+	free(N_12)
 }
 <actual_para_list> <sign> <K> <N_12> {
 	<actual_para_list>.syn_list = insertAtFront(<N_12>.syn_list,<sign>.addr,<K>.addr)
 	<actual_para_list>.addr = makeNode(MODULE,<actual_para_list>.inh_addr,<actual_para_list>.syn_list)
+	free(K)
+	free(N_12)
 }
 <N_12> COMMA <sign> <K> <N_12> {
-	<N_12>.syn_list = insertAtFront(<N_12>1.syn_list,<sign>.addr,<K>.addr)
+	<post> : <N_12>.syn_list = insertAtFront(<N_12>1.syn_list,<sign>.addr,<K>.addr)
+	free(COMMA)
+	free(K)
+	free(N_12)
 }
 <N_12> EPS {
 	<N_12>.syn_list = NULL
+	free(EPS)
 }
 <K> NUM {
-	<K>.addr = NUM.addr
+	<post> : <K>.addr = NUM.addr
 }
 <K> RNUM {
-	<K>.addr = RNUM.addr
+	<post> : <K>.addr = RNUM.addr
 }
 <K> <boolConstt> {
-	<k>.addr = <boolConstt>.addr
+	<post> : <K>.addr = <boolConstt>.addr
 	free(boolConstt)
 }
 <K> ID <N_11> {
-	<K>.addr = insertAtFront(<N_11>.syn_list, ID.addr)
+	<post> : <K>.addr = insertAtFront(<N_11>.syn_list, ID.addr)
+	free(N_11)
 }
 <optional> SQBO <idList> SQBC ASSIGNOP {
-	optional.addr = makeNode(ASSIGNOP,<idList>.addr, <optional>.inh_addr) //assignop,lhs_addr, rhs_addr
+	<optional>.addr = makeNode(OPTIONAL1,<idList>.addr, <optional>.inh_addr) 
 	free(SQBO,SQBC,ASSIGNOP)
 }
 <optional> EPS {
-	<optional>.addr = NULL
+	<optional>.addr = makeNode(OPTIONAL2,<optional>.inh_addr)
 	free(EPS)
 }
 <idList> ID <N3> {
-	<idList>.addr = insertAtFront(<N3>.syn_list,ID.addr)
+	<post> : <idList>.addr = insertAtFront(<N3>.syn_list,ID.addr)
 	free(N3)
 }
 <N3> COMMA ID <N3> {
-	<N3>.syn_list = insertAtFront(<N3>1.syn_list,ID.addr)
+	<post> : <N3>.syn_list = insertAtFront(<N3>1.syn_list,ID.addr)
 	free(COMMA)
 	free(<N3>1)
 }
 <N3> EPS {
 	<N3>.syn_list = NULL;
+	free(EPS)
 }
+
 
 Ansh
 <expression> <arithmeticOrBooleanExpr>
