@@ -21,7 +21,7 @@ Nikhil
     <otherModules>.syn_list = NULL
 }
 <driverModule> DRIVERDEF DRIVER PROGRAM DRIVERENDDEF <moduleDef> {
-    <driverModule>.addr = <moduleDef>.addr
+    <driverModule>.addr = makeNode(DRIVERMODULE, moduleDef.addr)
 }
 <module> DEF MODULE ID ENDDEF TAKES INPUT SQBO <input_plist> SQBC SEMICOL <ret> <moduleDef> {
     <module>.addr = makeNode(MODULE, ID.addr, <input_plist>.addr, <ret>.addr, <moduleDef>.addr)
