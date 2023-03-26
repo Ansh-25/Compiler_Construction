@@ -205,8 +205,6 @@ Nikhil
 	free(iterativeStmt)
 }
 
-
-
 Toshit
 //  Note: syn->post, inh->pre  //
 
@@ -367,64 +365,322 @@ Toshit
 	free(EPS)
 }
 
-
 Ansh
-<expression> <arithmeticOrBooleanExpr>
-<expression> <U>
-<U> <unary_op> <new_NT>
-<new_NT> BO <arithmeticExpr> BC
-<new_NT> <var_id_num>
-<unary_op> PLUS 
-<unary_op> MINUS
-<var_id_num> ID
-<var_id_num> NUM
-<var_id_num> RNUM
-<arithmeticOrBooleanExpr> <AnyTerm> <N7>
-<N7> <logicalOp> <AnyTerm> <N7>
-<N7> EPS
-<AnyTerm> <arithmeticExpr> <N8>
-<AnyTerm> <boolConstt>
-<N8> <relationalOp> <arithmeticExpr>
-<N8> EPS
-<arithmeticExpr> <term> <N4>
-<N4> <op1> <term> <N4>
-<N4> EPS
-<term> <factor> <N5>
-<N5> <op2> <factor> <N5>
-<N5> EPS
-<factor> BO <arithmeticOrBooleanExpr> BC
-<factor> NUM
-<factor> RNUM
-<factor> <boolConstt>
-<factor> ID <N_11>
-<N_11> SQBO <element_index_with_expressions> SQBC
-<N_11> EPS
-<element_index_with_expressions> <sign> <N_10>
-<element_index_with_expressions> <arrExpr>
-<N_10> <new_index>
-<N_10> BO <arrExpr> BC
-<arrExpr> <arrTerm> <arr_N4>
-<arr_N4> <op1> <arrTerm> <arr_N4>
-<arr_N4> EPS
-<arrTerm> <arrFactor> <arr_N5>
-<arr_N5> <op2> <arrFactor> <arr_N5>
-<arr_N5> EPS
-<arrFactor> ID
-<arrFactor> BO <arrExpr> BC
-<arrFactor> <boolConstt>
-<arrFactor> NUM
-<op1> PLUS
-<op1> MINUS
-<op2> MUL
-<op2> DIV
-<logicalOp> AND
-<logicalOp> OR
-<relationalOp> LT
-<relationalOp> LE
-<relationalOp> GT
-<relationalOp> GE
-<relationalOp> EQ
-<relationalOp> NE
+<expression> <arithmeticOrBooleanExpr> {
+	traversal : bottom-up
+	<expression>.addr = <arithmeticOrBooleanExpr>.syn_addr;
+	free(<arithmeticOrBooleanExpr>);
+}
+<expression> <U> {
+	traversal : bottom-up
+	<expression>.addr = <U>.syn_addr;
+	free(<U>);
+}
+<U> <unary_op> <new_NT> {
+	traversal : top-down
+	<new_NT>.addr = makeNode('<unary_op>',NULL,<U>.addr);
+	traversal : bottom-up
+	<U>.syn_addr = <new_NT>.syn_addr;
+	free(<new_NT>);
+}
+<new_NT> BO <arithmeticExpr> BC {
+	traversal : bottom-up
+	<new_NT>.syn_addr = <arithmeticExpr>.syn_addr;
+	free(BO); 
+	free(BC);
+	free(<arithmeticExpr>);
+}
+<new_NT> <var_id_num> {
+	traversal : bottom-up
+	<new_NT>.addr = <var_id_num>.syn_addr
+	free(<var_id_num>);
+}
+<unary_op> PLUS {
+	traversal : bottom-up
+	<unary_op>.addr = PLUS.addr;
+}
+<unary_op> MINUS{
+	traversal : bottom-up
+	<unary_op>.addr = MINUS.addr
+}
+<var_id_num> ID {
+	traversal : bottom-up
+	<var_id_num>.addr = ID.addr;
+}
+<var_id_num> NUM {
+	traversal : bottom-up
+	<var_id_num>.addr = NUM.addr;
+}
+<var_id_num> RNUM {
+	traversal : bottom-up
+	<var_id_num>.addr = RNUM.addr;
+}
+<arithmeticOrBooleanExpr> <AnyTerm> <N7> {
+	traversal : top-down
+	<N7>.inh_addr = <AnyTerm>.addr;
+	traversal : bottom-up
+	<arithmeticOrBooleanExpr>.syn_addr = <N7>.syn_addr;
+	free(<N7>);
+	free(<AnyTerm>);
+}
+<N7> <logicalOp> <AnyTerm> <N7>' {
+	traversal : top-down
+	<N7>'.inh_addr = makeNode(logicalOp,NULL,<N7>.inh_addr);
+	<N7>'.inh_addr->child->next=<AnyTerm>.addr;
+	traversal : bottom-up
+	<N7>.syn_addr = <N7>'.syn_addr;
+	free(<N7>);
+	free(<AnyTerm>);
+	free(<logicalOp>);
+}
+<N7> EPS {
+	traversal : bottom-up
+	<N7>.syn_addr = <N7>.inh_addr;
+}
+<AnyTerm> <arithmeticExpr> <N8> {
+	traversal : top-down
+	<N8>.inh_addr = <arithmeticExpr>.addr;
+	traversal : bottom-up
+	<AnyTerm>.syn_addr = <N8>.syn_addr;
+	free(<N8>); 
+	free(<arithmeticExpr>);
+}
+<AnyTerm> <boolConstt> {
+	traversal : bottom-up
+	<AnyTerm>.syn_addr = <boolConstt>.syn_addr;
+	free(<boolConstt>);
+}
+<N8> <relationalOp> <arithmeticExpr>{
+	traversal : top-down
+	<arithmeticExpr>.inh_addr = <relationalOp>.addr;
+	traversal : bottom-up
+	<N8>.syn_addr = <arithmeticExpr>.syn_addr;
+	free(<arithmeticExpr>);
+	free(<relationalOp>);
+}
+<N8> EPS {
+	traversal : bottom-up
+	<N8>.syn_addr = <N8>.inh_addr;
+}
+<arithmeticExpr> <term> <N4> {
+	traversal : top-down
+	<N4>.inh_addr = <term>.addr;
+	traversal : bottom-up
+	<arithmeticExpr>.syn_addr = <N4>.syn_addr;
+	free(<term>);
+	free(<N4>);
+}
+<N4> <op1> <term> <N4>' {
+	traversal : top-down
+	<N4>'.inh_addr = makeNode(op1,NULL,<N4>.inh_addr);
+	<N4>'.inh_addr->child->next=<term>.addr;
+	traversal : bottom-up
+	<N4>.syn_addr = <N4>'.syn_addr;
+	free(<op1>);
+	free(<term>);
+	free(<N4>');
+}
+<N4> EPS {
+	traversal : bottom-up
+	<N4>.syn_addr = <N4>.inh_addr;
+}
+<term> <factor> <N5> {
+	traversal : top-down
+	<N5>.inh_addr = <factor>.addr;
+	traversal : bottom-up
+	<term>.syn_addr = <N5>.syn_addr;
+	free(<factor>); 
+	free(<N5>);
+}
+<N5> <op2> <factor> <N5>' {
+	traversal : top-down
+	<N5>'.inh_addr = makeNode(logicalOp,NULL,<N5>.inh_addr);
+	<N5>'.inh_addr->child->next=<factor>.addr;
+	traversal : bottom-up
+	<N5>.syn_addr = <N5>'.addr;
+	free(<op2>);
+	free(<factor>); 
+	free(<N5>');
+}
+<N5> EPS {
+	traversal : bottom-up
+	<N75>.syn_addr = <N5>.inh_addr;
+}
+<factor> BO <arithmeticOrBooleanExpr> BC {
+	traversal : bottom-up
+	<factor>.addr = <arithmeticOrBooleanExpr>.syn_addr;
+	free(BO); 
+	free(BC);
+	free(<arithmeticOrBooleanExpr>);
+}
+<factor> NUM {
+	traversal : bottom-up
+	<factor>.addr = NUM.addr;
+}
+<factor> RNUM {
+	traversal : bottom-up
+	<factor>.addr = RNUM.addr;
+}
+<factor> <boolConstt> {
+	traversal : bottom-up
+	<factor>.addr = <boolConstt>.addr;
+	free(<boolConstt>);
+}
+<factor> ID <N_11> {
+	traversal : top-down
+	<N_11>.inh_addr = ID.addr;
+	traversal : bottom-up
+	<factor>.syn_addr = <N_11>.syn_addr;
+	free(<N_11>);
+}
+<N_11> SQBO <element_index_with_expressions> SQBC {
+	traversal : bottom-up
+	<N_11>.addr = <element_index_with_expressions>.syn_addr; 
+	free(SQBO); 
+	free(SQBC);
+	free(<element_index_with_expressions>);
+}
+<N_11> EPS {
+	traversal : bottom-up
+	<N_11>.syn_addr = <N_11>.inh_addr;
+}
+<element_index_with_expressions> <sign> <N_10> {
+	traversal : top-down
+	<N_10>.inh_addr = <sign>.addr;
+	traversal : bottom-up
+	<element_index_with_expressions>.syn_addr = <N_10>.syn_addr;
+	free(<sign>); 
+	free(<N_10>);
+}
+<element_index_with_expressions> <arrExpr> {
+	traversal : bottom-up
+	<element_index_with_expressions>.addr = <arrExpr>.syn_addr;
+	free(<arrExpr>);
+}
+<N_10> <new_index> {
+	traversal : bottom-up
+	<N_10>.addr = <new_index>.syn_addr;
+	free(<new_index>);
+}
+<N_10> BO <arrExpr> BC {
+	traversal : bottom-up
+	<N_10>.addr = <arrExpr>.syn_addr;
+	free(BO); 
+	free(BC);
+	free(<arrExpr>);
+}
+<arrExpr> <arrTerm> <arr_N4> {
+	traversal : top-down
+	<arr_N4>.inh_addr = <arrTerm>.addr;
+	traversal : bottom-up
+	<arrExpr>.syn_addr = <arr_N4>.syn_addr;
+	free(<arrTerm>);
+	free(<arr_N4>);
+}
+<arr_N4> <op1> <arrTerm> <arr_N4> {
+	traversal : top-down
+	<arr_N4>'.inh_addr = makeNode(op1,NULL,<arr_N4>.inh_addr);
+	<arr_N4>'.inh_addr->child->next=<arrTerm>.addr;
+	traversal : bottom-up
+	<arr_N4>.syn_addr = <arr_N4>'.syn_addr;
+	free(<op1>);
+	free(<arrTerm>);
+	free(<arr_N4>);
+}
+<arr_N4> EPS {
+	traversal : bottom-up
+	<arr_N4>.syn = <arr_N4>.inh
+}
+<arrTerm> <arrFactor> <arr_N5> {
+	traversal : top-down
+	<arr_N5>.inh_addr = <arrFactor>.addr;
+	traversal : bottom-up
+	<arrTerm>.syn_addr = <arr_N5>.syn_addr;
+	free(<arrFactor>); 
+	free(<arr_N5>);
+}
+<arr_N5> <op2> <arrFactor> <arr_N5>' {
+	traversal : top-down
+	<arr_N5>'.inh_addr = makeNode(OP2,NULL,<arr_N5>.inh_addr);
+	<arr_N5>'.inh_addr->child->next=<arrFactor>.addr;
+	traversal : bottom-up
+	<arr_N5>.syn_addr = <arr_N5>'.syn_addr;
+	free(<op2>); 
+	free(<arrFactor>) 
+	free(<arr_N5>');
+}
+<arr_N5> EPS {
+	traversal : bottom-up
+	<arr_N5>.syn = <arr_N5>.inh
+}
+<arrFactor> ID {
+	traversal : bottom-up
+	<arrFactor>.addr = ID.addr;
+}
+<arrFactor> BO <arrExpr> BC {
+	traversal : bottom-up
+	<arrFactor>.addr = <arrExpr>.addr;
+	free(BO); 
+	free(BC);
+	free(<arrExpr>);
+}
+<arrFactor> <boolConstt> {
+	traversal : bottom-up
+	<arrFactor>.addr = <boolConstt>.addr;
+	free(<boolConstt>);
+}
+<arrFactor> NUM {
+	traversal : bottom-up
+	<arrFactor>.addr = NUM.addr;
+}
+<op1> PLUS {
+	traversal : bottom-up
+	<op2>.addr = PLUS.addr;
+}
+<op1> MINUS {
+	traversal : bottom-up
+	<op1>.addr = MINUS.addr;
+}
+<op2> MUL {
+	traversal : bottom-up
+	<op1>.addr = MUL.addr;
+}
+<op2> DIV {
+	traversal : bottom-up
+	<op1>.addr = DIV.addr;
+}
+<logicalOp> AND {
+	traversal : bottom-up
+	<logicalOp>.addr = AND.addr;
+}
+<logicalOp> OR {
+	traversal : bottom-up
+	<logicalOp>.addr = OR.addr;
+}
+<relationalOp> LT {
+	traversal : bottom-up
+	<relationalOp>.addr = LT.addr; 
+}
+<relationalOp> LE {
+	traversal : bottom-up
+	<relationalOp>.addr = LE.addr; 
+}
+<relationalOp> GT {
+	traversal : bottom-up
+	<relationalOp>.addr = GT.addr; 
+}
+<relationalOp> GE {
+	traversal : bottom-up
+	<relationalOp>.addr = GE.addr; 
+}
+<relationalOp> EQ {
+	traversal : bottom-up
+	<relationalOp>.addr = EQ.addr; 
+}
+<relationalOp> NE {
+	traversal : bottom-up
+	<relationalOp>.addr = NE.addr; 
+}
 
 Shreekar
 //format of makeNode function
