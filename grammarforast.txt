@@ -1,106 +1,208 @@
 Nikhil
 <program> <moduleDeclarations> <otherModules> <driverModule> <otherModules> {
+	traversal: post order
     <program>.syn_list = <moduleDeclarations>.syn_list
-    insertatend(<program>.syn_list, <otherModules1>.syn_list)
+    insertatend(<program>.syn_list, <otherModules>1.syn_list)
     insertatend(<program>.syn_list, <driverModule>.syn_addr)
-    insertatend(<program>.syn_list, <otherModules2>.syn_list)
+    insertatend(<program>.syn_list, <otherModules>2.syn_list)
+	free (moduleDeclarations)
+	free (otherModules1)
+	free (driverModule)
+	free (otherModules2)
 }
 <moduleDeclarations> <moduleDeclaration> <moduleDeclarations> {
+	traversal: post order
     <moduleDeclarations>1.syn_list = insertatbeginning(<moduleDeclarations>2.syn_list, <moduleDeclaration>.addr)
+	free (moduleDeclaration)
+	free (moduleDeclarations2)
 }
 <moduleDeclarations> EPS {
+	traversal: post order
     <moduleDeclarations>.syn_list = NULL
+	free (EPS)
 }
 <moduleDeclaration> DECLARE MODULE ID SEMICOL {
+	traversal: post order
     <moduleDeclaration>.addr = ID.addr
+	free (DECLARE)
+	free (MODULE)
+	free (SEMICOL)
 }
 <otherModules> <module> <otherModules> {
+	traversal: post order
     <otherModules>1.syn_list = insertatbeginning(<otherModules>2.syn_list, <module>.addr)
+	free (module)
+	free (otherModules2)
 }
 <otherModules> EPS {
+	traversal: post order
     <otherModules>.syn_list = NULL
+	free(EPS)
 }
 <driverModule> DRIVERDEF DRIVER PROGRAM DRIVERENDDEF <moduleDef> {
+	traversal: post order
     <driverModule>.addr = makeNode(DRIVERMODULE, moduleDef.addr)
+	free(DRIVERDEF)
+	free(DRIVER)
+	free(PROGRAM)
+	free(DRIVERENDDEF)
+	free(moduleDef)
 }
 <module> DEF MODULE ID ENDDEF TAKES INPUT SQBO <input_plist> SQBC SEMICOL <ret> <moduleDef> {
+	traversal: post order
     <module>.addr = makeNode(MODULE, ID.addr, <input_plist>.addr, <ret>.addr, <moduleDef>.addr)
+	free(DEF)
+	free(MODULE)
+	free(ENDDEF)
+	free(TAKES)
+	free(INPUT)
+	free(SQBO)
+	free(input_plist)
+	free(SQBC)
+	free(SEMICOL)
+	free(ret)
+	free(moduleDef)
 }
 <ret> RETURNS SQBO <output_plist> SQBC SEMICOL {
+	traversal: post order
     <ret>.addr = <output_plist>.addr
+	free(RETURNS)
+	free(SQBO)
+	free(output_plist)
+	free(SQBC)
+	free(SEMICOL)
 }
 <ret> EPS {
+	traversal: post order
     <ret>.addr = NULL
+	free(EPS)
 }
 <input_plist> ID COLON <dataType> <_input_plist> {
+	traversal: post order
     newnode = makeNode(INPUT_PLIST, ID.addr, <dataType>.addr)
     <input_plist>.syn_list = insertatbeginning(<_input_plist>.syn_list, newnode)
+	free(COLON)
+	free(dataType)
+	free(_input_plist)
 }
 <_input_plist> COMMA ID COLON <dataType> <_input_plist> {
     newnode = makeNode(INPUT_PLIST, ID.addr, <dataType>.addr)
     <input_plist>1.syn_list = insertatbeginning(<input_plist>2.syn_list, newnode)
+	free(COMMA)
+	free(COLON)
+	free(dataType)
+	free(_input_plist2)
 }
 <_input_plist> EPS {
+	traversal: post order
     <_input_plist>.syn_list = NULL
+	free(EPS)
 }
 <output_plist> ID COLON <_type> <_output_plist> {
+	traversal: post order
     newnode = makeNode(OUTPUT_PLIST, ID.addr, <_type>.addr)
     <output_plist>.syn_list = insertatbeginning(<_output_plist>.syn_list, newnode)
+	free(COLON)
+	free(dataType)
+	free(_output_plist)
 }
 <_output_plist> COMMA ID COLON <_type> <_output_plist> {
+	traversal: post order
     newnode = makeNode(OUTPUT_PLIST, ID.addr, <_type>.addr)
     <output_plist>1.syn_list = insertatbeginning(<output_plist>2.syn_list, newnode)
+	free(COMMA)
+	free(COLON)
+	free(dataType)
+	free(_output_plist2)
 }
 <_output_plist> EPS {
+	traversal: post order
     <_output_plist>.syn_list = NULL
+	free(EPS)
 }
 <dataType> INTEGER {
+	traversal: post order
     <dataType>.addr = INTEGER.addr
 }
 <dataType> REAL {
+	traversal: post order
     <dataType>.addr = REAL.addr
 }
 <dataType> BOOLEAN {
+	traversal: post order
     <dataType>.addr = BOOLEAN.addr
 }
 <dataType> ARRAY SQBO <range_arrays> SQBC OF <_type> {
+	traversal: post order
     <dataType>.addr = makeNode(ARRAY,<range_arrays>.addr,<_type>.addr)
+	free(ARRAY)
+	free(SQBO)
+	free(range_arrays)
+	free(SQBC)
+	free(OF)
+	free(<_type>)
 }
 <range_arrays> <index_arr> RANGEOP <index_arr> {
+	traversal: post order
     <range_arrays>.addr = makeNode(RANGE,<index_arr>1.addr,<index_arr>2.addr)
+	free(index_arr1)
+	free(RANGEOP)
+	free(index_arr2)
 }
 <_type> INTEGER {
+	traversal: post order
     <_type>.addr = INTEGER.addr
 }
 <_type> REAL {
+	traversal: post order
     <_type>.addr = REAL.addr
 }
 <_type> BOOLEAN {
+	traversal: post order
     <_type>.addr = BOOLEAN.addr
 }
 <moduleDef> START <statements> END {
+	traversal: post order
     <moduleDef>.addr = <statements>.addr
+	free(START)
+	free(statements)
+	free(end)
 }
 <statements> <statement> <statements> {
+	traversal: post order
     <statements>1.syn_list = insertatbeginning(<statements>2.syn_list, <statement>.addr)
+	free(statement)
+	free(statements2)
 }
 <statements> EPS {
+	traversal: post order
     <statements>.syn_list = NULL
+	free(EPS)
 }
 <statement> <ioStmt> {
+	traversal: post order
     <statement>.syn_addr = <ioStmt>.syn_addr
+	free(ioStmt)
 }
 <statement> <simpleStmt> {
+	traversal: post order
     <statement>.syn_addr = <simpleStmt>.syn_addr
+	free(simpleStmt)
 }
 <statement> <declareStmt> {
+	traversal: post order
     <statement>.syn_addr = <declareStmt>.syn_addr
+	free(declareStmt)
 }
 <statement> <conditionalStmt> {
+	traversal: post order
     <statement>.syn_addr = <conditionalStmt>.syn_addr
+	free(conditionalStmt)
 }
 <statement> <iterativeStmt> {
+	traversal: post order
     <statement>.syn_addr = <iterativeStmt>.syn_addr
+	free(iterativeStmt)
 }
 
 
