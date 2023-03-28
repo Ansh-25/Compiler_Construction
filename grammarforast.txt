@@ -635,7 +635,7 @@ Ansh
 }
 <op1> PLUS {
 	traversal : bottom-up
-	<op2>.addr = PLUS.addr;
+	<op1>.addr = PLUS.addr;
 }
 <op1> MINUS {
 	traversal : bottom-up
