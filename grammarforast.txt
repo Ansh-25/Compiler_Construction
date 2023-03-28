@@ -686,6 +686,12 @@ Shreekar
 //format of makeNode function
 //makeNode(type of node, value in the node, child node);
 
+<declareStmt> DECLARE <idList> COLON <dataType> SEMICOL{
+	traversal: post order
+	<declareStmt>.addr = makeNode(DECLARE, <idList>.addr, <dataType>.addr)
+	free(all RHS)
+}
+
 <conditionalStmt> SWITCH BO ID BC START <caseStmts> <_default> END  {
 	<caseStmts>.inh_addr=ID.addr
 	<_default>.inh_addr = <caseStmts>.addr.end(); //traverse through all case statements to get to the end of the case list
