@@ -32,6 +32,10 @@ typedef struct moduleDeclarationsList {
     
 }moduleDeclarationsList;
 
+typedef struct iostmt{
+    ASTNode* ID;
+}iostmt;
+
 typedef struct declstmt {
     int a,b;
 } declstmt;
@@ -46,17 +50,23 @@ typedef struct asgnstmt {
     int a,b;
 } asgnstmt;
 
+typedef struct module_node{
+    ASTNode* ID;
+    ASTList* param_list;
+}module_node;
 
 typedef union attr{
     declstmt ds;
     asgnstmt as;
+    iostmt is;
+    module_node m;
 }attr;
 
 typedef struct ASTNode {
     type t;
-    int ruleno;
-    label l;
-    attr attributes;
+    int ruleno; //reqd?
+    label l; //value? label and type both not req'd
+    attr attributes; //better keep child sibling
 }ASTNode;
 
 #endif

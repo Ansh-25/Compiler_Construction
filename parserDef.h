@@ -40,6 +40,7 @@ typedef struct TreeNode {
     type t;
     int ruleno;
     ASTNode* addr;
+    ASTList* list;
     union treenodeval val;
     struct TreeNode* child;
     struct TreeNode* sibling;
