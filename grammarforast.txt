@@ -381,6 +381,10 @@ Ansh
 	free(<U>);
 }
 <U> <unary_op> <new_NT> {
+	/*
+	U.addr = unary_op.addr;
+	unary_op.addr->child = new_NT->addr;
+	*/
 	traversal : top-down
 	<new_NT>.addr = makeNode('<unary_op>',NULL,<U>.addr);
 	traversal : bottom-up
