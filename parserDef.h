@@ -33,21 +33,20 @@ typedef struct ListNode {
 
 union treenodeval {
     non_terminal nt;
-    struct Token t;
+    struct Token* t;
 };
 
-typedef struct TreeNode {
+typedef struct ParseNode {
     type t;
     int ruleno;
     ASTNode* addr;
-    ASTList* list;
     union treenodeval val;
-    struct TreeNode* child;
-    struct TreeNode* sibling;
-}TreeNode;
+    struct ParseNode* child;
+    struct ParseNode* sibling;
+}ParseNode;
 
 typedef struct StackNode {
-    struct TreeNode* val;
+    struct ParseNode* val;
     struct StackNode* next;
 }StackNode;
 

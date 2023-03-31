@@ -4,17 +4,17 @@
 #include "astDef.h"
 //#include "parserDef.h"
 
+/*
+IMPORTANT THINGS TO REMEMBER
+
+1. make linked list using siblings.
+
+
+*/
+
 func makenode()
 
 ASTNode* astroot;
-
-// makenode will be implemented separately within each if else case
-
-// void printAST(ASTNode* root){
-//     if(root==NULL) return;
-//     printf(root->ruleno);
-
-// }
 
 ASTList* insertAtEnd(ASTList* head1,ASTList* head2){
     if(head1==NULL) return head1 = head2;
@@ -25,7 +25,7 @@ ASTList* insertAtEnd(ASTList* head1,ASTList* head2){
 }
 
 void make_ast(parserNode){
-    TreeNode* temp = parserNode->child;
+    ParseNode* temp = parserNode->child;
     while(temp!=NULL){
         makeAST(temp);
         temp = temp->sibling;
@@ -55,13 +55,13 @@ makeAST(parserNode){
 
 
         //Toshit
-        
+
         case 33:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
-            newNode->label = ID;
+            // ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            // newNode->node_type->pnode = parserNode->child->sibling->sibling;
             //newNode->val = parserNode->child->sibling->sibling->val;
-            parserNode->addr = newNode;
-            free(RHS);
+            parserNode->addr = parserNode->child->sibling->sibling;
+            free(RHS-ID);
             break;
 
         case 34:
@@ -72,13 +72,13 @@ makeAST(parserNode){
 
         case 35: 
             makeAST(parserNode->child->sibling);
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
-            newNode->label = ID;
+            //ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            //newNode->node_type->pnode = parserNode->child;
             ASTNode* newNode1 = (ASTNode*)malloc(sizseof(ASTNode));
-            newNode1->label = PRINT_ARR;
-            newNode1->child = newNode;
-            newNode1->child->sibling = parserNode->child->sibling->addr;
-            parserNode->addr = newNode1;
+            newNode->label = ARR;
+            newNode1->attr.arr_name = parserNode->child;
+            newNode1->attr.arr_index = parserNode->child->sibling->addr;
+            parserNode->addr = newNode;
             free(RHS);
             break;
 
@@ -390,7 +390,7 @@ makeAST(parserNode){
 }
 
 AST(){
-	TreeNode* parserNode = parse();
+	ParseNode* parserNode = parse();
 	makeAST(parserNode);
 	return astRoot;
 }

@@ -217,7 +217,7 @@ Toshit
 	free(PRINT) free(BO) free(BC) free(SEMICOL)
 }
 <var_print> ID <P1> {
-	<var_print>.addr = makeNode(PRINT_ARR,ID.addr,P1.addr)
+	<var_print>.addr = makeNode(ARR,ID.addr,P1.addr)
 	free(P1)
 }
 <var_print> NUM {

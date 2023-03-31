@@ -89,7 +89,7 @@ int main(int argc, char *argv[]){
             loadgrammar("grammar.txt");
             computefirstandfollow();
             createParseTable();
-            TreeNode* root = parse();
+            ParseNode* root = parse();
             printTree(root,fopen(argv[2],"w"));
             printf("\n\n");
             if(ptr != NULL)

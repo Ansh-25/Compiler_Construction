@@ -326,7 +326,7 @@ void deletelast (ListNode* head) {
     }
 }
 
-StackNode* push (StackNode* top, TreeNode* newnode) {
+StackNode* push (StackNode* top, ParseNode* newnode) {
     //printf("hi");
     StackNode* newstacknode = (StackNode*)malloc(sizeof(StackNode));
     newstacknode -> val = newnode;
@@ -340,7 +340,7 @@ int isEmpty (StackNode* top) {
     return top == NULL;
 }
 
-TreeNode* top (StackNode* top) {
+ParseNode* top (StackNode* top) {
     if (isEmpty(top))
         return NULL;
     return top->val;
@@ -618,10 +618,10 @@ void createSynchronizingSet(){
 StackNode* pushrule(int rule, StackNode* S){
 	StackNode* aux = NULL; //creates auxilliary stack
 	ListNode* x = grammar[rule]->next; //takes RHS of the grammar rule
-    TreeNode* prev = (TreeNode*)malloc(sizeof(TreeNode));
+    ParseNode* prev = (ParseNode*)malloc(sizeof(ParseNode));
 
     while(x!=NULL){
-        TreeNode* temp = (TreeNode*)malloc(sizeof(TreeNode));
+        ParseNode* temp = (ParseNode*)malloc(sizeof(ParseNode));
         if(x==grammar[rule]->next){//if this is the first node of the RHS of the rule, then we point the child pointer of the parent(i.e. top of the main stack) to it
 
             top(S)->child = temp;
@@ -648,20 +648,20 @@ StackNode* pushrule(int rule, StackNode* S){
     return S;
 }
 
-TreeNode* parse(){
+ParseNode* parse(){
     createSynchronizingSet(); //first create the synchronizing set for all non-terminals
     StackNode* S = NULL; //create stack
-    TreeNode* Eof = (TreeNode*)malloc(sizeof(TreeNode)); //create EOF TreeNode
+    ParseNode* Eof = (ParseNode*)malloc(sizeof(ParseNode)); //create EOF ParseNode
     Eof->val.t.type = TK_EOF;
     Eof->t = TERMINAL;
     Eof->sibling = NULL;
     Eof->child = NULL;
-    TreeNode* Root = (TreeNode*)malloc(sizeof(TreeNode)); //create Root TreeNode
+    ParseNode* Root = (ParseNode*)malloc(sizeof(ParseNode)); //create Root ParseNode
     Root->val.nt = program; //our start symbol is program
     Root->t = NONTERMINAL;
     Root->ruleno = 0;
     Root->sibling = NULL;
-    TreeNode* X = Root;
+    ParseNode* X = Root;
     S = push(S,Eof); //push into stack, EOF at bottom then program
     S = push(S,X);
     struct Token* L = getNextToken(); //start at the first token
@@ -743,13 +743,13 @@ TreeNode* parse(){
     return Root;
 }
 
-void printTree(TreeNode* root, FILE* fp) {
+void printTree(ParseNode* root, FILE* fp) {
     if(root==NULL) return;
     if(!fp){
         printf("\nERROR: file pointer invalid\n\n");
         exit(1);
     }
-    TreeNode* curr = root->child;
+    ParseNode* curr = root->child;
     printTree(root->child,fp);
     if(root->t==TERMINAL && root->val.t.type==TK_NUM) fprintf(fp,"Terminal %s with token value %d\n", mapttokentostring(root->val.t.type),root->val.t.val.integer);
     else if(root->t==TERMINAL && root->val.t.type==TK_RNUM) {fprintf(fp,"Terminal %s with token value %lf\n", mapttokentostring(root->val.t.type),root->val.t.val.decimal);}

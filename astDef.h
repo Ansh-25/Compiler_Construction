@@ -12,9 +12,9 @@
 #include "parserDef.h"
 #include <stdlib.h>
 
-typedef enum {PROGRAM_NODE} label;
+typedef enum {PROGRAM_NODE} Label;
 
-typedef struct ASTList {
+/*typedef struct ASTList {
     ASTNode* Node;
     ASTList* next;
 }ASTList;
@@ -55,18 +55,26 @@ typedef struct module_node{
     ASTList* param_list;
 }module_node;
 
-typedef union attr{
+typedef struct arr_node{
+    ParseNode* arr_name;
+    ParseNode* arr_index;
+}arr_node;
+
+typedef union attributes{
     declstmt ds;
     asgnstmt as;
     iostmt is;
     module_node m;
-}attr;
+    arr_node a_node;
+}attr;*/
 
-typedef struct ASTNode {
-    type t;
-    int ruleno; //reqd?
-    label l; //value? label and type both not req'd
-    attr attributes; //better keep child sibling
+typedef struct ASTNode{
+    Label label;
+    struct token* tk;
+    ASTNode* child;
+    ASTNode* sibling;
 }ASTNode;
+
+
 
 #endif
