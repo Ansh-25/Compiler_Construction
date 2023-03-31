@@ -599,7 +599,7 @@ void createParseTable(){ //creating the parse table
 void printStack(StackNode* S) {
     for (StackNode* curr = S; curr != NULL; curr = curr -> next) {
         if (curr->val->t == TERMINAL)
-            printf("TERMINAL: %s\t",mapttokentostring(curr->val->val.t.type));
+            printf("TERMINAL: %s\t",mapttokentostring(curr->val->val.t->type));
         else
             printf("NONTERMINAL: %s\t",mapnttostring(curr->val->val.nt));
     }
@@ -628,7 +628,8 @@ StackNode* pushrule(int rule, StackNode* S){
         }
         temp->t = x->val.t; //initialise the TreeNode with information of the grammar character depending on whether it is a terminal or non-terminal
         if(x->val.t==TERMINAL){
-            temp->val.t.type = x->val.g.t;
+            temp->val.t = (struct Token*)malloc(sizeof(struct Token));
+            temp->val.t->type = x->val.g.t;
         }
         else
             temp->val.nt = x->val.g.nt;
@@ -652,7 +653,8 @@ ParseNode* parse(){
     createSynchronizingSet(); //first create the synchronizing set for all non-terminals
     StackNode* S = NULL; //create stack
     ParseNode* Eof = (ParseNode*)malloc(sizeof(ParseNode)); //create EOF ParseNode
-    Eof->val.t.type = TK_EOF;
+    Eof->val.t = (struct Token*)malloc(sizeof(struct Token));
+    Eof->val.t->type = TK_EOF;
     Eof->t = TERMINAL;
     Eof->sibling = NULL;
     Eof->child = NULL;
@@ -673,9 +675,9 @@ ParseNode* parse(){
         //printf("hi");
         X = top(S); //get top of stack
         if(X->t==TERMINAL){ //if top of stack is terminal,
-            if(X->val.t.type == L->type){
+            if(X->val.t->type == L->type){
                 X->t = TERMINAL; //we convert the treenode to leafnode,
-                X->val.t = *L;
+                X->val.t = L;
                 S = pop(S); //pop the terminal at the top of the stack
                 if (L -> type == TK_EOF) { //if we reach the end of the file, then break
                     break;
@@ -686,14 +688,14 @@ ParseNode* parse(){
                     L -> type = TK_EOF;
                 }
             }
-            else if(X->val.t.type==TK_SEMICOLON && L->type==TK_END){
+            else if(X->val.t->type==TK_SEMICOLON && L->type==TK_END){
                 printf("\nERROR : Expected semicolon at line no %d \n",L->lineNo);
                 S = pop(S);
             }
             else{ //if we the top of the stack is a different terminal to the token, then we have an error
                 printf("\nSyntax Error at line no %d ... terminal mismatch\n",L->lineNo);
                 printf("actual : %s\n",mapttokentostring(L->type));
-                printf("exp : %s\n",mapttokentostring(X->val.t.type));
+                printf("exp : %s\n",mapttokentostring(X->val.t->type));
                 S = pop(S); //we pop the stack and also get the next token
                 if (L -> type == TK_EOF) { //if we reach the end of the file, then break
                     break;
@@ -717,7 +719,7 @@ ParseNode* parse(){
                 // printStack(S);
             }
 
-            else if(contains(synchronizingSet[X->val.t.type],L->type)){ //otherwise if we can't find the right rule, check if the non-terminal contains the top of the stack in the synchronizing set. if yes, we can pop the stack and continue
+            else if(contains(synchronizingSet[X->val.nt],L->type)){ //otherwise if we can't find the right rule, check if the non-terminal contains the top of the stack in the synchronizing set. if yes, we can pop the stack and continue
                 printf("\nSyntax Error at line no %d ... non-terminal mismatch, popping stack\n",L->lineNo);
                 S = pop(S);
             }
@@ -751,9 +753,9 @@ void printTree(ParseNode* root, FILE* fp) {
     }
     ParseNode* curr = root->child;
     printTree(root->child,fp);
-    if(root->t==TERMINAL && root->val.t.type==TK_NUM) fprintf(fp,"Terminal %s with token value %d\n", mapttokentostring(root->val.t.type),root->val.t.val.integer);
-    else if(root->t==TERMINAL && root->val.t.type==TK_RNUM) {fprintf(fp,"Terminal %s with token value %lf\n", mapttokentostring(root->val.t.type),root->val.t.val.decimal);}
-    else if(root->t==TERMINAL) {fprintf(fp,"Terminal %s with token value %s\n", mapttokentostring(root->val.t.type),root->val.t.val.identifier);}
+    if(root->t==TERMINAL && root->val.t->type==TK_NUM) fprintf(fp,"Terminal %s with token value %d\n", mapttokentostring(root->val.t->type),root->val.t->val.integer);
+    else if(root->t==TERMINAL && root->val.t->type==TK_RNUM) {fprintf(fp,"Terminal %s with token value %lf\n", mapttokentostring(root->val.t->type),root->val.t->val.decimal);}
+    else if(root->t==TERMINAL) {fprintf(fp,"Terminal %s with token value %s\n", mapttokentostring(root->val.t->type),root->val.t->val.identifier);}
     else fprintf(fp,"Non-Terminal %s\n",mapnttostring(root->val.nt));
     if (curr != NULL)
         curr=curr->sibling;

@@ -37,7 +37,7 @@ Non-Terminal _type
 Terminal TK_COMMA with token value ,
 Non-Terminal _input_plist
 Terminal TK_ID with token value n
-Terminal TK_COLON with token value 
+Terminal TK_COLON with token value ð­ºð­ºð­ºð­ºð­ºð­ºð­ºð­º««««««««««««««««îþîþîþîþ
 Non-Terminal dataType
 Non-Terminal _input_plist
 Terminal TK_SQBC with token value ]
@@ -87,7 +87,7 @@ Terminal TK_FOR with token value for
 Non-Terminal iterativeStmt
 Terminal TK_BO with token value (
 Terminal TK_ID with token value index
-Terminal TK_IN with token value 
+Terminal TK_IN with token value ð­ºð­ºð­ºð­ºð­ºð­ºð­ºð­º««««««««««««««««îþîþîþîþ
 Non-Terminal sign_for_loop
 Non-Terminal index_for_loop
 Terminal TK_NUM with token value 1
@@ -309,7 +309,7 @@ Non-Terminal moduleReuseStmt
 Terminal TK_USE with token value use
 Terminal TK_MODULE with token value module
 Terminal TK_ID with token value readArr
-Terminal TK_WITH with token value 
+Terminal TK_WITH with token value ð­ºð­ºð­ºð­ºð­ºð­ºð­ºð­º««««««««««««««««îþîþîþîþ
 Terminal TK_PARAMETERS with token value parameters
 Non-Terminal sign
 Non-Terminal actual_para_list
@@ -393,7 +393,7 @@ Terminal TK_ID with token value s
 Non-Terminal var_print
 Non-Terminal P1
 Terminal TK_BC with token value )
-Terminal TK_SEMICOLON with token value 
+Terminal TK_SEMICOLON with token value ð­ºð­ºð­ºð­ºð­ºð­ºð­ºð­º««««««««««««««««îþîþîþîþ
 Non-Terminal statement
 Non-Terminal statements
 Non-Terminal statements
@@ -542,9 +542,9 @@ Non-Terminal sign
 Non-Terminal index_arr
 Terminal TK_ID with token value P
 Non-Terminal new_index
-Terminal TK_SQBC with token value 
-Terminal TK_BC with token value 
-Terminal TK_SEMICOLON with token value 
+Terminal TK_SQBC with token value ð­ºð­ºð­ºð­ºð­ºð­ºð­ºð­º««««««««««««««««îþîþîþîþ
+Terminal TK_BC with token value ð­ºð­ºð­ºð­ºð­ºð­ºð­ºð­º««««««««««««««««îþîþîþîþ
+Terminal TK_SEMICOLON with token value ð­ºð­ºð­ºð­ºð­ºð­ºð­ºð­º««««««««««««««««îþîþîþîþ
 Non-Terminal statement
 Non-Terminal statements
 Terminal TK_ID with token value index
