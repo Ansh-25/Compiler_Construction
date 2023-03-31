@@ -22,6 +22,7 @@ ASTList* insertAtEnd(ASTList* head1,ASTList* head2){
     while(head1->next != NULL) head1 = head1 -> next;
     head1 -> next = head2;
     return head1;
+	//shreekar: wouldn't this return the second last node in the list and not the list itself?
 }
 
 void make_ast(parserNode){
