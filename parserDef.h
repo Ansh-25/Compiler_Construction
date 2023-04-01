@@ -39,7 +39,7 @@ union treenodeval {
 typedef struct ParseNode {
     type t;
     int ruleno;
-    ASTNode* addr;
+    struct ASTNode* addr;
     union treenodeval val;
     struct ParseNode* child;
     struct ParseNode* sibling;

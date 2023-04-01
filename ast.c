@@ -2,7 +2,8 @@
 #include <string.h>
 #include <stdio.h>
 #include "astDef.h"
-//#include "parserDef.h"
+#include "parserDef.h"
+
 
 /*
 IMPORTANT THINGS TO REMEMBER
@@ -12,7 +13,7 @@ IMPORTANT THINGS TO REMEMBER
 
 */
 
-func makenode()
+/*func makenode()
 
 ASTNode* astroot;
 
@@ -31,17 +32,17 @@ void make_ast(parserNode){
         makeAST(temp);
         temp = temp->sibling;
     }
-}
+}*/
 
 //rule no for leafnodes is same as that of their parents, change in parser;
-void makeAST(ParseNode* parserNode){
+void makeAST(struct ParseNode* parserNode){
     switch(parserNode->ruleno) {
-        case 0:
+        /*case 0:
             makeAST(parserNode->child);
             makeAST(parserNode->child->sibling);
             makeAST(parserNode->child->sibling->sibling);
             makeAST(parserNode->child->sibling->sibling->sibling);
-            astroot = (ASTNode*)malloc(sizseof(ASTNode));
+            astroot = (ASTNode*)malloc(sizeof(ASTNode));
             astroot->label = PROGRAM_NODE;
             astroot->moduleDeclarationsList = parserNode->child->addr;
             astroot->moduleList = parserNode->child->sibling->addr;
@@ -58,7 +59,7 @@ void makeAST(ParseNode* parserNode){
         //Toshit
 
         case 33:
-            // ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            // ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             // newNode->node_type->pnode = parserNode->child->sibling->sibling;
             //newNode->val = parserNode->child->sibling->sibling->val;
             parserNode->addr = parserNode->child->sibling->sibling;
@@ -73,9 +74,9 @@ void makeAST(ParseNode* parserNode){
 
         case 35: 
             makeAST(parserNode->child->sibling);
-            //ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            //ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             //newNode->node_type->pnode = parserNode->child;
-            ASTNode* newNode1 = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode1 = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = ARR;
             newNode1->attr.arr_name = parserNode->child;
             newNode1->attr.arr_index = parserNode->child->sibling->addr;
@@ -84,14 +85,14 @@ void makeAST(ParseNode* parserNode){
             break;
 
         case 36:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = NUM;
             parserNode->addr = newNode;
             free(RHS);
             break;
 
         case 37:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = RNUM;
             parserNode->addr = newNode;
             free(RHS);
@@ -104,14 +105,14 @@ void makeAST(ParseNode* parserNode){
             break;
 
         case 39:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = TRUE;
             parserNode->addr = newNode;
             free(RHS);
             break;
 
         case 40:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = FALSE;
             parserNode->addr = newNode;
             free(RHS);
@@ -141,7 +142,7 @@ void makeAST(ParseNode* parserNode){
             break;
 
         case 45: 
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = ID;
             parserNode->child->sibling->addr = newNode;
             makeAST(parserNode->child->sibling);
@@ -165,10 +166,10 @@ void makeAST(ParseNode* parserNode){
 
         case 48:
             makeAST(parserNode->child->sibling); //for <expression>.addr
-            ASTNode* newNode1 = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode1 = (ASTNode*)malloc(sizeof(ASTNode));
             newNode1->l = lhs_var;
             newNode1->child = parserNode->addr;
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = assignop;
             newNode->child = newNode1;
             newNode->child->sibling = parserNode->child->sibling->addr;
@@ -179,11 +180,11 @@ void makeAST(ParseNode* parserNode){
         case 49:
             makeAST(parserNode->child->sibling);
             makeAST(parserNode->child->sibling->sibling->sibling->sibling);
-            ASTNode* newNode1 = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode1 = (ASTNode*)malloc(sizeof(ASTNode));
             newNode1->l = lhs_arr;
             newNode1->child = parserNode->addr;
             newNode1->child->sibling = parserNode->child->sibling->addr;
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = assignop;
             newNode->child = newNode1;
             newNode->child->sibling = parserNode->child->sibling->sibling->sibling->sibling->addr;
@@ -194,7 +195,7 @@ void makeAST(ParseNode* parserNode){
         case 50:
             makeAST(parserNode->child);
             makeAST(parserNode->child->sibling);
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = arr_index;
             newNode->child = parserNode->child->addr;
             newNode->child->sibling = parserNode->child->sibling->addr;
@@ -203,28 +204,28 @@ void makeAST(ParseNode* parserNode){
             break;
 
         case 51:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = NUM;
             parserNode->addr = newNode;
             free(RHS);
             break;
         
         case 52:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = ID;
             parserNode->addr = newNode;
             free(RHS);
             break;
 
         case 53:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = PLUS;
             parserNode->addr = newNode;
             free(RHS);
             break;
 
         case 54:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = MINUS;
             parserNode->addr = newNode;
             free(RHS);
@@ -236,7 +237,7 @@ void makeAST(ParseNode* parserNode){
             break;
 
         case 56: 
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = ID; //parserNode->child->sibling->sibling->sibling
             parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->addr = newNode;
             makeAST(parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling);
@@ -249,11 +250,11 @@ void makeAST(ParseNode* parserNode){
         case 57: 
             makeAST(parserNode->child); //<K>
             makeAST(parserNode->child->sibling); //<N_12>
-            ASTNode* newNode1 = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode1 = (ASTNode*)malloc(sizeof(ASTNode));
             newNode1->l = u_param;
             newNode1->child = parserNode->child->addr;
             parserNode->list = insertatFront(parserNode->child->sibling->list,newNode1);
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->l = module;
             newNode->attr->m.ID = parserNode->addr;
             newNode->attr->m.param_list = parserNode->list;
@@ -265,12 +266,12 @@ void makeAST(ParseNode* parserNode){
             makeAST(parserNode->child);//<sign>
             makeAST(parserNode->child->sibling); //<K>
             makeAST(parserNode->child->sibling->sibling); //<N_12>
-            ASTNode* newNode1 = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode1 = (ASTNode*)malloc(sizeof(ASTNode));
             newNode1->l = s_param;
             newNode1->child = parserNode->child->addr;
             newNode1->child->sibling = parserNode->child->sibling->addr;
             parserNode->list = insertatFront(parserNode->child->sibling->sibling->list,newNode1);
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->l = module;
             newNode->attr->m.ID = parserNode->addr;
             newNode->attr->m.param_list = parserNode->list;
@@ -282,7 +283,7 @@ void makeAST(ParseNode* parserNode){
             makeAST(parserNode->child->sibling);//<sign>
             makeAST(parserNode->child->sibling->sibling); //<K>
             makeAST(parserNode->child->sibling->sibling->sibling); //<N_12>
-            ASTNode* newNode1 = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode1 = (ASTNode*)malloc(sizeof(ASTNode));
             if(parserNode->child->sibling->addr!=NULL){
                 newNode1->l = s_param;
                 newNode1->child = parserNode->child->sibling->addr;
@@ -303,14 +304,14 @@ void makeAST(ParseNode* parserNode){
             break;
 
         case 61:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = NUM;
             parserNode->addr = newNode;
             free(RHS);
             break;
 
         case 62:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = RNUM;
             parserNode->addr = newNode;
             free(RHS);
@@ -324,9 +325,9 @@ void makeAST(ParseNode* parserNode){
 
         case 64:
             makeAST(parserNode->child->sibling);
-            ASTNode* newNode1 = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode1 = (ASTNode*)malloc(sizeof(ASTNode));
             newNode1->l = ID;
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->l = arr;
             newNode->child = newNode1;
             newNode->child->sibling = parserNode->child->sibling->addr;
@@ -336,7 +337,7 @@ void makeAST(ParseNode* parserNode){
             
         case 65:
             makeAST(parserNode->child->sibling);
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = Optional1;
             newNode->child = parserNode->child->sibling->addr;
             newNode->child->sibling = parserNode->addr;
@@ -345,7 +346,7 @@ void makeAST(ParseNode* parserNode){
             break;
 
         case 66:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = Optional1;
             newNode->child = parserNode->addr;
             parserNode->addr = newNode;
@@ -354,7 +355,7 @@ void makeAST(ParseNode* parserNode){
 
         case 67:
             makeAST(parserNode->child->sibling);
-            ASTNode* newNode1 = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode1 = (ASTNode*)malloc(sizeof(ASTNode));
             newNode1->l = ID;
             parserNode->addr = insertatFront(parserNode->child->sibling->list,newNode1);
             free(RHS);
@@ -362,7 +363,7 @@ void makeAST(ParseNode* parserNode){
 
         case 68:
             makeAST(parserNode->child->sibling->sibling);
-            ASTNode* newNode1 = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode1 = (ASTNode*)malloc(sizeof(ASTNode));
             newNode1->l = ID;
             parserNode->list = insertatFront(parserNode->child->sibling->sibling->list,newNode1);
             free(RHS);
@@ -371,7 +372,7 @@ void makeAST(ParseNode* parserNode){
         case 69:
             parserNode->list = new ASTList;
             free(RHS);
-            break;
+            break;*/
 
 
         case 70:
@@ -395,8 +396,10 @@ void makeAST(ParseNode* parserNode){
         case 73:
             makeAST(parserNode->child->sibling);
             parserNode->addr = parserNode->child->sibling->addr;
+            free(parserNode->child->sibling->sibling->val.t);
             free(parserNode->child->sibling->sibling);
             free(parserNode->child->sibling);
+            free(parserNode->child->val.t);
             free(parserNode->child);
 
         case 74:
@@ -405,7 +408,7 @@ void makeAST(ParseNode* parserNode){
             free(parserNode->child);
 
         case 75:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = UNARY_PLUS;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -414,7 +417,7 @@ void makeAST(ParseNode* parserNode){
             free(parserNode->child);
         
         case 76:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = UNARY_MINUS;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -423,7 +426,7 @@ void makeAST(ParseNode* parserNode){
             free(parserNode->child);
 
         case 77:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = ID;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -432,7 +435,7 @@ void makeAST(ParseNode* parserNode){
             free(parserNode->child);
 
         case 78:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = NUM;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -441,7 +444,7 @@ void makeAST(ParseNode* parserNode){
             free(parserNode->child);
 
         case 79:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = RNUM;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -471,6 +474,7 @@ void makeAST(ParseNode* parserNode){
 
         case 82:
             parserNode->addr = parserNode->child->addr;
+            free(parserNode->child->val.t);
             free(parserNode->child);
 
         case 83:
@@ -497,6 +501,7 @@ void makeAST(ParseNode* parserNode){
 
         case 86:
             parserNode->addr = parserNode->child->addr;
+            free(parserNode->child->val.t);
             free(parserNode->child);
 
         case 87:
@@ -521,6 +526,7 @@ void makeAST(ParseNode* parserNode){
 
         case 89:
             parserNode->addr = parserNode->child->addr;
+            free(parserNode->child->val.t);
             free(parserNode->child);
 
         case 90:
@@ -545,17 +551,20 @@ void makeAST(ParseNode* parserNode){
 
         case 92:
             parserNode->addr = parserNode->child->addr;
+            free(parserNode->child->val.t);
             free(parserNode->child);
 
         case 93:
             makeAST(parserNode->child->sibling);
             parserNode->addr = parserNode->child->sibling->addr;
+            free(parserNode->child->sibling->sibling->val.t);
             free(parserNode->child->sibling->sibling);
             free(parserNode->child->sibling);
+            free(parserNode->child->val.t);
             free(parserNode->child);
 
         case 94:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = NUM;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -564,7 +573,7 @@ void makeAST(ParseNode* parserNode){
             free(parserNode->child);
 
         case 95:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = RNUM;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -578,13 +587,13 @@ void makeAST(ParseNode* parserNode){
             free(parserNode->child);
 
         case 97:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = ID;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
             newNode->sibling = NULL;
             makeAST(parserNode->child->sibling);
-            ASTNode* newNode1 = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode1 = (ASTNode*)malloc(sizeof(ASTNode));
             newNode1->label = ARRAY;
             newNode1->child = newNode;
             newNode1->child->sibling = parserNode->child->sibling->addr;
@@ -595,18 +604,21 @@ void makeAST(ParseNode* parserNode){
         case 98:
             makeAST(parserNode->child->sibling);
             parserNode->addr = parserNode->child->sibling->addr;
+            free(parserNode->child->sibling->sibling->val.t);
             free(parserNode->child->sibling->sibling);
             free(parserNode->child->sibling);
+            free(parserNode->child->val.t);
             free(parserNode->child); 
 
         case 99:
-            parserNode->addr = NULL;
-            free(parserNode->child); 
+            parserNode->addr = parserNode->child->addr;
+            free(parserNode->child->val.t);
+            free(parserNode->child);
 
         case 100:
             makeAST(parserNode->child);
             makeAST(parserNode->child->sibling);
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = ARR_INDEX1;
             newNode->child = parserNode->child->addr;
             newNode->child->sibling = parserNode->child->sibling->addr;
@@ -615,7 +627,7 @@ void makeAST(ParseNode* parserNode){
 
         case 101:
             makeAST(parserNode->child);
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = ARR_INDEX2;
             newNode->child = parserNode->child->addr;
             free(parserNode->child);
@@ -628,8 +640,10 @@ void makeAST(ParseNode* parserNode){
         case 103:
             makeAST(parserNode->child->sibling);
             parserNode->addr = parserNode->child->sibling->addr;
+            free(parserNode->child->sibling->sibling->val.t);
             free(parserNode->child->sibling->sibling);
             free(parserNode->child->sibling);
+            free(parserNode->child->val.t);
             free(parserNode->child);
 
         case 104:
@@ -654,6 +668,7 @@ void makeAST(ParseNode* parserNode){
 
         case 106:
             parserNode->addr = parserNode->child->addr;
+            free(parserNode->child->val.t);
             free(parserNode->child);
 
         case 107:
@@ -678,10 +693,11 @@ void makeAST(ParseNode* parserNode){
 
         case 109:
             parserNode->addr = parserNode->child->addr;
+            free(parserNode->child->val.t);
             free(parserNode->child);
 
         case 110:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = ID;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -692,19 +708,21 @@ void makeAST(ParseNode* parserNode){
         case 111:
             makeAST(parserNode->child->sibling);
             parserNode->addr = parserNode->child->sibling->addr;
+            free(parserNode->child->sibling->sibling->val.t);
             free(parserNode->child->sibling->sibling);
             free(parserNode->child->sibling);
+            free(parserNode->child->val.t);
             free(parserNode->child);
 
         case 112:
             makeAST(parserNode->child);
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = ARR_INDEX2;
             newNode->child = parserNode->child->addr;
             free(parserNode->child);
 
         case 113:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = NUM;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -713,7 +731,7 @@ void makeAST(ParseNode* parserNode){
             free(parserNode->child);
 
         case 114:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = PLUS;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -722,7 +740,7 @@ void makeAST(ParseNode* parserNode){
             free(parserNode->child);
 
         case 115:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = MINUS;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -731,7 +749,7 @@ void makeAST(ParseNode* parserNode){
             free(parserNode->child);
 
         case 116:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = MUL;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -740,7 +758,7 @@ void makeAST(ParseNode* parserNode){
             free(parserNode->child);
 
         case 117:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = DIV;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -749,7 +767,7 @@ void makeAST(ParseNode* parserNode){
             free(parserNode->child);
 
         case 118:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = AND;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -758,7 +776,7 @@ void makeAST(ParseNode* parserNode){
             free(parserNode->child);
 
         case 119:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = OR;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -767,7 +785,7 @@ void makeAST(ParseNode* parserNode){
             free(parserNode->child);
 
         case 120:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = LT;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -776,7 +794,7 @@ void makeAST(ParseNode* parserNode){
             free(parserNode->child);
 
         case 121:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = LE;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -785,7 +803,7 @@ void makeAST(ParseNode* parserNode){
             free(parserNode->child);
 
         case 122:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = GT;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -794,7 +812,7 @@ void makeAST(ParseNode* parserNode){
             free(parserNode->child);
 
         case 123:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = GE;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -803,7 +821,7 @@ void makeAST(ParseNode* parserNode){
             free(parserNode->child);
 
         case 124:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = EQ;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;
@@ -812,7 +830,7 @@ void makeAST(ParseNode* parserNode){
             free(parserNode->child);
 
         case 125:
-            ASTNode* newNode = (ASTNode*)malloc(sizseof(ASTNode));
+            ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = NE;
             newNode->tk = parserNode->child->val.t;
             newNode->child = NULL;

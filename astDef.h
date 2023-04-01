@@ -12,7 +12,7 @@
 #include "parserDef.h"
 #include <stdlib.h>
 
-typedef enum {PROGRAM_NODE} Label;
+typedef enum {UNARY_PLUS, UNARY_MINUS, ID, NUM, RNUM, ARR_INDEX1, ARR_INDEX2, PLUS, MINUS, MUL, DIV, AND, OR, LT, LE, GT, GE, EQ, NE} Label;
 
 /*typedef struct ASTList {
     ASTNode* Node;
@@ -71,10 +71,9 @@ typedef union attributes{
 typedef struct ASTNode{
     Label label;
     struct token* tk;
-    ASTNode* child;
-    ASTNode* sibling;
+    struct ASTNode* child;
+    struct ASTNode* sibling;
 }ASTNode;
-
 
 
 #endif
