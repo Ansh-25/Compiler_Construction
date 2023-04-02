@@ -40,7 +40,7 @@
 //in each of the nodes, be it +,-,*,/,<,>... we check the datatype of the 2 children nodes
 //if they are not equal, throw an error
 /if they are equal, then pass this datatype into the AST node. Then continue up (basically do bottom-up traversal)
-//whenever we get <relationalOp>, we just directly put AST node datatype as bool (5>3.5 is allowed)
+//whenever we get <relationalOp>, we just directly put AST node datatype as bool, as long as  both sides of the relationalOp is the same datatype(5>3.5 is not allowed)
 
 //now incorporating array indexes
 //make sure the <element_index_with_expression> datatype is always NUM(since that's all that can be passed into an array
@@ -70,9 +70,3 @@
 	if(ST[<index_for_loop>1] != ST[<index_for_loop>2]) return error
 	<range_for_loop>.dataType = <index_for_loop>1.dataType;
 }
-
-
-
-
-
-
