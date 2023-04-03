@@ -27,10 +27,15 @@ typedef union Type{
     Array_tuple at;
 }Type;
 
+typedef struct DataType{
+    bool is_primitive;
+    Type t;
+}DataType;
+
 typedef struct ASTNode{
     Label label;
     struct Token* tk;
-    Type type;
+    DataType type;
     struct ASTNode* child;
     struct ASTNode* sibling;
 }ASTNode;
