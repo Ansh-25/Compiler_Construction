@@ -12,65 +12,25 @@
 #include "parserDef.h"
 #include <stdlib.h>
 
-typedef enum {UNARY_PLUS, UNARY_MINUS, ID, NUM, RNUM, ARRAY, ARR_INDEX1, ARR_INDEX2, PLUS, MINUS, MUL, DIV, AND, OR, LT, LE, GT, GE, EQ, NE, MODULEDECLARATION, DRIVERMODULE, MODULE, RET, PARAMETER, INTEGER, REAL, BOOLEAN, RANGE, STATEMENTS, INPUT, OUTPUT, ARR_OUTPUT, TRUE, FALSE, ASSIGN, ARR_ASSIGN, INDEX_ARR} Label;
+typedef enum {UNARY_PLUS, UNARY_MINUS, ID, NUM, RNUM, ARRAY, ARR_INDEX1, ARR_INDEX2, PLUS, MINUS, MUL, DIV, AND, OR, LT, LE, GT, GE, EQ, NE, MODULEDECLARATION, DRIVERMODULE, MODULE, RET, PARAMETER, INTEGER_, REAL_, BOOLEAN_, RANGE, STATEMENTS, INPUT, OUTPUT, ARR_OUTPUT, TRUE, FALSE, ASSIGN, ARR_ASSIGN, INDEX_ARR} Label;
 
-/*typedef struct ASTList {
-    ASTNode* Node;
-    ASTList* next;
-}ASTList;
+typedef enum {INTEGER, REAL, BOOLEAN} Prim_type;
 
-typedef struct programNode {
-    moduleDeclarationsList* moduleDecList;
-    ASTList* moduleList;
-}programNode;
+typedef struct Array_tuple{
+    Prim_type pt;;
+    int lower_bound;
+    int upper_bound;
+}Array_tuple;
 
-typedef struct otherModulesNode {
-    ASTList* moduleList;
-}otherModulesNode;
-
-typedef struct moduleDeclarationsList {
-    
-}moduleDeclarationsList;
-
-typedef struct iostmt{
-    ASTNode* ID;
-}iostmt;
-
-typedef struct declstmt {
-    int a,b;
-} declstmt;
-
-typedef struct itrstmt {
-    ASTNode* ID;
-    ASTNode* range;
-    ASTNode* statements;
-} itrstmt;
-
-typedef struct asgnstmt {
-    int a,b;
-} asgnstmt;
-
-typedef struct module_node{
-    ASTNode* ID;
-    ASTList* param_list;
-}module_node;
-
-typedef struct arr_node{
-    ParseNode* arr_name;
-    ParseNode* arr_index;
-}arr_node;
-
-typedef union attributes{
-    declstmt ds;
-    asgnstmt as;
-    iostmt is;
-    module_node m;
-    arr_node a_node;
-}attr;*/
+typedef union Type{
+    Prim_type pt;
+    Array_tuple at;
+}Type;
 
 typedef struct ASTNode{
     Label label;
     struct Token* tk;
+    Type type;
     struct ASTNode* child;
     struct ASTNode* sibling;
 }ASTNode;
