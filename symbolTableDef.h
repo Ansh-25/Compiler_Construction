@@ -52,7 +52,7 @@ void insertVar(ModuleTableEntry** table, ModuleTableEntry* new_var) {
     table[ind] = new_var;
 }
 
-ModuleTableEntry* searchModule(ModuleTableEntry** table, char* varName) {
+ModuleTableEntry* searchVar(ModuleTableEntry** table, char* varName) {
     int ind = sumchars(varName);
     while(table[ind]!=NULL){
         if(strcmp(varName, table[ind] -> identifier)==0) return table[ind];
@@ -75,4 +75,11 @@ ParamList* insertlast (ParamList* head, ParamList* newNode) {
     return head;
 }
 
+bool compare_Datatype(Datatype d1, Datatype d2){
+    if(d1.is_primitive!=d2.is_primitive)
+        return false;
+    if(d1.type!=d2.type)
+        return false;
+    return true;
+}
 #endif

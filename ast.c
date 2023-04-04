@@ -1025,6 +1025,23 @@ void makeAST(struct ParseNode* parserNode){
             free(RHS);
             break;*/
 
+        case 67:
+            makeAST(parserNode->child->sibling);
+            newNode = (ASTNode*)malloc(sizeof(ASTNode));
+            newNode->label = ID;
+            newNode->tk = parserNode->child->val.t;
+            newNode->child = NULL;
+            newNode->sibling = parserNode->child->sibling->addr;
+            newNode1 = (ASTNode*)malloc(sizeof(ASTNode));
+            newNode1->label = ID_LIST;
+            newNode1->tk = NULL;
+            newNode1->child = newNode;
+            newNode1->sibling = NULL;
+            parserNode->addr = newNode1;
+            free(parserNode->child->sibling);
+            free(parserNode->child);
+            break;
+
 
         case 69:
             makeAST(parserNode->child);
@@ -1543,7 +1560,26 @@ void makeAST(struct ParseNode* parserNode){
             newNode->sibling = NULL;
             parserNode->addr = newNode;
             free(parserNode->child);
-            break;       
+            break;     
+
+        case 125:
+            makeAST(parserNode->child->sibling);
+            makeAST(parserNode->child->sibling->sibling->sibling);
+            newNode = (ASTNode*)malloc(sizeof(ASTNode));
+            newNode->label = DECLARE;
+            newNode->tk = NULL; 
+            newNode->child = parserNode->child->sibling->addr;
+            newNode->child->sibling = parserNode->child->sibling->sibling->sibling->addr;
+            parserNode->addr = newNode;
+            free(parserNode->child->sibling->sibling->sibling->sibling->val.t);
+            free(parserNode->child->sibling->sibling->sibling->sibling);
+            free(parserNode->child->sibling->sibling->sibling);
+            free(parserNode->child->sibling->sibling->val.t);
+            free(parserNode->child->sibling->sibling);
+            free(parserNode->child->sibling);
+            free(parserNode->child->val.t);
+            free(parserNode->child);
+            break;
 
         default:
             printf("Bye\n");
