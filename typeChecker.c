@@ -32,6 +32,7 @@ typechecker(ASTNode* astNode){
             typechecker(astNode->sibling);
             break;
 
+
         case 38: //case declare
             DataType d = astNode->child->sibling->type;
             ASTNode* idList = astNode->child->child;

@@ -8,7 +8,7 @@
 
 #include "parserDef.h"
 
-#define NO_RULES 141 //No. of grammar rules: 141
+#define NO_RULES 139 //No. of grammar rules: 141
 #define NO_TERMS 58 //No. of terminals: 58
 #define NO_NONTERMS 72 //No. of Non Terminals: 72
 #define MAXTERMLEN 50 // length of maximum terminal/nonterminal
