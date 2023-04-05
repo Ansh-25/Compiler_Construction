@@ -561,7 +561,7 @@ void createParseTable(){ //creating the parse table
     int s = (NO_TERMS-1)*(NO_NONTERMS);
     memset(parseTable,-1,s*sizeof(int));
 
-    for(int i=1;i<NO_RULES;i++){ //checking all the rules
+    for(int i=0;i<NO_RULES;i++){ //checking all the rules
         struct ListNode* A = grammar[i];
         struct ListNode* B = grammar[i];
         int a = A->val.g.nt; //A is RHS of rule
