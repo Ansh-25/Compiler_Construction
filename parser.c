@@ -12,7 +12,7 @@
 #include "lexer.h"
 
 #define MAXTERMLEN 50 
-#define NO_RULES 143 //No. of grammar rules: 143
+#define NO_RULES 139 //No. of grammar rules: 143
 #define NO_TERMS 58 //No. of terminals: 58
 #define NO_NONTERMS 73 //No. of Non Terminals: 73
 #define MAXTERMLEN 50 
