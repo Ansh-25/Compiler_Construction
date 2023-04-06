@@ -1,4 +1,11 @@
 <<<driver program>>>
 start
-    declare nums:array[1...15] of integer;
+	switch(t)
+	start
+		case true:
+				break;
+		case false:
+				break;
+	end
+	declare t:boolean;
 end

@@ -603,6 +603,7 @@ void makeAST(struct ParseNode* parserNode){
             parserNode->addr = (ASTNode*)malloc(sizeof(ASTNode));
             parserNode->addr->label = INDEX_ARR;
             parserNode->addr->tk = NULL;
+            parserNode->addr->sibling = NULL;
             if (parserNode->child->addr != NULL) {
                 parserNode->addr->child = parserNode->child->addr;
                 parserNode->addr->child->child = parserNode->child->sibling->addr;
@@ -664,7 +665,6 @@ void makeAST(struct ParseNode* parserNode){
             makeAST(c1);
             makeAST(c3);
             newNode = makeNode(MODULE_REUSE,c2->val.t,c1->addr,NULL);
-            printf("line:= %d\n",parserNode->child->sibling->val.t->lineNo);
             if(c1->addr!=NULL) newNode->child->sibling = c3->addr;
             else newNode->child = c3->addr;
             parserNode->addr = newNode;
@@ -675,6 +675,7 @@ void makeAST(struct ParseNode* parserNode){
             free(c2->sibling->sibling);
             free(c2->sibling->val.t);
             free(c2->sibling);
+            free(c2->val.t);
             free(c2);
             free(c1->sibling->sibling->val.t);
             free(c1->sibling->sibling);
@@ -776,6 +777,7 @@ void makeAST(struct ParseNode* parserNode){
 
         case 64:
             parserNode->addr = NULL;
+            break;
 
         case 65:
             c1= parserNode->child;
@@ -1452,12 +1454,14 @@ void makeAST(struct ParseNode* parserNode){
             break;
 
         case 134:
+            // iterator stored in range_for node
             c1= parserNode->child->sibling->sibling->sibling->sibling;
             c2= c1->sibling->sibling->sibling;
             makeAST(c1); 
             makeAST(c2);
-            newNode = makeNode(RANGE_FOR,NULL,c1->addr,NULL);
+            newNode = makeNode(RANGE_FOR,parserNode->child->sibling->sibling->val.t,c1->addr,NULL);
             newNode->child->sibling = c2->addr;
+            parserNode->addr = newNode;
             free(parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->val.t); 
             free(parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling); 
             free(parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling); 
@@ -1515,9 +1519,11 @@ void makeAST(struct ParseNode* parserNode){
             c2= c1->sibling;
             makeAST(c1); 
             makeAST(c2);
-            newNode = makeNode(RANGE_FOR,NULL,c1->addr,NULL);
-            if(newNode->child!=NULL) newNode->child->sibling = c2->addr;
-            else newNode->child = c2->addr;
+            if(parserNode->child->addr!=NULL){ 
+                parserNode->addr = c1->addr;
+                c1->addr->child = c2->addr;
+            }
+            else parserNode->addr = c2->addr;
             free(c2); 
             free(c1);
             break;
