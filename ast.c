@@ -36,6 +36,173 @@ ASTNode* makeNode(Label label_1,struct Token* token_1,struct ASTNode* child_1,st
 }
 
 //rule no for leafnodes is same as that of their parents, change in parser;
+ParseNode* parse(){
+    createSynchronizingSet(); //first create the synchronizing set for all non-terminals
+    StackNode* S = NULL; //create stack
+    ParseNode* Eof = (ParseNode*)malloc(sizeof(ParseNode)); //create EOF ParseNode
+    Eof->val.t = (struct Token*)malloc(sizeof(struct Token));
+    Eof->val.t->type = TK_EOF;
+    Eof->t = TERMINAL;
+    Eof->sibling = NULL;
+    Eof->child = NULL;
+    ParseNode* Root = (ParseNode*)malloc(sizeof(ParseNode)); //create Root ParseNode
+    Root->val.nt = program; //our start symbol is program
+    Root->t = NONTERMINAL;
+    Root->ruleno = 0;
+    Root->sibling = NULL;
+    ParseNode* X = Root;
+    S = push(S,Eof); //push into stack, EOF at bottom then program
+    S = push(S,X);
+    struct Token* L = getNextToken(); //start at the first token
+    while(L!=NULL){
+        if(isEmpty(S)){ //if stack is empty and we still have a token, it means there is an error
+            printf("\nSyntax Error at line no %d ... empty stack\n",L->lineNo); 
+            break;
+        }
+        //printf("hi");
+        X = top(S); //get top of stack
+        if(X->t==TERMINAL){ //if top of stack is terminal,
+            if(X->val.t->type == L->type){
+                X->t = TERMINAL; //we convert the treenode to leafnode,
+                X->val.t = L;
+                S = pop(S); //pop the terminal at the top of the stack
+                if (L -> type == TK_EOF) { //if we reach the end of the file, then break
+                    break;
+                }
+                L = getNextToken(); //get next token
+                if (L == NULL) { //if we are unable to get next token, then we convert it to EOF token
+                    L = malloc(sizeof(struct Token));
+                    L -> type = TK_EOF;
+                }
+            }
+            else if(X->val.t->type==TK_SEMICOLON && L->type==TK_END){
+                printf("\nERROR : Expected semicolon at line no %d \n",L->lineNo);
+                S = pop(S);
+            }
+            else{ //if we the top of the stack is a different terminal to the token, then we have an error
+                printf("\nSyntax Error at line no %d ... terminal mismatch\n",L->lineNo);
+                printf("actual : %s\n",mapttokentostring(L->type));
+                printf("exp : %s\n",mapttokentostring(X->val.t->type));
+                S = pop(S); //we pop the stack and also get the next token
+                if (L -> type == TK_EOF) { //if we reach the end of the file, then break
+                    break;
+                }
+                L = getNextToken(); //get next token
+                if (L == NULL) { //if we are unable to get next token, then we convert it to EOF token
+                    L = malloc(sizeof(struct Token));
+                    L -> type = TK_EOF;
+                }
+            }
+        }
+        else if(X->t==NONTERMINAL){ //else if top of stack is a non-terminal
+            //printf("hi");
+            if(parseTable[X->val.nt][L->type]>=0){ //check the parse table for the right rule
+                X->ruleno = parseTable[X->val.nt][L->type];
+                //X->child = grammar[parseTable[X->val.nt][L->type]]->next;
+                if(grammar[parseTable[X->val.nt][L->type]]->next->val.t==TERMINAL && grammar[parseTable[X->val.nt][L->type]]->next->val.g.t==EPS)
+                    S = pop(S); //if the rule derives epsilon, just pop S
+                else 
+                    S = pushrule(X->ruleno, S); //otherwise push the LHS of the rule (the pushrule function pops S on its own at the end)
+                // printStack(S);
+            }
+
+            else if(contains(synchronizingSet[X->val.nt],L->type)){ //otherwise if we can't find the right rule, check if the non-terminal contains the top of the stack in the synchronizing set. if yes, we can pop the stack and continue
+                printf("\nSyntax Error at line no %d ... non-terminal mismatch, popping stack\n",L->lineNo);
+                S = pop(S);
+            }
+
+            else { //otherwise get next token
+                printf("\nSyntax Error at line no %d ... non-terminal mismatch, getting new token\n",L->lineNo);
+                if (L -> type == TK_EOF) { //if L is TK_EOF, we can't get next token, so we just break
+                    break;
+                }
+                L = getNextToken();
+                if (L == NULL) {
+                    L = malloc(sizeof(struct Token));
+                    L -> type = TK_EOF;
+                }
+            }
+        }
+        // printf("%d %s: ",L->lineNo,mapttokentostring(L->type));
+        //printStack(S);
+    }
+    if(!isEmpty(S)){ //if stack is not empty after consuming all tokens, we have an error
+        printf("\nERROR: stack not empty yet\n");
+    }
+    return Root;
+}
+
+void printTree(ParseNode* root, FILE* fp) {
+    if(root==NULL) return;
+    if(!fp){
+        printf("\nERROR: file pointer invalid\n\n");
+        exit(1);
+    }
+    ParseNode* curr = root->child;
+    printTree(root->child,fp);
+    if(root->t==TERMINAL && root->val.t->type==TK_NUM) fprintf(fp,"Terminal %s with token value %d\n", mapttokentostring(root->val.t->type),root->val.t->val.integer);
+    else if(root->t==TERMINAL && root->val.t->type==TK_RNUM) {fprintf(fp,"Terminal %s with token value %lf\n", mapttokentostring(root->val.t->type),root->val.t->val.decimal);}
+    else if(root->t==TERMINAL) {fprintf(fp,"Terminal %s with token value %s\n", mapttokentostring(root->val.t->type),root->val.t->val.identifier);}
+    else fprintf(fp,"Non-Terminal %s\n",mapnttostring(root->val.nt));
+    if (curr != NULL)
+        curr=curr->sibling;
+    for(;curr!=NULL; curr=curr->sibling){
+        printTree(curr,fp);
+    }
+}
+
+typedef enum {PROGRAM,UNARY_PLUS, UNARY_MINUS, ID, NUM, RNUM, ARRAY,ARR_INDEX1, ARR_INDEX2, PLUS, MINUS, MUL, DIV, AND, OR, LT, LE, GT, GE, EQ, NE, MODULEDECLARATION, DRIVERMODULE,MODULE_REUSE, MODULE, RET, PARAMETER, INTEGER_, REAL_, BOOLEAN_, RANGE_WHILE,RANGE_FOR, STATEMENTS, INPUT, OUTPUT, ARR_OUTPUT, TRUE, FALSE, ASSIGN, ARR_ASSIGN, INDEX_ARR, DECLARE, ID_LIST, CASE,CASE_STMT,RANGE, INPUT_PLIST, OUTPUT_PLIST} Label;
+
+typedef enum {INTEGER, REAL, BOOLEAN} Prim_type;
+
+typedef struct Array_tuple{
+    Prim_type pt; 
+    int lower_bound;
+    int upper_bound;
+}Array_tuple;
+
+typedef union Type{
+    Prim_type pt;
+    Array_tuple at;
+}Type;
+
+typedef struct DataType{
+    bool is_primitive;
+    Type t;
+}DataType;
+
+typedef struct ASTNode{
+    Label label;
+    DataType type;
+    struct Token* tk;
+    struct ASTNode* child;
+    struct ASTNode* sibling;
+}ASTNode;
+
+ASTNode* astroot;
+
+void printAST(ASTNode* root){
+    if(root==NULL) return;
+    if(root->label == ID)
+        printf("%s\n",root->tk->val.identifier);
+    printf("%d\n",root->label);
+    ASTNode* temp = root->child;
+    while(temp!=NULL){
+        printAST(temp);
+        temp=temp->sibling;
+    }
+}
+
+ASTNode* makeNode(Label label_1,struct Token* token_1,struct ASTNode* child_1,struct ASTNode* sibling_1){
+    ASTNode* newNode = (ASTNode*)malloc(sizeof(ASTNode));
+    newNode->label = label_1;
+    newNode->tk = token_1;
+    newNode->child = child_1;
+    newNode->sibling = sibling_1;
+    return newNode;
+}
+
+//rule no for leafnodes is same as that of their parents, change in parser;
 void makeAST(struct ParseNode* parserNode){
     ASTNode *newNode = NULL, *newNode1 = NULL;
     ParseNode *c1=NULL,*c2=NULL,*c3=NULL;
@@ -708,6 +875,7 @@ void makeAST(struct ParseNode* parserNode){
                 newNode->child = c2->addr;
                 newNode->child->sibling = c3->addr;
             }
+            parserNode->addr = newNode;
             free(c3); 
             free(c2);
             free(c1);
