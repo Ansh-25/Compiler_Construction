@@ -708,6 +708,7 @@ void makeAST(struct ParseNode* parserNode){
                 newNode->child = c2->addr;
                 newNode->child->sibling = c3->addr;
             }
+            parserNode->addr = newNode;
             free(c3); 
             free(c2);
             free(c1);
