@@ -751,12 +751,12 @@ void printTree(ParseNode* root, FILE* fp) {
         printf("\nERROR: file pointer invalid\n\n");
         exit(1);
     }
-    ParseNode* curr = root->child;
-    printTree(root->child,fp);
     if(root->t==TERMINAL && root->val.t->type==TK_NUM) fprintf(fp,"Terminal %s with token value %d\n", mapttokentostring(root->val.t->type),root->val.t->val.integer);
     else if(root->t==TERMINAL && root->val.t->type==TK_RNUM) {fprintf(fp,"Terminal %s with token value %lf\n", mapttokentostring(root->val.t->type),root->val.t->val.decimal);}
     else if(root->t==TERMINAL) {fprintf(fp,"Terminal %s with token value %s\n", mapttokentostring(root->val.t->type),root->val.t->val.identifier);}
     else fprintf(fp,"Non-Terminal %s\n",mapnttostring(root->val.nt));
+    ParseNode* curr = root->child;
+    printTree(root->child,fp);
     if (curr != NULL)
         curr=curr->sibling;
     for(;curr!=NULL; curr=curr->sibling){
