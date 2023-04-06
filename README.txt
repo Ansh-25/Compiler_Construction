@@ -11,7 +11,7 @@ COMMANDS
 
 sample command to run the program
 
-./stage1.exe testcase6.txt testOutput.txt 32
+./stage1.exe testcase4.txt testOutput.txt 32
 
 command template to run the driver
 

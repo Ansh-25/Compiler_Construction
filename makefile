@@ -5,6 +5,12 @@
 # ID: 2020A7PS0146P | Name: Toshit Jain
 # ID: 2020A7PS0116P | Name: Ansh Gupta
 
+stage2.exe: ast.c lexer.c parser.c
+	gcc ast.c lexer.c parser.c -o stage2.exe
+
+run1: stage1.exe
+	stage1.exe testcase4.txt testOutput.txt 32
+
 stage1.exe: driver.c lexer.c parser.c
 	gcc driver.c lexer.c parser.c -o stage1.exe
 

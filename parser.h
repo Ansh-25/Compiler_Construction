@@ -28,3 +28,11 @@ void createParseTable();
 void printTree(ParseNode* root, FILE* fp);
 
 ParseNode* parse();
+
+tokentype mapttoenum(char* s);
+
+non_terminal mapnttoenum(char* s);
+
+char* mapttokentostring(tokentype t);
+
+char* mapnttostring(non_terminal n);

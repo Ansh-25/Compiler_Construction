@@ -2,9 +2,8 @@
 #include <string.h>
 #include <stdio.h>
 #include "astDef.h"
-#include "parserDef.h"
 #include "parser.h"
-#include "parser.c"
+#include "lexer.h"
 
 
 /*
@@ -40,6 +39,8 @@ ASTNode* makeNode(Label label_1,struct Token* token_1,struct ASTNode* child_1,st
 void makeAST(struct ParseNode* parserNode){
     ASTNode *newNode = NULL, *newNode1 = NULL;
     ParseNode *c1=NULL,*c2=NULL,*c3=NULL;
+    printf("%d ",parserNode->ruleno + 1);
+    printf("%s\n",mapnttostring(parserNode->val.nt));
     switch(parserNode->ruleno) {
 
         case 0:
@@ -47,8 +48,7 @@ void makeAST(struct ParseNode* parserNode){
             makeAST(parserNode->child->sibling);
             makeAST(parserNode->child->sibling->sibling);
             makeAST(parserNode->child->sibling->sibling->sibling);
-            astroot = (ASTNode*)malloc(sizeof(ASTNode));
-            astroot->child = parserNode->child->addr;
+            astroot = makeNode(PROGRAM,NULL,parserNode->child->addr,NULL);
             astroot->child->sibling = parserNode->child->sibling->addr;
             astroot->child->sibling->sibling = parserNode->child->sibling->sibling->addr;
             astroot->child->sibling->sibling->sibling = parserNode->child->sibling->sibling->sibling->addr;
@@ -96,14 +96,8 @@ void makeAST(struct ParseNode* parserNode){
         case 4:
             makeAST(parserNode->child);
             makeAST(parserNode->child->sibling);
-            if (parserNode->child->addr == NULL)
-                parserNode->addr = parserNode->child->sibling->addr;
-            else {
-                ASTNode* curr = parserNode->child->addr;
-                while (curr->sibling != NULL)
-                    curr = curr -> sibling;
-                curr->sibling = parserNode->child->sibling->addr;
-            }
+            parserNode->addr = parserNode->child->addr;
+            parserNode->addr->sibling = parserNode->child->sibling->addr;
             free(parserNode->child->sibling);
             free(parserNode->child);
             break;
@@ -365,7 +359,7 @@ void makeAST(struct ParseNode* parserNode){
 
         case 24:
             makeAST(parserNode->child->sibling);
-            parserNode->addr =  parserNode->child->sibling->addr;
+            parserNode->addr =  makeNode(STATEMENTS,NULL,parserNode->child->sibling->addr,NULL);
             free(parserNode->child->sibling->sibling->val.t);
             free(parserNode->child->sibling->sibling);
             free(parserNode->child->sibling);
@@ -376,20 +370,14 @@ void makeAST(struct ParseNode* parserNode){
         case 25:
             makeAST(parserNode->child);
             makeAST(parserNode->child->sibling);
-            parserNode->addr = parserNode->child->sibling->addr;
-            newNode = parserNode->child->addr;
-            newNode->sibling = parserNode->addr->child;
-            parserNode->addr->child = newNode;
+            parserNode->addr = parserNode->child->addr;
+            parserNode->addr->sibling = parserNode->child->sibling->addr;
             free(parserNode->child->sibling);
             free(parserNode->child);
             break;
 
         case 26:
-            parserNode->addr = (ASTNode*)malloc(sizeof(ASTNode));
-            parserNode->addr->label = STATEMENTS;
-            parserNode->addr->tk = NULL;
-            parserNode->addr->child = NULL;
-            parserNode->addr->sibling = NULL;
+            parserNode->addr = NULL;
             break;
 
         case 27:
@@ -685,6 +673,7 @@ void makeAST(struct ParseNode* parserNode){
             makeAST(c1); 
             makeAST(c2);
             newNode = makeNode(MODULE_REUSE,NULL,c1->addr,NULL);
+            printf("line:= %d\n",parserNode->child->sibling->val.t->lineNo);
             if(c1->addr!=NULL) newNode->child->sibling = c2->addr;
             else newNode->child = c2->addr;
             free(c2->sibling->val.t); 
@@ -747,6 +736,7 @@ void makeAST(struct ParseNode* parserNode){
         
         case 58:
             parserNode->addr = NULL;
+            break;
         
         case 59:
             parserNode->addr = makeNode(NUM,parserNode->child->val.t,NULL,NULL);
@@ -822,6 +812,7 @@ void makeAST(struct ParseNode* parserNode){
 
         case 67:
             parserNode->addr = NULL;
+            break;
 
         //TOSHIT
         case 68:
@@ -1553,19 +1544,22 @@ void makeAST(struct ParseNode* parserNode){
 }
 
 ASTNode* AST(){
+    ptr = fopen("testcase4.txt","r");
+    ptr = initLexer(ptr, 32);
     loadgrammar("grammar.txt");
     computefirstandfollow();
     createParseTable();
 	ParseNode* parserNode = parse();
-    FILE* fp = fopen("checktree.txt","w");
-    printTree(parserNode,fp);
-	// makeAST(parserNode);
-    // printAST(astroot);
+    // FILE* fp = fopen("checktree.txt","w");
+    // printTree(parserNode,fp);
+    // fflush(fp); fclose(fp);
+	makeAST(parserNode);
+    printf("hi\n");
+    printAST(astroot);
 	return astroot;
 }
 
 int main(){
     AST();
-    printf("hi\n");
     return 0;
 }

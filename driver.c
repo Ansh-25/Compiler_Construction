@@ -90,10 +90,14 @@ int main(int argc, char *argv[]){
             computefirstandfollow();
             createParseTable();
             ParseNode* root = parse();
-            printTree(root,fopen(argv[2],"w"));
+            FILE* fp = fopen(argv[2],"w");
+            printTree(root,fp);
+            // fflush(fp);
+            fclose(fp);
             printf("\n\n");
             if(ptr != NULL)
                 fclose(ptr);
+            exit(0);
             break;
         case 4:
             ptr = fopen(argv[1],"r");
