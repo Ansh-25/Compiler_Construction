@@ -17,20 +17,11 @@ typedef enum {PROGRAM,ITER_STMT,ITER_FOR,MODULEDECLARATIONS,OTHERMODULES1,OTHERM
 
 typedef enum {INTEGER, REAL, BOOLEAN} Prim_type;
 
-typedef struct Array_tuple{
+typedef struct DataType{
+    bool is_primitive;
     Prim_type pt; 
     int lower_bound;
     int upper_bound;
-}Array_tuple;
-
-typedef union Type{
-    Prim_type pt;
-    Array_tuple at;
-}Type;
-
-typedef struct DataType{
-    bool is_primitive;
-    Type t;
 }DataType;
 
 typedef struct ASTNode{
