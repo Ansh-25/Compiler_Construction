@@ -1,5 +1,11 @@
 <<<driver program>>>
 start
-	var_2_:=10;
-	var_3_:= -(6);
+	switch(t)
+	start
+		case true:
+				break;
+		case false:
+				break;
+	end
+	declare t:boolean;
 end

@@ -261,7 +261,6 @@ void makeAST(struct ParseNode* parserNode){
             parserNode->addr->tk = NULL;
             parserNode->addr->child = NULL;
             parserNode->addr->sibling = NULL;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -271,7 +270,6 @@ void makeAST(struct ParseNode* parserNode){
             parserNode->addr->tk = NULL;
             parserNode->addr->child = NULL;
             parserNode->addr->sibling = NULL;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -281,7 +279,6 @@ void makeAST(struct ParseNode* parserNode){
             parserNode->addr->tk = NULL;
             parserNode->addr->child = NULL;
             parserNode->addr->sibling = NULL;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -327,7 +324,6 @@ void makeAST(struct ParseNode* parserNode){
             parserNode->addr->tk = parserNode->child->val.t;
             parserNode->addr->child = NULL;
             parserNode->addr->sibling = NULL;
-            //free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -337,7 +333,6 @@ void makeAST(struct ParseNode* parserNode){
             parserNode->addr->tk = parserNode->child->val.t;
             parserNode->addr->child = NULL;
             parserNode->addr->sibling = NULL;
-            //free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -347,7 +342,6 @@ void makeAST(struct ParseNode* parserNode){
             parserNode->addr->tk = parserNode->child->val.t;
             parserNode->addr->child = NULL;
             parserNode->addr->sibling = NULL;
-            //free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -490,7 +484,6 @@ void makeAST(struct ParseNode* parserNode){
             parserNode->addr->tk = NULL;
             parserNode->addr->child = NULL;
             parserNode->addr->sibling = NULL;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -500,7 +493,6 @@ void makeAST(struct ParseNode* parserNode){
             parserNode->addr->tk = NULL;
             parserNode->addr->child = NULL;
             parserNode->addr->sibling = NULL;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -638,7 +630,6 @@ void makeAST(struct ParseNode* parserNode){
             parserNode->addr->tk = parserNode->child->val.t;
             parserNode->addr->child = NULL;
             parserNode->addr->sibling = NULL;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -648,7 +639,6 @@ void makeAST(struct ParseNode* parserNode){
             parserNode->addr->tk = parserNode->child->val.t;
             parserNode->addr->child = NULL;
             parserNode->addr->sibling = NULL;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -675,7 +665,6 @@ void makeAST(struct ParseNode* parserNode){
             free(c2->sibling->sibling);
             free(c2->sibling->val.t);
             free(c2->sibling);
-            free(c2->val.t);
             free(c2);
             free(c1->sibling->sibling->val.t);
             free(c1->sibling->sibling);
@@ -848,7 +837,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
         
@@ -859,7 +847,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -870,7 +857,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -881,7 +867,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -892,7 +877,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -1016,7 +1000,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -1027,7 +1010,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -1166,7 +1148,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -1193,7 +1174,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -1204,7 +1184,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -1215,7 +1194,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -1226,7 +1204,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -1237,7 +1214,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -1248,7 +1224,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -1259,7 +1234,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -1270,7 +1244,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -1281,7 +1254,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -1292,7 +1264,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -1303,7 +1274,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -1314,7 +1284,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -1325,7 +1294,6 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child = NULL;
             newNode->sibling = NULL;
             parserNode->addr = newNode;
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;     
 
@@ -1360,7 +1328,6 @@ void makeAST(struct ParseNode* parserNode){
             free(parserNode->child->sibling->sibling->sibling->sibling);
             free(parserNode->child->sibling->sibling->sibling->val.t);
             free(parserNode->child->sibling->sibling->sibling);
-            free(parserNode->child->sibling->sibling->val.t);
             free(parserNode->child->sibling->sibling);
             free(parserNode->child->sibling->val.t);
             free(parserNode->child->sibling);
@@ -1418,19 +1385,16 @@ void makeAST(struct ParseNode* parserNode){
 
         case 129:
             parserNode->addr = makeNode(NUM,parserNode->child->val.t,NULL,NULL);
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
         case 130:
             parserNode->addr = makeNode(TRUE,parserNode->child->val.t,NULL,NULL);
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
         case 131:
             parserNode->addr = makeNode(FALSE,parserNode->child->val.t,NULL,NULL);
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
         
@@ -1472,7 +1436,6 @@ void makeAST(struct ParseNode* parserNode){
             free(parserNode->child->sibling->sibling->sibling->sibling); 
             free(parserNode->child->sibling->sibling->sibling->val.t); 
             free(parserNode->child->sibling->sibling->sibling); 
-            free(parserNode->child->sibling->sibling->val.t); 
             free(parserNode->child->sibling->sibling); 
             free(parserNode->child->sibling->val.t); 
             free(parserNode->child->sibling); 
@@ -1530,7 +1493,6 @@ void makeAST(struct ParseNode* parserNode){
 
         case 138:
             parserNode->addr = makeNode(NUM,parserNode->child->val.t,NULL,NULL);
-            free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
