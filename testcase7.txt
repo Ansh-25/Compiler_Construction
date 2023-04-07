@@ -1,30 +1,36 @@
-** This testcase demonstrates the syntactic correctness of the constructs such as modules, simple and declaration statements, and expressions**
-
-declare module compute;
+** This testcase demonstrates correctness of module structure with declaration and simple statements**
 <<<driver program>>>
 start
-	declare var_1_, var_2_, var_3_:integer;
-	declare R1_abc: boolean;
-	declare r2_ABC: integer;
-	declare R3_abc: real;
-	get_value(var_1_);
-	var_2_:=10;
-	var_3_:= -(6);
-	[R1_abc, r2_ABC, R3_abc] := use module compute with parameters var_1_, var_2_, var_34;
-	** do not bother that the last variable is not declared. It will be taken care of later in the semantic analysis phase**
-end
-<<module compute>>
-takes input[a:integer, b:integer, c:integer];
-returns [res_1:boolean, res_2_a:integer, res_2__b:real];
-start
-	declare b:boolean;
-	res_2_a:= -(a*b-c/5);
-	res_2__b:= ((res_2_a + a)*12+22.34E-2)/13;
-	b := a <=  b AND c >= a OR  a<0 AND false;
-	res_1:= (true AND c==b)OR(b>p AND (a<=c));
-	** check  rules 27 a to e and redefine to preserve the parentheses needs ** 
-	print(res_1);
+	declare v_1_2_3:integer;
+	get_value(v_1_2_3);
+	declare result_:integer;
+	[result_]:=use module square with parameters 1.2, A[k], -2, - j, -A[v], _1_2_3; 
+        ** Modify rule for <actual_para_list>**
+	print(result);
 end
 
-**verify the output of the lexical analyzer as well**
-**check the correctness of the parse tree**
+<<module square>>
+takes input [x:integer];
+returns [value:integer];
+start
+	value:= x*x;
+end
+
+**notice that this test case does not declare the module before the driver module, still it is syntactically correct as moduleDeclarations is optional. Testing whether a module is declared before its use is a matter of semantic analysis**
+
+** test the correctness of all lexemes and parse tree created
+and print the following message on successful compilation on the console
+      " Input source code is syntactically correct.........."
+**
+**
+Modification for the rule for actual parameters list
+
+<actual_para_list> --> <actual_para_list> COMMA <K> | <K> | <sign> <K>
+<K> --> NUM | RNUM | <boolConstt> | ID <N_11> 
+<N_11> --> SQBO <element_index_with_expression> SQBC | epsilon
+
+Resolve the left recursion in the above rules. 
+
+**
+**make sure to produce only relevant output of your compiler code...
+Also remove all unnecessary printf statements and make the code more professional before submitting**
