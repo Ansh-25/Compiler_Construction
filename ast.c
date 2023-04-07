@@ -1540,7 +1540,7 @@ void makeAST(struct ParseNode* parserNode){
 }
 
 ASTNode* AST(){
-    ptr = fopen("testcase4.txt","r");
+    ptr = fopen("testcase7.txt","r");
     ptr = initLexer(ptr, 32);
     loadgrammar("grammar.txt");
     computefirstandfollow();
