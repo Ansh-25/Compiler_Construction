@@ -16,7 +16,7 @@ case numbering wrong
 
 ASTNode* astroot;
 
-char* arr[] = {"PROGRAM","MODULEDECLARATIONS","OTHERMODULES1","OTHERMODULES2","UNARY_PLUS","UNARY_MINUS", "ID", "NUM", "RNUM", "ARRAY","ARRAY_RANGE","ARR_INDEX1", "ARR_INDEX2", "PLUS", "MINUS", "MUL", "DIV", "AND", "OR", "LT", "LE", "GT", "GE", "EQ", "NE", "MODULEDECLARATION", "DRIVERMODULE","MODULE_REUSE", "MODULE", "RET", "PARAMETER", "INTEGER_", "REAL_", "BOOLEAN_", "RANGE_WHILE","RANGE_FOR", "STATEMENTS", "INPUT", "OUTPUT", "ARR_OUTPUT", "TRUE", "FALSE", "ASSIGN", "ARR_ASSIGN", "INDEX_ARR", "DECLARE", "ID_LIST", "CASE","CASE_STMT","RANGE", "INPUT_PLIST", "OUTPUT_PLIST"};
+char* arr[] = {"PROGRAM","MODULEDECLARATIONS","OTHERMODULES1","OTHERMODULES2","UNARY_PLUS","UNARY_MINUS", "ID", "NUM", "RNUM", "ARRAY","ARRAY_RANGE","ARR_INDEX1", "ARR_INDEX2", "PLUS", "MINUS", "MUL", "DIV", "AND", "OR", "LT", "LE", "GT", "GE", "EQ", "NE", "MODULEDECLARATION", "DRIVERMODULE","MODULE_REUSE", "MODULE", "RET", "PARAMETER", "INTEGER_", "REAL_", "BOOLEAN_", "RANGE_WHILE","RANGE_FOR", "STATEMENTS", "INPUT", "OUTPUT", "ARR_OUTPUT", "TRUE", "FALSE", "ASSIGN", "ARR_ASSIGN", "INDEX_ARR", "DECLARE", "ID_LIST", "CASE","CASE_STMT","RANGE", "INPUT_PLIST", "OUTPUT_PLIST","DEFAULT"};
 
 void printAST(ASTNode* root){
     if(root==NULL) return;
@@ -1316,10 +1316,10 @@ void makeAST(struct ParseNode* parserNode){
         case 125:
             c1= parserNode->child->sibling->sibling->sibling->sibling->sibling;
             c2= c1->sibling;
-            makeAST(c1);
             makeAST(c2);
-            newNode = makeNode(CASE_STMT,NULL,c1->addr,NULL);
-            newNode->child->sibling = c2->addr;
+            c1->addr = c2->addr;
+            makeAST(c1);
+            parserNode->addr = makeNode(CASE_STMT,NULL,c1->addr,NULL);
             free(c2->sibling->val.t);
             free(c2->sibling);
             free(c2);
@@ -1341,10 +1341,15 @@ void makeAST(struct ParseNode* parserNode){
             c3= c1->sibling->sibling->sibling;
             makeAST(c1); 
             makeAST(c2);
+            c3->addr = parserNode->addr;
             makeAST(c3);
             newNode = makeNode(CASE,NULL,c1->addr,NULL);
             newNode->child->sibling = c2->addr;
-            newNode->child->sibling->sibling = c3->addr;
+            if(c3->addr==NULL)
+                newNode->sibling = parserNode->addr;
+            else
+                newNode->sibling = c3->addr;
+            parserNode->addr = newNode;
             free(parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling);
             free(parserNode->child->sibling->sibling->sibling->sibling->sibling->val.t);
             free(parserNode->child->sibling->sibling->sibling->sibling->val.t);
@@ -1363,10 +1368,16 @@ void makeAST(struct ParseNode* parserNode){
             c3= c1->sibling->sibling->sibling;
             makeAST(c1); 
             makeAST(c2);
+            c3->addr = parserNode->addr;
             makeAST(c3);
             newNode = makeNode(CASE,NULL,c1->addr,NULL);
             newNode->child->sibling = c2->addr;
-            if(c3->addr!=NULL) newNode->child->sibling->sibling = c3->addr;
+            if(c3->addr==NULL)
+                newNode->sibling = parserNode->addr;
+            else
+                newNode->sibling = c3->addr;
+            parserNode->addr = newNode;
+            //if(c3->addr==NULL) newNode->child->sibling->sibling = c3->addr;
             free(parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling);
             free(parserNode->child->sibling->sibling->sibling->sibling->sibling->val.t);
             free(parserNode->child->sibling->sibling->sibling->sibling->val.t);
@@ -1380,7 +1391,7 @@ void makeAST(struct ParseNode* parserNode){
             break;
         
         case 128:
-            parserNode->addr = NULL;
+            //parserNode->addr = NULL;
             break;
 
         case 129:
@@ -1401,7 +1412,7 @@ void makeAST(struct ParseNode* parserNode){
         case 132:
             c1 = parserNode->child->sibling->sibling;
             makeAST(c1); 
-            newNode = makeNode(RANGE,NULL,c1->addr,NULL);
+            parserNode->addr = makeNode(DEFAULT,NULL,c1->addr,NULL);
             free(parserNode->child->sibling->sibling->sibling->sibling->val.t); 
             free(parserNode->child->sibling->sibling->sibling->sibling); 
             free(parserNode->child->sibling->sibling->sibling->val.t); 
@@ -1502,7 +1513,7 @@ void makeAST(struct ParseNode* parserNode){
 }
 
 ASTNode* AST(){
-    ptr = fopen("testcase7.txt","r");
+    ptr = fopen("testcase5.txt","r");
     ptr = initLexer(ptr, 32);
     loadgrammar("grammar.txt");
     computefirstandfollow();

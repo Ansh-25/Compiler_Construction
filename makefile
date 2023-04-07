@@ -6,7 +6,7 @@
 # ID: 2020A7PS0116P | Name: Ansh Gupta
 
 run2: ast.exe
-	ast.exe
+	./ast.exe
 
 ast.exe: ast.c lexer.c parser.c
 	gcc ast.c lexer.c parser.c -o ast.exe
