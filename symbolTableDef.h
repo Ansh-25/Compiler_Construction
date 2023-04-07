@@ -75,10 +75,10 @@ ParamList* insertlast (ParamList* head, ParamList* newNode) {
     return head;
 }
 
-bool compare_Datatype(Datatype d1, Datatype d2){
+bool compare_Datatype(DataType d1, DataType d2){
     if(d1.is_primitive!=d2.is_primitive)
         return false;
-    if(d1.type!=d2.type)
+    if(d1.pt!=d2.pt)
         return false;
     return true;
 }

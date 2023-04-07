@@ -130,15 +130,15 @@ typechecker(ASTNode* astNode){
             astNode->type.pt = astNode->child->sibling->type;
             break;
 
-        case 35: //case assign
+        case ASSIGN: //case assign
             ASTNode* rhs = astNode->child->sibling;
             if(astNode->child->label==ARR_ASSIGN){ //case arr assign
                 ASTNode* lhs = astNode->child->child;
                 if(searchVar(curr,lhs->tk->val.identifier)==NULL){
                     //Error:variable not found
                 }
-                else if(searchVar(curr,lhs->tk->val.identifier)->t.t.at.pt!=rhs->type.t.pt){
-                    //Type Error:datatypes don't match at line no. lhs->tk->lineno.
+                else if(searchVar(curr,lhs->tk->val.identifier)->t.pt!=rhs->type.pt){
+                    //Type Error:types don't match at line no. lhs->tk->lineno.
                 }
             }
             else{
@@ -154,7 +154,8 @@ typechecker(ASTNode* astNode){
             break;
 
 
-        case 38: //case declare
+        case DECLARE: //case declare
+            typechecker(astNode->child->sibling);
             DataType d = astNode->child->sibling->type;
             ASTNode* idList = astNode->child->child;
             while(idList!=NULL){
