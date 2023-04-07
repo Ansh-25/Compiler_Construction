@@ -128,7 +128,7 @@ typechecker(ASTNode* astNode){
             typechecker(astNode->child->sibling);
             astNode->type.is_primitive = false;
             astNode->type.pt = astNode->child->sibling->type;
-            astNode->type.lower_bound = 
+            break;
 
         case 35: //case assign
             ASTNode* rhs = astNode->child->sibling;
