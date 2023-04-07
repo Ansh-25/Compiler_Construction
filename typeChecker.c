@@ -26,6 +26,8 @@ MainTableEntry* createModule(char* name, ParamList* inputList, ParamList* output
 
 typechecker(ASTNode* astNode){
     int c = astNode->label;
+    ASTNode* current = astNode->child;
+    for (ASTNode* current = astNode->child; current != NULL; current = current -> sibling) typechecker(current);
     switch(c){
         case PROGRAM:
             for (ASTNode* current = astNode->child; current != NULL; current = current -> sibling)
@@ -124,11 +126,11 @@ typechecker(ASTNode* astNode){
             astNode->type.pt = BOOLEAN;
             break;
 
-        case ARRAY:
-            typechecker(astNode->child->sibling);
-            astNode->type.is_primitive = false;
-            astNode->type.pt = astNode->child->sibling->type;
-            break;
+        // case ARRAY:
+        //     typechecker(astNode->child->sibling);
+        //     astNode->type.is_primitive = false;
+        //     astNode->type.pt = astNode->child->sibling->type;
+        //     break;
 
         case ASSIGN: //case assign
             ASTNode* rhs = astNode->child->sibling;
@@ -166,6 +168,19 @@ typechecker(ASTNode* astNode){
                 idList = idList->sibling;
             }
             typechecker(astNode->sibling);
+            break;
+
+        case RANGE_WHILE:
+            ASTNode* current = astNode->child;
+            for (ASTNode* current = astNode->child; current != NULL; current = current -> sibling) typechecker(current);
+            if(astNode->child->type.pt!=BOOLEAN || astNode->child->type.is_primitive!=1){
+                printf("TYPE ERROR: line:= %d, Module \"%s\" has already been defined\n",astNode->tk->lineNo, astNode->tk->val.identifier);
+            } 
+            break;
+        
+        case RANGE_FOR:
+            for (ASTNode* current = astNode->child; current != NULL; current = current -> sibling)
+                typechecker(current);
             break;
     }
 }

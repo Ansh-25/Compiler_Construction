@@ -15,7 +15,7 @@
 }
 <output_plist> -> ID <_type> ... {
 	//traverse through each ID in the output list
-		if(ST[ID] != <_type> {//return error}
+		if(ST[ID]) != <_type> {//return error}
 }
 
 <statement> -> ID ASSIGNOP <expression> {

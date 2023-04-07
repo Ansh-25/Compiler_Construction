@@ -16,7 +16,7 @@ case numbering wrong
 
 ASTNode* astroot;
 
-char* arr[] = {"PROGRAM","ITER_STMT","ITER_FOR","MODULEDECLARATIONS","OTHERMODULES1","OTHERMODULES2","UNARY_PLUS","UNARY_MINUS", "ID", "NUM", "RNUM", "ARRAY","ARRAY_RANGE","ARR_INDEX1", "ARR_INDEX2", "PLUS", "MINUS", "MUL", "DIV", "AND", "OR", "LT", "LE", "GT", "GE", "EQ", "NE", "MODULEDECLARATION", "DRIVERMODULE","MODULE_REUSE", "MODULE", "RET", "PARAMETER", "INTEGER_", "REAL_", "BOOLEAN_", "RANGE_WHILE","RANGE_FOR", "STATEMENTS", "INPUT", "OUTPUT", "ARR_OUTPUT", "TRUE", "FALSE", "ASSIGN", "ARR_ASSIGN", "INDEX_ARR", "DECLARE", "ID_LIST", "CASE","CASE_STMT","RANGE", "INPUT_PLIST", "OUTPUT_PLIST","DEFAULT"};
+char* arr[] = {"PROGRAM","MODULEDECLARATIONS","OTHERMODULES1","OTHERMODULES2","UNARY_PLUS","UNARY_MINUS", "ID", "NUM", "RNUM", "ARRAY","ARRAY_RANGE","ARR_INDEX1", "ARR_INDEX2", "PLUS", "MINUS", "MUL", "DIV", "AND", "OR", "LT", "LE", "GT", "GE", "EQ", "NE", "MODULEDECLARATION", "DRIVERMODULE","MODULE_REUSE", "MODULE", "RET", "PARAMETER", "INTEGER_", "REAL_", "BOOLEAN_", "RANGE_WHILE","RANGE_FOR", "STATEMENTS", "INPUT", "OUTPUT", "ARR_OUTPUT", "TRUE", "FALSE", "ASSIGN", "ARR_ASSIGN", "INDEX_ARR", "DECLARE", "ID_LIST", "CASE","CASE_STMT","RANGE", "INPUT_PLIST", "OUTPUT_PLIST","DEFAULT"};
 
 void printAST(ASTNode* root){
     if(root==NULL) return;
@@ -57,7 +57,6 @@ void makeAST(struct ParseNode* parserNode){
             astroot->child->sibling = makeNode(OTHERMODULES1,NULL,parserNode->child->sibling->addr,NULL);
             astroot->child->sibling->sibling = parserNode->child->sibling->sibling->addr;
             astroot->child->sibling->sibling->sibling = makeNode(OTHERMODULES2,NULL,parserNode->child->sibling->sibling->sibling->addr,NULL);
-            //parserNode->child->sibling->sibling->addr->sibling = parserNode->child->sibling->sibling->sibling->addr;
             free(parserNode->child->sibling->sibling->sibling);
             free(parserNode->child->sibling->sibling);
             free(parserNode->child->sibling);
