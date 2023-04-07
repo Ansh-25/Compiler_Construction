@@ -126,11 +126,47 @@ typechecker(ASTNode* astNode){
             astNode->type.pt = BOOLEAN;
             break;
 
-        // case ARRAY:
-        //     typechecker(astNode->child->sibling);
-        //     astNode->type.is_primitive = false;
-        //     astNode->type.pt = astNode->child->sibling->type;
-        //     break;
+       case ARRAY_DTYPE:
+            typechecker(astNode->child->sibling);
+            astNode->type.is_primitive = false;
+            astNode->type.pt = astNode->child->sibling->type.pt;
+            astNode->type.lower_bound = INT_MIN;
+            astNode->type.upper_bound = INT_MIN;
+            ASTNode* left = astNode->child->child;
+            ASTNode* right = astNode->child->child->sibling;
+            if (left->label == UNARY_MINUS) {
+                if (left->child->label == NUM)
+                    astNode->type.lower_bound = (-1) * left->child->tk->val.integer;
+                else
+                    printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n",left->child->tk->lineNo, left->child->tk->val.identifier);
+            }
+            else if (left->label == UNARY_PLUS) {
+                if (left->child->label == NUM)
+                    astNode->type.lower_bound = left->child->tk->val.integer;
+                else
+                    printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n",left->child->tk->lineNo, left->child->tk->val.identifier);
+            }
+            else if (left->label = NUM)
+                astNode->type.lower_bound = left->child->tk->val.integer;
+            else
+                printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n",left->tk->lineNo, left->tk->val.identifier);
+            if (right->label == UNARY_MINUS) {
+                if (right->child->label == NUM)
+                    astNode->type.lower_bound = (-1) * right->child->tk->val.integer;
+                else
+                    printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n",right->child->tk->lineNo, right->child->tk->val.identifier);
+            }
+            else if (right->label == UNARY_PLUS) {
+                if (right->child->label == NUM)
+                    astNode->type.lower_bound = right->child->tk->val.integer;
+                else
+                    printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n",right->child->tk->lineNo, right->child->tk->val.identifier);
+            }
+            else if (right->label = NUM)
+                astNode->type.lower_bound = right->child->tk->val.integer;
+            else
+                printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n",right->tk->lineNo, right->tk->val.identifier);
+            break;
 
         case ASSIGN: //case assign
             ASTNode* rhs = astNode->child->sibling;

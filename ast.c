@@ -16,7 +16,7 @@ case numbering wrong
 
 ASTNode* astroot;
 
-char* arr[] = {"PROGRAM","MODULEDECLARATIONS","OTHERMODULES1","OTHERMODULES2","UNARY_PLUS","UNARY_MINUS", "ID", "NUM", "RNUM", "ARRAY","ARRAY_RANGE","ARR_INDEX1", "ARR_INDEX2", "PLUS", "MINUS", "MUL", "DIV", "AND", "OR", "LT", "LE", "GT", "GE", "EQ", "NE", "MODULEDECLARATION", "DRIVERMODULE","MODULE_REUSE", "MODULE", "RET", "PARAMETER", "INTEGER_", "REAL_", "BOOLEAN_", "RANGE_WHILE","RANGE_FOR", "STATEMENTS", "INPUT", "OUTPUT", "ARR_OUTPUT", "TRUE", "FALSE", "ASSIGN", "ARR_ASSIGN", "INDEX_ARR", "DECLARE", "ID_LIST", "CASE","CASE_STMT","RANGE", "INPUT_PLIST", "OUTPUT_PLIST","DEFAULT"};
+char* arr[] = {"PROGRAM","MODULEDECLARATIONS","OTHERMODULES1","OTHERMODULES2","UNARY_PLUS","UNARY_MINUS", "ID", "NUM", "RNUM", "ARRAY_DTYPE", "ARRAY","ARRAY_RANGE","ARR_INDEX1", "ARR_INDEX2", "PLUS", "MINUS", "MUL", "DIV", "AND", "OR", "LT", "LE", "GT", "GE", "EQ", "NE", "MODULEDECLARATION", "DRIVERMODULE","MODULE_REUSE", "MODULE", "RET", "PARAMETER", "INTEGER_", "REAL_", "BOOLEAN_", "RANGE_WHILE","RANGE_FOR", "STATEMENTS", "INPUT", "OUTPUT", "ARR_OUTPUT", "TRUE", "FALSE", "ASSIGN", "ARR_ASSIGN", "INDEX_ARR", "DECLARE", "ID_LIST", "CASE","CASE_STMT","RANGE", "INPUT_PLIST", "OUTPUT_PLIST","DEFAULT"};
 
 void printAST(ASTNode* root){
     if(root==NULL) return;
@@ -287,7 +287,7 @@ void makeAST(struct ParseNode* parserNode){
             makeAST(parserNode->child->sibling->sibling);
             makeAST(parserNode->child->sibling->sibling->sibling->sibling->sibling);
             parserNode->addr = (ASTNode*)malloc(sizeof(ASTNode));
-            parserNode->addr->label = ARRAY;
+            parserNode->addr->label = ARRAY_DTYPE;
             parserNode->addr->tk = NULL;
             parserNode->addr->sibling = NULL;
             parserNode->addr->child = parserNode->child->sibling->sibling->addr;
@@ -1519,7 +1519,7 @@ void makeAST(struct ParseNode* parserNode){
 }
 
 ASTNode* AST(){
-    ptr = fopen("testcase7.txt","r");
+    ptr = fopen("testcase5.txt","r");
     ptr = initLexer(ptr, 32);
     loadgrammar("grammar.txt");
     computefirstandfollow();
