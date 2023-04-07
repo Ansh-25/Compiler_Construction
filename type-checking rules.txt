@@ -40,7 +40,17 @@
 //in each of the nodes, be it +,-,*,/,<,>... we check the datatype of the 2 children nodes
 //if they are not equal, throw an error
 /if they are equal, then pass this datatype into the AST node. Then continue up (basically do bottom-up traversal)
-//whenever we get <relationalOp>, we just directly put AST node datatype as bool, as long as  both sides of the relationalOp is the same datatype(5>3.5 is not allowed)
+
+//the answer is : 
+//is integer, if both expressions are of type integer and the operator is an arithmetic operator PLUS, MINUS or MUL.
+//is real, if both expressions are of type integer, or one is integer and the other is real, or both are real, and the operator is an arithmetic operator DIV.
+//is real, if both the expressions are of type real and the operator is arithmetic operator PLUS, MINUS or MUL.
+//is boolean, if both expressions are of type integer and the operator is a relational operator
+//is boolean, if both expressions are of type real and the operator is relational.
+//is boolean, if both expressions are of type boolean and the operator is logical.
+
+The type of the expression is ERROR, if the above rules do not derive the type of E appropriately.
+
 
 //now incorporating array indexes
 //make sure the <element_index_with_expression> datatype is always NUM(since that's all that can be passed into an array
