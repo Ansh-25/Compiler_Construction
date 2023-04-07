@@ -327,7 +327,7 @@ void makeAST(struct ParseNode* parserNode){
             parserNode->addr->tk = parserNode->child->val.t;
             parserNode->addr->child = NULL;
             parserNode->addr->sibling = NULL;
-            free(parserNode->child->val.t);
+            //free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -337,7 +337,7 @@ void makeAST(struct ParseNode* parserNode){
             parserNode->addr->tk = parserNode->child->val.t;
             parserNode->addr->child = NULL;
             parserNode->addr->sibling = NULL;
-            free(parserNode->child->val.t);
+            //free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -347,7 +347,7 @@ void makeAST(struct ParseNode* parserNode){
             parserNode->addr->tk = parserNode->child->val.t;
             parserNode->addr->child = NULL;
             parserNode->addr->sibling = NULL;
-            free(parserNode->child->val.t);
+            //free(parserNode->child->val.t);
             free(parserNode->child);
             break;
 
@@ -1540,7 +1540,7 @@ void makeAST(struct ParseNode* parserNode){
 }
 
 ASTNode* AST(){
-    ptr = fopen("testcase7.txt","r");
+    ptr = fopen("testcase4.txt","r");
     ptr = initLexer(ptr, 32);
     loadgrammar("grammar.txt");
     computefirstandfollow();

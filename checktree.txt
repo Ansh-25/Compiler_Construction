@@ -1,5 +1,11 @@
 Non-Terminal program
 Non-Terminal moduleDeclarations
+Non-Terminal moduleDeclaration
+Terminal TK_DECLARE with token value declare
+Terminal TK_MODULE with token value module
+Terminal TK_ID with token value compute
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal moduleDeclarations
 Non-Terminal otherModules
 Non-Terminal driverModule
 Terminal TK_DRIVERDEF with token value <<<
@@ -10,41 +16,477 @@ Non-Terminal moduleDef
 Terminal TK_START with token value start
 Non-Terminal statements
 Non-Terminal statement
-Non-Terminal conditionalStmt
-Terminal TK_SWITCH with token value switch
-Terminal TK_BO with token value (
-Terminal TK_ID with token value t
-Terminal TK_BC with token value )
-Terminal TK_START with token value start
-Non-Terminal caseStmts
-Terminal TK_CASE with token value case
-Non-Terminal value
-Terminal TK_TRUE with token value true
+Non-Terminal declareStmt
+Terminal TK_DECLARE with token value declare
+Non-Terminal idList
+Terminal TK_ID with token value var_1_
+Non-Terminal N3
+Terminal TK_COMMA with token value ,
+Terminal TK_ID with token value var_2_
+Non-Terminal N3
+Terminal TK_COMMA with token value ,
+Terminal TK_ID with token value var_3_
+Non-Terminal N3
 Terminal TK_COLON with token value :
-Non-Terminal statements
-Terminal TK_BREAK with token value break
+Non-Terminal dataType
+Terminal TK_INTEGER with token value integer
 Terminal TK_SEMICOLON with token value ;
-Non-Terminal N9
-Terminal TK_CASE with token value case
-Non-Terminal value
-Terminal TK_FALSE with token value false
-Terminal TK_COLON with token value :
-Non-Terminal statements
-Terminal TK_BREAK with token value break
-Terminal TK_SEMICOLON with token value ;
-Non-Terminal N9
-Non-Terminal _default
-Terminal TK_END with token value end
 Non-Terminal statements
 Non-Terminal statement
 Non-Terminal declareStmt
 Terminal TK_DECLARE with token value declare
 Non-Terminal idList
-Terminal TK_ID with token value t
+Terminal TK_ID with token value R1_abc
 Non-Terminal N3
 Terminal TK_COLON with token value :
 Non-Terminal dataType
 Terminal TK_BOOLEAN with token value boolean
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal statements
+Non-Terminal statement
+Non-Terminal declareStmt
+Terminal TK_DECLARE with token value declare
+Non-Terminal idList
+Terminal TK_ID with token value r2_ABC
+Non-Terminal N3
+Terminal TK_COLON with token value :
+Non-Terminal dataType
+Terminal TK_INTEGER with token value integer
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal statements
+Non-Terminal statement
+Non-Terminal declareStmt
+Terminal TK_DECLARE with token value declare
+Non-Terminal idList
+Terminal TK_ID with token value R3_abc
+Non-Terminal N3
+Terminal TK_COLON with token value :
+Non-Terminal dataType
+Terminal TK_REAL with token value real
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal statements
+Non-Terminal statement
+Non-Terminal ioStmt
+Terminal TK_GET_VALUE with token value get_value
+Terminal TK_BO with token value (
+Terminal TK_ID with token value var_1_
+Terminal TK_BC with token value )
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal statements
+Non-Terminal statement
+Non-Terminal simpleStmt
+Non-Terminal moduleReuseStmt
+Non-Terminal optional
+Terminal TK_SQBO with token value [
+Non-Terminal idList
+Terminal TK_ID with token value R1_abc
+Non-Terminal N3
+Terminal TK_COMMA with token value ,
+Terminal TK_ID with token value r2_ABC
+Non-Terminal N3
+Terminal TK_COMMA with token value ,
+Terminal TK_ID with token value R3_abc
+Non-Terminal N3
+Terminal TK_SQBC with token value ]
+Terminal TK_ASSIGNOP with token value :=
+Terminal TK_USE with token value use
+Terminal TK_MODULE with token value module
+Terminal TK_ID with token value compute
+Terminal TK_WITH with token value with
+Terminal TK_PARAMETERS with token value parameters
+Non-Terminal actual_para_list
+Non-Terminal sign
+Non-Terminal K
+Terminal TK_ID with token value var_1_
+Non-Terminal N_11
+Non-Terminal N_12
+Terminal TK_COMMA with token value ,
+Non-Terminal sign
+Non-Terminal K
+Terminal TK_ID with token value var_2_
+Non-Terminal N_11
+Non-Terminal N_12
+Terminal TK_COMMA with token value ,
+Non-Terminal sign
+Non-Terminal K
+Terminal TK_ID with token value var_34
+Non-Terminal N_11
+Non-Terminal N_12
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal statements
+Terminal TK_END with token value end
+Non-Terminal otherModules
+Non-Terminal module
+Terminal TK_DEF with token value <<
+Terminal TK_MODULE with token value module
+Terminal TK_ID with token value compute
+Terminal TK_ENDDEF with token value >>
+Terminal TK_TAKES with token value takes
+Terminal TK_INPUT with token value input
+Terminal TK_SQBO with token value [
+Non-Terminal input_plist
+Terminal TK_ID with token value a
+Terminal TK_COLON with token value :
+Non-Terminal dataType
+Terminal TK_INTEGER with token value integer
+Non-Terminal _input_plist
+Terminal TK_COMMA with token value ,
+Terminal TK_ID with token value b
+Terminal TK_COLON with token value :
+Non-Terminal dataType
+Terminal TK_INTEGER with token value integer
+Non-Terminal _input_plist
+Terminal TK_COMMA with token value ,
+Terminal TK_ID with token value c
+Terminal TK_COLON with token value :
+Non-Terminal dataType
+Terminal TK_INTEGER with token value integer
+Non-Terminal _input_plist
+Terminal TK_SQBC with token value ]
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal ret
+Terminal TK_RETURNS with token value returns
+Terminal TK_SQBO with token value [
+Non-Terminal output_plist
+Terminal TK_ID with token value res_1
+Terminal TK_COLON with token value :
+Non-Terminal _type
+Terminal TK_BOOLEAN with token value boolean
+Non-Terminal _output_plist
+Terminal TK_COMMA with token value ,
+Terminal TK_ID with token value res_2_a
+Terminal TK_COLON with token value :
+Non-Terminal _type
+Terminal TK_INTEGER with token value integer
+Non-Terminal _output_plist
+Terminal TK_COMMA with token value ,
+Terminal TK_ID with token value res_2__b
+Terminal TK_COLON with token value :
+Non-Terminal _type
+Terminal TK_REAL with token value real
+Non-Terminal _output_plist
+Terminal TK_SQBC with token value ]
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal moduleDef
+Terminal TK_START with token value start
+Non-Terminal statements
+Non-Terminal statement
+Non-Terminal declareStmt
+Terminal TK_DECLARE with token value declare
+Non-Terminal idList
+Terminal TK_ID with token value b
+Non-Terminal N3
+Terminal TK_COLON with token value :
+Non-Terminal dataType
+Terminal TK_BOOLEAN with token value boolean
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal statements
+Non-Terminal statement
+Non-Terminal simpleStmt
+Non-Terminal assignmentStmt
+Terminal TK_ID with token value res_2_a
+Non-Terminal whichStmt
+Non-Terminal lvalueIDStmt
+Terminal TK_ASSIGNOP with token value :=
+Non-Terminal expression
+Non-Terminal U
+Non-Terminal unary_op
+Terminal TK_MINUS with token value -
+Non-Terminal new_NT
+Terminal TK_BO with token value (
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_ID with token value a
+Non-Terminal N_11
+Non-Terminal N5
+Non-Terminal op2
+Terminal TK_MUL with token value *
+Non-Terminal factor
+Terminal TK_ID with token value b
+Non-Terminal N_11
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal op1
+Terminal TK_MINUS with token value -
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_ID with token value c
+Non-Terminal N_11
+Non-Terminal N5
+Non-Terminal op2
+Terminal TK_DIV with token value /
+Non-Terminal factor
+Terminal TK_NUM with token value 5
+Non-Terminal N5
+Non-Terminal N4
+Terminal TK_BC with token value )
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal statements
+Non-Terminal statement
+Non-Terminal simpleStmt
+Non-Terminal assignmentStmt
+Terminal TK_ID with token value res_2__b
+Non-Terminal whichStmt
+Non-Terminal lvalueIDStmt
+Terminal TK_ASSIGNOP with token value :=
+Non-Terminal expression
+Non-Terminal arithmeticOrBooleanExpr
+Non-Terminal AnyTerm
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_BO with token value (
+Non-Terminal arithmeticOrBooleanExpr
+Non-Terminal AnyTerm
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_BO with token value (
+Non-Terminal arithmeticOrBooleanExpr
+Non-Terminal AnyTerm
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_ID with token value res_2_a
+Non-Terminal N_11
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal op1
+Terminal TK_PLUS with token value +
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_ID with token value a
+Non-Terminal N_11
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N8
+Non-Terminal N7
+Terminal TK_BC with token value )
+Non-Terminal N5
+Non-Terminal op2
+Terminal TK_MUL with token value *
+Non-Terminal factor
+Terminal TK_NUM with token value 12
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal op1
+Terminal TK_PLUS with token value +
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_RNUM with token value 0.223400
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N8
+Non-Terminal N7
+Terminal TK_BC with token value )
+Non-Terminal N5
+Non-Terminal op2
+Terminal TK_DIV with token value /
+Non-Terminal factor
+Terminal TK_NUM with token value 13
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N8
+Non-Terminal N7
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal statements
+Non-Terminal statement
+Non-Terminal simpleStmt
+Non-Terminal assignmentStmt
+Terminal TK_ID with token value b
+Non-Terminal whichStmt
+Non-Terminal lvalueIDStmt
+Terminal TK_ASSIGNOP with token value :=
+Non-Terminal expression
+Non-Terminal arithmeticOrBooleanExpr
+Non-Terminal AnyTerm
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_ID with token value a
+Non-Terminal N_11
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N8
+Non-Terminal relationalOp
+Terminal TK_LE with token value <=
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_ID with token value b
+Non-Terminal N_11
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N7
+Non-Terminal logicalOp
+Terminal TK_AND with token value AND
+Non-Terminal AnyTerm
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_ID with token value c
+Non-Terminal N_11
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N8
+Non-Terminal relationalOp
+Terminal TK_GE with token value >=
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_ID with token value a
+Non-Terminal N_11
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N7
+Non-Terminal logicalOp
+Terminal TK_OR with token value OR
+Non-Terminal AnyTerm
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_ID with token value a
+Non-Terminal N_11
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N8
+Non-Terminal relationalOp
+Terminal TK_LT with token value <
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_NUM with token value 0
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N7
+Non-Terminal logicalOp
+Terminal TK_AND with token value AND
+Non-Terminal AnyTerm
+Non-Terminal boolConstt
+Terminal TK_FALSE with token value false
+Non-Terminal N7
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal statements
+Non-Terminal statement
+Non-Terminal simpleStmt
+Non-Terminal assignmentStmt
+Terminal TK_ID with token value res_1
+Non-Terminal whichStmt
+Non-Terminal lvalueIDStmt
+Terminal TK_ASSIGNOP with token value :=
+Non-Terminal expression
+Non-Terminal arithmeticOrBooleanExpr
+Non-Terminal AnyTerm
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_BO with token value (
+Non-Terminal arithmeticOrBooleanExpr
+Non-Terminal AnyTerm
+Non-Terminal boolConstt
+Terminal TK_TRUE with token value true
+Non-Terminal N7
+Non-Terminal logicalOp
+Terminal TK_AND with token value AND
+Non-Terminal AnyTerm
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_ID with token value c
+Non-Terminal N_11
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N8
+Non-Terminal relationalOp
+Terminal TK_EQ with token value ==
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_ID with token value b
+Non-Terminal N_11
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N7
+Terminal TK_BC with token value )
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N8
+Non-Terminal N7
+Non-Terminal logicalOp
+Terminal TK_OR with token value OR
+Non-Terminal AnyTerm
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_BO with token value (
+Non-Terminal arithmeticOrBooleanExpr
+Non-Terminal AnyTerm
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_ID with token value b
+Non-Terminal N_11
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N8
+Non-Terminal relationalOp
+Terminal TK_GT with token value >
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_ID with token value p
+Non-Terminal N_11
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N7
+Non-Terminal logicalOp
+Terminal TK_AND with token value AND
+Non-Terminal AnyTerm
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_BO with token value (
+Non-Terminal arithmeticOrBooleanExpr
+Non-Terminal AnyTerm
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_ID with token value a
+Non-Terminal N_11
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N8
+Non-Terminal relationalOp
+Terminal TK_LE with token value <=
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_ID with token value c
+Non-Terminal N_11
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N7
+Terminal TK_BC with token value )
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N8
+Non-Terminal N7
+Terminal TK_BC with token value )
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N8
+Non-Terminal N7
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal statements
+Non-Terminal statement
+Non-Terminal ioStmt
+Terminal TK_PRINT with token value print
+Terminal TK_BO with token value (
+Non-Terminal var_print
+Terminal TK_ID with token value res_1
+Non-Terminal P1
+Terminal TK_BC with token value )
 Terminal TK_SEMICOLON with token value ;
 Non-Terminal statements
 Terminal TK_END with token value end
