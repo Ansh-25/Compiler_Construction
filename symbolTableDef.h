@@ -13,14 +13,19 @@
 #include "hash.h"
 
 typedef struct ParamList{
-    DataType t;
+    TypeInfo type;
     char* identifier;
     struct ParamList* next;
 }ParamList;
 
 typedef struct{
     char* identifier;
-    DataType t;
+    int nesting_lvl;
+    int scope_begin;
+    int scope_end;
+    int width;
+    int offset;
+    TypeInfo type;
 }ModuleTableEntry;
 
 typedef struct{

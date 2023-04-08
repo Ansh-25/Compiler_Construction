@@ -17,16 +17,18 @@ typedef enum {PROGRAM,MODULEDECLARATIONS,OTHERMODULES1,OTHERMODULES2,UNARY_PLUS,
 
 typedef enum {INTEGER, REAL, BOOLEAN, ERROR} Prim_type;
 
-typedef struct DataType{
-    bool is_primitive;
-    Prim_type pt; 
+typedef enum {ARRAY_STATIC, ARRAY_DYNAMIC, PRIMITIVE} DataType;
+
+typedef struct TypeInfo{
+    DataType datatype;
+    Prim_type primtype; 
     int lower_bound;
     int upper_bound;
-}DataType;
+}TypeInfo;
 
 typedef struct ASTNode{
     Label label;
-    DataType type;
+    TypeInfo type;
     struct Token* tk;
     struct ASTNode* child;
     struct ASTNode* sibling;
