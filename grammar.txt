@@ -96,7 +96,7 @@
 <factor> ID <N_11>
 <N_11> SQBO <element_index_with_expressions> SQBC
 <N_11> EPS
-<element_index_with_expressions> <sign> <N_10>
+<element_index_with_expressions> <unary_op> <N_10>
 <element_index_with_expressions> <arrExpr>
 <N_10> <new_index>
 <N_10> BO <arrExpr> BC
