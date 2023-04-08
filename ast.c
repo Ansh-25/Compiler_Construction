@@ -1061,8 +1061,13 @@ void makeAST(struct ParseNode* parserNode){
             makeAST(parserNode->child->sibling);
             newNode = (ASTNode*)malloc(sizeof(ASTNode));
             newNode->label = ARR_INDEX1;
-            newNode->child = parserNode->child->addr;
-            newNode->child->sibling = parserNode->child->sibling->addr;
+            if(parserNode->child->addr!=NULL){
+                newNode->child = parserNode->child->addr;
+                newNode->child->child = parserNode->child->sibling->addr;
+            }
+            else    
+                newNode->child = parserNode->child->sibling->addr;
+            newNode->sibling = NULL;
             parserNode->addr = newNode;
             free(parserNode->child->sibling);
             free(parserNode->child);

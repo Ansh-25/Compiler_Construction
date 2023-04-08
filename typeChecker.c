@@ -25,6 +25,8 @@ MainTableEntry* createModule(char* name, ParamList* inputList, ParamList* output
 }
 
 typechecker(ASTNode* astNode){
+    if(astNode==NULL)
+        return;
     int c = astNode->label;
     ASTNode* current = astNode->child;
     for (ASTNode* current = astNode->child; current != NULL; current = current -> sibling) typechecker(current);
@@ -273,6 +275,494 @@ typechecker(ASTNode* astNode){
             typechecker(astNode->sibling);
             break;
 
+        case UNARY_PLUS:
+            typechecker(astNode->child);
+            astNode->type = astNode->child->type;
+            break;
+        
+        case UNARY_MINUS:
+            typechecker(astNode->child);
+            astNode->type = astNode->child->type;
+            break;
+
+        case ID:
+            if(searchVar(curr,astNode->tk->val.identifier)==NULL){
+                //Error:variable not found
+                //astNode->type = error;
+            }
+            else{
+                astNode->type = searchVar(curr,astNode->tk->val.identifier)->t;
+            }
+            break;
+
+        case NUM:
+            astNode->type.is_primitive = true;
+            astNode->type.pt = INTEGER;
+            break;
+
+        case RNUM:
+            astNode->type.is_primitive = true;
+            astNode->type.pt = REAL;
+            break;
+
+        case TRUE:
+            astNode->type.is_primitive = true;
+            astNode->type.pt = BOOLEAN;
+            break;
+
+        case FALSE:
+            astNode->type.is_primitive = true;
+            astNode->type.pt = BOOLEAN;
+            break;
+        
+        case ARRAY:
+            typechecker(astNode->child->sibling->child);
+            astNode->type.is_primitive = false;
+            ModuleTableEntry* var = searchVar(curr, astNode->child->tk->val.identifier);
+            if(var==NULL){
+                printf("Error at line %d: Array not declared\n",astNode->child->tk->lineNo);
+            }
+            else if(astNode->child->sibling->child->type.pt!=INTEGER){
+                printf("Error at line %d: Array index can only be of integer type\n",astNode->child->tk->lineNo);
+            }
+            else{
+                astNode->type.pt = var->t.pt;
+            }
+            break;
+
+        case PLUS:
+            typechecker(astNode->child);
+            typechecker(astNode->child->sibling);
+            ASTNode* left_op = astNode->child;
+            ASTNode* right_op = astNode->child->sibling;
+            if(left_op->type.is_primitive==false || right_op->type.is_primitive==false){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in addition\n",left_op->child->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in addition\n",right_op->child->tk->lineNo);
+            }
+            else if(left_op->type.pt==BOOLEAN || right_op->type.pt==BOOLEAN){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Boolean operand found in addition\n",left_op->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Boolean operand found in addition\n",right_op->tk->lineNo);
+            }
+            else if(left_op->type.pt!=BOOLEAN && left_op->type.pt!=ERROR && compare_Datatype(left_op->type,right_op->type)==true){
+                astNode->type = left_op->type;
+            }
+            else if(left_op->type.pt==ERROR || right_op->type.pt==ERROR){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+            }
+            else{
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in addition\n",left_op->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in addition\n",right_op->tk->lineNo);
+                else{
+                    printf("Expected operands of similar type in addition\n");
+                }
+            }
+            break;
+
+        case MINUS:
+            typechecker(astNode->child);
+            typechecker(astNode->child->sibling);
+            ASTNode* left_op = astNode->child;
+            ASTNode* right_op = astNode->child->sibling;
+            if(left_op->type.is_primitive==false || right_op->type.is_primitive==false){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in subtraction\n",left_op->child->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in subtraction\n",right_op->child->tk->lineNo);
+            }
+            else if(left_op->type.pt==BOOLEAN || right_op->type.pt==BOOLEAN){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Boolean operand found in subtraction\n",left_op->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Boolean operand found in subtraction\n",right_op->tk->lineNo);
+            }
+            else if(left_op->type.pt!=BOOLEAN && left_op->type.pt!=ERROR && compare_Datatype(left_op->type,right_op->type)==true){
+                astNode->type = left_op->type;
+            }
+            else if(left_op->type.pt==ERROR || right_op->type.pt==ERROR){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+            }
+            else{
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in subtraction\n",left_op->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in subtraction\n",right_op->tk->lineNo);
+                else{
+                    printf("Expected operands of similar type in subtraction\n");
+                }
+            }
+            break;
+
+        case MUL:
+            typechecker(astNode->child);
+            typechecker(astNode->child->sibling);
+            ASTNode* left_op = astNode->child;
+            ASTNode* right_op = astNode->child->sibling;
+            if(left_op->type.is_primitive==false || right_op->type.is_primitive==false){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in multiplication\n",left_op->child->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in multiplication\n",right_op->child->tk->lineNo);
+            }
+            else if(left_op->type.pt==BOOLEAN || right_op->type.pt==BOOLEAN){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Boolean operand found in multiplication\n",left_op->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Boolean operand found in multiplication\n",right_op->tk->lineNo);
+            }
+            else if(left_op->type.pt!=BOOLEAN && left_op->type.pt!=ERROR && compare_Datatype(left_op->type,right_op->type)==true){
+                astNode->type = left_op->type;
+            }
+            else if(left_op->type.pt==ERROR || right_op->type.pt==ERROR){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+            }
+            else{
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in multiplication\n",left_op->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in multiplication\n",right_op->tk->lineNo);
+                else{
+                    printf("Expected operands of similar type in multiplication\n");
+                }
+            }
+            break;
+
+        case DIV:
+            typechecker(astNode->child);
+            typechecker(astNode->child->sibling);
+            ASTNode* left_op = astNode->child;
+            ASTNode* right_op = astNode->child->sibling;
+            if(left_op->type.is_primitive==false || right_op->type.is_primitive==false){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in division\n",left_op->child->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in division\n",right_op->child->tk->lineNo);
+            }
+            else if(left_op->type.pt==BOOLEAN || right_op->type.pt==BOOLEAN){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Boolean operand found in division\n",left_op->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Boolean operand found in division\n",right_op->tk->lineNo);
+            }
+            else if(compare_Datatype(left_op->type,right_op->type)==true){
+                astNode->type = left_op->type;
+            }
+            else if((left_op->type.pt==INTEGER && right_op->type.pt==REAL)||(right_op->type.pt==INTEGER && left_op->type.pt==REAL)){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = REAL;
+            }
+            else if(left_op->type.pt==ERROR || right_op->type.pt==ERROR){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+            }
+            else{
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in division\n",left_op->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in division\n",right_op->tk->lineNo);
+                else{
+                    printf("Expected operands of similar type in division\n");
+                }
+            }
+            break;
+
+        case AND:
+            typechecker(astNode->child);
+            typechecker(astNode->child->sibling);
+            ASTNode* left_op = astNode->child;
+            ASTNode* right_op = astNode->child->sibling;
+            if(left_op->type.is_primitive==false || right_op->type.is_primitive==false){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in logical operation\n",left_op->child->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in logical operation\n",right_op->child->tk->lineNo);
+            }
+            else if(left_op->type.pt!=BOOLEAN || right_op->type.pt!=BOOLEAN){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected both operands of boolean type in logical operation\n",left_op->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected both operands of boolean type in logical operation\n",right_op->tk->lineNo);
+                else{
+                    printf("Expected both operands of boolean type in logical operation\n");
+                }
+            }
+            else{
+                astNode->type.is_primitive = true;
+                astNode->type.pt = BOOLEAN;
+            }
+            break;
+
+        case OR:
+            typechecker(astNode->child);
+            typechecker(astNode->child->sibling);
+            ASTNode* left_op = astNode->child;
+            ASTNode* right_op = astNode->child->sibling;
+            if(left_op->type.is_primitive==false || right_op->type.is_primitive==false){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in logical operation\n",left_op->child->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in logical operation\n",right_op->child->tk->lineNo);
+            }
+            else if(left_op->type.pt!=BOOLEAN || right_op->type.pt!=BOOLEAN){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected both operands of boolean type in logical operation\n",left_op->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected both operands of boolean type in logical operation\n",right_op->tk->lineNo);
+                else{
+                    printf("Expected both operands of boolean type in logical operation\n");
+                }
+            }
+            else{
+                astNode->type.is_primitive = true;
+                astNode->type.pt = BOOLEAN;
+            }
+            break;
+            
+        case LT:
+            typechecker(astNode->child);
+            typechecker(astNode->child->sibling);
+            ASTNode* left_op = astNode->child;
+            ASTNode* right_op = astNode->child->sibling;
+            if(left_op->type.is_primitive==false || right_op->type.is_primitive==false){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in relational operation\n",left_op->child->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in relational operation\n",right_op->child->tk->lineNo);
+            }
+            else if(left_op->type.pt==INTEGER && right_op->type.pt==INTEGER){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = BOOLEAN;
+            }
+            else if(left_op->type.pt==REAL && right_op->type.pt==REAL){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = BOOLEAN;
+            }
+            else{
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in relational operation\n",left_op->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in relational operation\n",right_op->tk->lineNo);
+                else{
+                    printf("Expected operands of similar type in relational operation\n");
+                }
+            }
+            break;
+            
+        case LE:
+            typechecker(astNode->child);
+            typechecker(astNode->child->sibling);
+            ASTNode* left_op = astNode->child;
+            ASTNode* right_op = astNode->child->sibling;
+            if(left_op->type.is_primitive==false || right_op->type.is_primitive==false){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in relational operation\n",left_op->child->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in relational operation\n",right_op->child->tk->lineNo);
+            }
+            else if(left_op->type.pt==INTEGER && right_op->type.pt==INTEGER){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = BOOLEAN;
+            }
+            else if(left_op->type.pt==REAL && right_op->type.pt==REAL){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = BOOLEAN;
+            }
+            else{
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in relational operation\n",left_op->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in relational operation\n",right_op->tk->lineNo);
+                else{
+                    printf("Expected operands of similar type in relational operation\n");
+                }
+            }
+            break;
+            
+
+        case GT:
+            typechecker(astNode->child);
+            typechecker(astNode->child->sibling);
+            ASTNode* left_op = astNode->child;
+            ASTNode* right_op = astNode->child->sibling;
+            if(left_op->type.is_primitive==false || right_op->type.is_primitive==false){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in relational operation\n",left_op->child->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in relational operation\n",right_op->child->tk->lineNo);
+            }
+            else if(left_op->type.pt==INTEGER && right_op->type.pt==INTEGER){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = BOOLEAN;
+            }
+            else if(left_op->type.pt==REAL && right_op->type.pt==REAL){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = BOOLEAN;
+            }
+            else{
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in relational operation\n",left_op->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in relational operation\n",right_op->tk->lineNo);
+                else{
+                    printf("Expected operands of similar type in relational operation\n");
+                }
+            }
+            break;
+
+        case GE:
+            typechecker(astNode->child);
+            typechecker(astNode->child->sibling);
+            ASTNode* left_op = astNode->child;
+            ASTNode* right_op = astNode->child->sibling;
+            if(left_op->type.is_primitive==false || right_op->type.is_primitive==false){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in relational operation\n",left_op->child->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in relational operation\n",right_op->child->tk->lineNo);
+            }
+            else if(left_op->type.pt==INTEGER && right_op->type.pt==INTEGER){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = BOOLEAN;
+            }
+            else if(left_op->type.pt==REAL && right_op->type.pt==REAL){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = BOOLEAN;
+            }
+            else{
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in relational operation\n",left_op->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in relational operation\n",right_op->tk->lineNo);
+                else{
+                    printf("Expected operands of similar type in relational operation\n");
+                }
+            }
+            break;
+
+        case EQ:
+            typechecker(astNode->child);
+            typechecker(astNode->child->sibling);
+            ASTNode* left_op = astNode->child;
+            ASTNode* right_op = astNode->child->sibling;
+            if(left_op->type.is_primitive==false || right_op->type.is_primitive==false){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in relational operation\n",left_op->child->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in relational operation\n",right_op->child->tk->lineNo);
+            }
+            else if(left_op->type.pt==INTEGER && right_op->type.pt==INTEGER){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = BOOLEAN;
+            }
+            else if(left_op->type.pt==REAL && right_op->type.pt==REAL){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = BOOLEAN;
+            }
+            else{
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in relational operation\n",left_op->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in relational operation\n",right_op->tk->lineNo);
+                else{
+                    printf("Expected operands of similar type in relational operation\n");
+                }
+            }
+            break;
+
+        case NE:
+            typechecker(astNode->child);
+            typechecker(astNode->child->sibling);
+            ASTNode* left_op = astNode->child;
+            ASTNode* right_op = astNode->child->sibling;
+            if(left_op->type.is_primitive==false || right_op->type.is_primitive==false){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in relational operation\n",left_op->child->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Array operand found in relational operation\n",right_op->child->tk->lineNo);
+            }
+            else if(left_op->type.pt==INTEGER && right_op->type.pt==INTEGER){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = BOOLEAN;
+            }
+            else if(left_op->type.pt==REAL && right_op->type.pt==REAL){
+                astNode->type.is_primitive = true;
+                astNode->type.pt = BOOLEAN;
+            }
+            else{
+                astNode->type.is_primitive = true;
+                astNode->type.pt = ERROR;
+                if(left_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in relational operation\n",left_op->tk->lineNo);
+                else if(right_op->tk!=NULL)
+                    printf("Type Error at line %d: Expected operands of similar type in relational operation\n",right_op->tk->lineNo);
+                else{
+                    printf("Expected operands of similar type in relational operation\n");
+                }
+            }
+            break;
+        
         case RANGE_WHILE:
             ASTNode* current = astNode->child;
             for (ASTNode* current = astNode->child; current != NULL; current = current -> sibling) typechecker(current);
