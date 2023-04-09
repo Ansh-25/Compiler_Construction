@@ -1,5 +1,4 @@
-** This testcase demonstrates correctness of module structure with declaration and simple statements**
 <<<driver program>>>
 start
-	[s]:= use module arraySum with parameters A,k;
+	
 end

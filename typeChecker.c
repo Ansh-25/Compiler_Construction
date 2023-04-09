@@ -4,6 +4,57 @@ MainTableEntry **SymbolTable;
 MainTableEntry *curr; // set curr at every module node
 int offset = 0;
 
+void insertModule(MainTableEntry** table, MainTableEntry* new_module) {
+    int ind = sumchars(new_module->module_name);
+    while(table[ind] != NULL) {ind++; ind %=47;}
+    table[ind] = new_module;
+}
+
+MainTableEntry* searchModule(MainTableEntry** table, char* moduleName) {
+    int ind = sumchars(moduleName);
+    while(table[ind]!=NULL){
+        if(strcmp(moduleName, table[ind] -> module_name)==0) return table[ind];
+        ind++;
+        ind %= 47;
+    }
+    return NULL;
+}
+
+void insertVar(ModuleTableEntry** table, ModuleTableEntry* new_var) {
+    int ind = sumchars(new_var->identifier);
+    while(table[ind] != NULL) {ind++; ind %=47;}
+    table[ind] = new_var;
+}
+
+ModuleTableEntry* searchVar(ModuleTableEntry** table, char* varName) {
+    int ind = sumchars(varName);
+    while(table[ind]!=NULL){
+        if(strcmp(varName, table[ind] -> identifier)==0) return table[ind];
+        ind++;
+        ind %= 47;
+    }
+    return NULL;
+}
+
+ParamList* insertlast (ParamList* head, ParamList* newNode) {
+    newNode -> next = NULL;
+    if (head == NULL)
+        head = newNode;
+    else {
+        ParamList* curr = head;
+        while (curr -> next != NULL)
+            curr = curr -> next;
+        curr -> next = newNode;
+    }
+    return head;
+}
+
+bool compare_Datatype(TypeInfo d1, TypeInfo d2){
+    if(d1.datatype!=d2.datatype || d1.primtype!=d2.primtype || d1.lower_bound!=d2.lower_bound || d1.upper_bound!=d2.upper_bound)
+        return false;
+    return true;
+}
+
 void createMainTable(int size)
 {
     SymbolTable = (MainTableEntry **)malloc(size * sizeof(MainTableEntry *));
@@ -1059,22 +1110,4 @@ void typechecker(ASTNode *astNode)
     default:
         break;
     }
-}
-
-int main()
-{
-    FILE *ptr = fopen("testcase7.txt", "r");
-    ptr = initLexer(ptr, 32);
-    loadgrammar("grammar.txt");
-    computefirstandfollow();
-    createParseTable();
-    ParseNode *parserNode = parse();
-    FILE *fp = fopen("checktree.txt", "w");
-    printf("Printing AST ruleno\n");
-    printTree(parserNode, fp);
-    fflush(fp);
-    fclose(fp);
-    ASTNode *astroot = makeAST(parserNode);
-    typechecker(astroot);
-    return 0;
 }

@@ -4,15 +4,7 @@
 #include "astDef.h"
 #include "parser.h"
 #include "lexer.h"
-
-
-/*
-IMPORTANT THINGS TO REMEMBER
-
-1. make linked list using siblings.
-ast type not used
-case numbering wrong
-*/
+#include "symbolTableDef.h"
 
 ASTNode* astroot;
 int scope_start1 = 1;
@@ -45,7 +37,6 @@ ASTNode* makeNode(Label label_1,struct Token* token_1,struct ASTNode* child_1,st
     return newNode;
 }
 
-//rule no for leafnodes is same as that of their parents, change in parser;
 void makeAST(struct ParseNode* parserNode){
     ASTNode *newNode = NULL, *newNode1 = NULL;
     ParseNode *c1=NULL,*c2=NULL,*c3=NULL;
@@ -1593,6 +1584,8 @@ ASTNode* AST(){
 	makeAST(parserNode);
     printf("\nPrinting AST\n\n");
     printAST(astroot);
+    // printf("\nTypeChecking AST ...\n\n");
+    // typechecker(astroot);
 	return astroot;
 }
 
