@@ -835,13 +835,44 @@ typechecker(ASTNode* astNode){
             ASTNode* current = astNode->child;
             for (ASTNode* current = astNode->child; current != NULL; current = current -> sibling) typechecker(current);
             if(astNode->child->type.primtype!=BOOLEAN || astNode->child->type.datatype!=PRIMITIVE){
-                printf("TYPE ERROR: line:= %d, Module \"%s\" has already been defined\n",astNode->tk->lineNo, astNode->tk->val.identifier);
+                printf("TYPE ERROR: at line:= %d, Module \"%s\" has already been defined\n",astNode->tk->lineNo, astNode->tk->val.identifier);
             } 
             break;
         
+        case ITER_FOR:
+            for (ASTNode* current = astNode->child; current != NULL; current = current -> sibling) typechecker(current);
+            ModuleTableEntry* newEntry;
+            newEntry->identifier = astNode->tk->val.identifier;
+            newEntry->nesting_lvl = astNode->nest_level;
+            newEntry->offset = offset;
+            offset+=2;
+            newEntry->scope_begin = astNode->scope_begin;
+            newEntry->scope_end = astNode->scope_end;
+            newEntry->type.datatype = PRIMITIVE;
+            newEntry->type.primtype = INTEGER;
+            insertVar(curr, newEntry);
+            break;
+
         case RANGE_FOR:
-            for (ASTNode* current = astNode->child; current != NULL; current = current -> sibling)
-                typechecker(current);
+            ASTNode* num1,*num2;
+            if(astNode->child->type.datatype==PRIMITIVE && astNode->child->type.primtype==INTEGER){
+                num1 = astNode->child;
+            }else num1 = astNode->child->child;
+            if(astNode->child->sibling->type.datatype==PRIMITIVE && astNode->child->sibling->type.primtype==INTEGER){
+                num2 = astNode->child->sibling;
+            }else num2 = astNode->child->sibling->child;
+            if(astNode->child->type.datatype!=PRIMITIVE || astNode->child->type.primtype!=INTEGER){
+                printf("TYPE ERROR: at line:= %d, iterator range bounds must be integer\n",astNode->tk->lineNo);
+            }
+
+            break;
+
+        case CASE_STMT:
+
+            break;
+        
+        case CASE:
+
             break;
     }
 }

@@ -16,11 +16,11 @@ case numbering wrong
 
 ASTNode* astroot;
 int scope_start1 = 1;
-int scope_end1 = INT16_MAX;
-int scope_end2 = INT16_MAX;
+int scope_end1 = INT_MAX;
+int scope_end2 = INT_MAX;
 int nest_level = 0;
 
-char* arr[] = {"PROGRAM","MODULEDECLARATIONS","OTHERMODULES1","OTHERMODULES2","UNARY_PLUS","UNARY_MINUS", "ID", "NUM", "RNUM", "ARRAY_DTYPE", "ARRAY","ARRAY_RANGE","ARR_INDEX1", "ARR_INDEX2", "PLUS", "MINUS", "MUL", "DIV", "AND", "OR", "LT", "LE", "GT", "GE", "EQ", "NE", "MODULEDECLARATION", "DRIVERMODULE","MODULE_REUSE", "MODULE", "RET", "PARAMETER", "INTEGER_", "REAL_", "BOOLEAN_", "RANGE_WHILE","RANGE_FOR", "STATEMENTS", "INPUT", "OUTPUT", "ARR_OUTPUT", "TRUE", "FALSE", "ASSIGN", "ARR_ASSIGN", "INDEX_ARR", "DECLARE", "ID_LIST", "CASE","CASE_STMT","RANGE", "INPUT_PLIST", "OUTPUT_PLIST","DEFAULT"};
+char* arr[] = {"PROGRAM","ITER_FOR","MODULEDECLARATIONS","OTHERMODULES1","OTHERMODULES2","UNARY_PLUS","UNARY_MINUS", "ID", "NUM", "RNUM", "ARRAY_DTYPE", "ARRAY","ARRAY_RANGE","ARR_INDEX1", "ARR_INDEX2", "PLUS", "MINUS", "MUL", "DIV", "AND", "OR", "LT", "LE", "GT", "GE", "EQ", "NE", "MODULEDECLARATION", "DRIVERMODULE","MODULE_REUSE", "MODULE", "RET", "PARAMETER", "INTEGER_", "REAL_", "BOOLEAN_", "RANGE_WHILE","RANGE_FOR", "STATEMENTS", "INPUT", "OUTPUT", "ARR_OUTPUT", "TRUE", "FALSE", "ASSIGN", "ARR_ASSIGN", "INDEX_ARR", "DECLARE", "ID_LIST", "CASE","CASE_STMT","RANGE", "INPUT_PLIST", "OUTPUT_PLIST","DEFAULT"};
 
 void printAST(ASTNode* root){
     if(root==NULL) return;
@@ -1493,7 +1493,7 @@ void makeAST(struct ParseNode* parserNode){
             makeAST(c2);
             scope_end1 = scope_end2;
             nest_level--;
-            newNode = makeNode(RANGE_FOR,parserNode->child->sibling->sibling->val.t,c1->addr,NULL);
+            newNode = makeNode(ITER_FOR,parserNode->child->sibling->sibling->val.t,c1->addr,NULL);
             newNode->child->sibling = c2->addr;
             newNode->scope_begin = parserNode->child->sibling->sibling->val.t->lineNo;
             newNode->scope_end = c2->sibling->val.t->lineNo;
@@ -1582,7 +1582,7 @@ void makeAST(struct ParseNode* parserNode){
 }
 
 ASTNode* AST(){
-    ptr = fopen("testcase5.txt","r");
+    ptr = fopen("testcase7.txt","r");
     ptr = initLexer(ptr, 32);
     loadgrammar("grammar.txt");
     computefirstandfollow();
