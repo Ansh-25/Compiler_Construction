@@ -15,6 +15,10 @@ case numbering wrong
 */
 
 ASTNode* astroot;
+int scope_start1 = 1;
+int scope_end1 = INT16_MAX;
+int scope_end2 = INT16_MAX;
+int nest_level = 0;
 
 char* arr[] = {"PROGRAM","MODULEDECLARATIONS","OTHERMODULES1","OTHERMODULES2","UNARY_PLUS","UNARY_MINUS", "ID", "NUM", "RNUM", "ARRAY_DTYPE", "ARRAY","ARRAY_RANGE","ARR_INDEX1", "ARR_INDEX2", "PLUS", "MINUS", "MUL", "DIV", "AND", "OR", "LT", "LE", "GT", "GE", "EQ", "NE", "MODULEDECLARATION", "DRIVERMODULE","MODULE_REUSE", "MODULE", "RET", "PARAMETER", "INTEGER_", "REAL_", "BOOLEAN_", "RANGE_WHILE","RANGE_FOR", "STATEMENTS", "INPUT", "OUTPUT", "ARR_OUTPUT", "TRUE", "FALSE", "ASSIGN", "ARR_ASSIGN", "INDEX_ARR", "DECLARE", "ID_LIST", "CASE","CASE_STMT","RANGE", "INPUT_PLIST", "OUTPUT_PLIST","DEFAULT"};
 
@@ -120,6 +124,8 @@ void makeAST(struct ParseNode* parserNode){
             break;
 
         case 7:
+            scope_start1 = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->child->val.t->lineNo;
+            scope_end1 = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->child->sibling->sibling->val.t->lineNo;
             c1 = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling;
             c2 = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling;
             c3 = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling;
@@ -188,6 +194,8 @@ void makeAST(struct ParseNode* parserNode){
             parserNode->addr->child->tk = parserNode->child->val.t;
             parserNode->addr->child->child = parserNode->child->sibling->sibling->addr;
             parserNode->addr->child->sibling = parserNode->child->sibling->sibling->sibling->addr;
+            parserNode->addr->scope_begin = scope_start1;
+            parserNode->addr->scope_end = scope_end1;
             free(parserNode->child->sibling->sibling->sibling);
             free(parserNode->child->sibling->sibling);
             free(parserNode->child->sibling->val.t);
@@ -203,6 +211,8 @@ void makeAST(struct ParseNode* parserNode){
             parserNode->addr->tk = parserNode->child->sibling->val.t;
             parserNode->addr->child = parserNode->child->sibling->sibling->sibling->addr;
             parserNode->addr->sibling = parserNode->child->sibling->sibling->sibling->sibling->addr;
+            parserNode->addr->scope_begin = scope_start1;
+            parserNode->addr->scope_end = scope_end1;
             free(parserNode->child->sibling->sibling->sibling->sibling);
             free(parserNode->child->sibling->sibling->sibling);
             free(parserNode->child->sibling->sibling->val.t);
@@ -228,6 +238,8 @@ void makeAST(struct ParseNode* parserNode){
             parserNode->addr->child->tk = parserNode->child->val.t;
             parserNode->addr->child->child = parserNode->child->sibling->sibling->addr;
             parserNode->addr->child->sibling = parserNode->child->sibling->sibling->sibling->addr;
+            parserNode->addr->scope_begin = scope_start1;
+            parserNode->addr->scope_end = scope_end1;
             free(parserNode->child->sibling->sibling->sibling);
             free(parserNode->child->sibling->sibling);
             free(parserNode->child->sibling->val.t);
@@ -243,6 +255,8 @@ void makeAST(struct ParseNode* parserNode){
             parserNode->addr->tk = parserNode->child->sibling->val.t;
             parserNode->addr->child = parserNode->child->sibling->sibling->sibling->addr;
             parserNode->addr->sibling = parserNode->child->sibling->sibling->sibling->sibling->addr;
+            parserNode->addr->scope_begin = scope_start1;
+            parserNode->addr->scope_end = scope_end1;
             free(parserNode->child->sibling->sibling->sibling->sibling);
             free(parserNode->child->sibling->sibling->sibling);
             free(parserNode->child->sibling->sibling->val.t);
@@ -347,7 +361,12 @@ void makeAST(struct ParseNode* parserNode){
             break;
 
         case 24:
+            nest_level++;
+            scope_end2 = scope_end1;
+            scope_end1 = parserNode->child->sibling->sibling->val.t->lineNo;
             makeAST(parserNode->child->sibling);
+            scope_end1 = scope_end2;
+            nest_level--;
             parserNode->addr = makeNode(STATEMENTS,NULL,parserNode->child->sibling->addr,NULL);
             free(parserNode->child->sibling->sibling->val.t);
             free(parserNode->child->sibling->sibling);
@@ -437,6 +456,7 @@ void makeAST(struct ParseNode* parserNode){
             makeAST(parserNode->child->sibling);
             parserNode->addr = (ASTNode*)malloc(sizeof(ASTNode));
             parserNode->addr->sibling = NULL;
+            
             if (parserNode->child->sibling->addr == NULL) {
                 parserNode->addr->label = ID;
                 parserNode->addr->tk = parserNode->child->val.t;
@@ -1308,10 +1328,18 @@ void makeAST(struct ParseNode* parserNode){
 
         // ANSH
         case 124:
+            scope_start1 = parserNode->child->sibling->sibling->sibling->sibling->val.t->lineNo;
             makeAST(parserNode->child->sibling);
             makeAST(parserNode->child->sibling->sibling->sibling);
             parserNode->addr = makeNode(DECLARE,NULL,parserNode->child->sibling->addr,NULL);
             parserNode->addr->child->sibling = parserNode->child->sibling->sibling->sibling->addr;
+            ASTNode* curr = parserNode->child->sibling->addr->child;
+            while(curr!=NULL){
+                curr->scope_begin = scope_start1;
+                curr->scope_end = scope_end1;
+                curr->nest_level = nest_level;
+                curr = curr->sibling;
+            }
             free(parserNode->child->sibling->sibling->sibling->sibling->val.t);
             free(parserNode->child->sibling->sibling->sibling->sibling);
             free(parserNode->child->sibling->sibling->sibling);
@@ -1445,6 +1473,8 @@ void makeAST(struct ParseNode* parserNode){
             makeAST(c2);
             newNode = makeNode(RANGE_FOR,parserNode->child->sibling->sibling->val.t,c1->addr,NULL);
             newNode->child->sibling = c2->addr;
+            newNode->scope_begin = parserNode->child->sibling->sibling->val.t->lineNo;
+            newNode->scope_end = c2->sibling->val.t->lineNo;
             parserNode->addr = newNode;
             free(parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->val.t); 
             free(parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling); 

@@ -32,6 +32,9 @@ typedef struct ASTNode{
     struct Token* tk;
     struct ASTNode* child;
     struct ASTNode* sibling;
+    int scope_begin;
+    int scope_end;
+    int nest_level;
 }ASTNode;
 
 
