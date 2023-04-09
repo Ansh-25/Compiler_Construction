@@ -84,9 +84,28 @@ typechecker(ASTNode* astNode){
                             ParamList* newnode = (ParamList*)malloc(sizeof(ParamList));
                             newnode->identifier = parameter->tk->val.identifier;
                             typechecker(parameter->child);
-                            newnode->t = parameter->child->type;
+                            newnode->type = parameter->child->type;
                             newnode->next = NULL;
                             input_plist = insertlast(input_plist, newnode);
+                            ModuleTableEntry* newEntry;
+                            newEntry->identifier = newnode->identifier;
+                            newEntry->nesting_lvl = 1;
+                            newEntry->offset = offset;
+                            newEntry->scope_begin = astNode->scope_begin;
+                            newEntry->scope_end = astNode->scope_end;
+                            newEntry->type = newnode->type;
+                            if (newEntry->type.primtype == BOOLEAN)
+                                newEntry->width = 1;
+                            else if (newEntry->type.primtype == INTEGER)
+                                newEntry->width = 2;
+                            else
+                                newEntry->width = 4;
+                            if (newEntry->type.datatype == ARRAY_STATIC)
+                                newEntry->width = (newEntry->width * (newEntry->type.upper_bound - newEntry->type.lower_bound + 1)) - 1;
+                            else if (newEntry->type.datatype == ARRAY_DYNAMIC)
+                                newEntry->width = 1;
+                            offset += newEntry->width;
+                            insertVar(curr, newEntry);
                             parameter = parameter->sibling;
                         }
                         searched->inputList = input_plist;
@@ -98,9 +117,28 @@ typechecker(ASTNode* astNode){
                             ParamList* newnode = (ParamList*)malloc(sizeof(ParamList));
                             newnode->identifier = parameter->tk->val.identifier;
                             typechecker(parameter->child);
-                            newnode->t = parameter->child->type;
+                            newnode->type = parameter->child->type;
                             newnode->next = NULL;
                             output_plist = insertlast(input_plist, newnode);
+                            ModuleTableEntry* newEntry;
+                            newEntry->identifier = newnode->identifier;
+                            newEntry->nesting_lvl = 1;
+                            newEntry->offset = offset;
+                            newEntry->scope_begin = astNode->scope_begin;
+                            newEntry->scope_end = astNode->scope_end;
+                            newEntry->type = newnode->type;
+                            if (newEntry->type.primtype == BOOLEAN)
+                                newEntry->width = 1;
+                            else if (newEntry->type.primtype == INTEGER)
+                                newEntry->width = 2;
+                            else
+                                newEntry->width = 4;
+                            if (newEntry->type.datatype == ARRAY_STATIC)
+                                newEntry->width = (newEntry->width * (newEntry->type.upper_bound - newEntry->type.lower_bound + 1)) - 1;
+                            else if (newEntry->type.datatype == ARRAY_DYNAMIC)
+                                newEntry->width = 1;
+                            offset += newEntry->width;
+                            insertVar(curr, newEntry);
                             parameter = parameter->sibling;
                         }
                         searched->outputList = output_plist;
@@ -131,7 +169,6 @@ typechecker(ASTNode* astNode){
 
         case ARRAY_DTYPE:
             typechecker(astNode->child->sibling);
-            astNode->type.is_primitive = false;
             astNode->type.primtype = astNode->child->sibling->type.primtype;
             astNode->type.lower_bound = INT_MIN;
             astNode->type.upper_bound = INT_MIN;
@@ -171,13 +208,17 @@ typechecker(ASTNode* astNode){
                 printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n",right->tk->lineNo, right->tk->val.identifier);
             if (astNode->type.upper_bound != INT_MIN && astNode->type.lower_bound != INT_MIN && astNode->type.upper_bound < astNode->type.lower_bound)
                 printf("Error: lower bound of array should be less than or equal to upper bound\n");
+            if (astNode->type.upper_bound != INT_MIN && astNode->type.lower_bound != INT_MIN)
+                astNode->type.datatype = ARRAY_STATIC;
+            else
+                astNode->type.datatype = ARRAY_DYNAMIC;
             break;
 
         case INPUT:
             ModuleTableEntry* var = searchVar(curr, astNode->tk->val.identifier);
             if (var == NULL)
                 printf("Error at line %d: identifier\"%s\" not recognized\n",astNode->tk->lineNo, astNode->tk->val.identifier);
-            else if (var->t.is_primitive == false)
+            else if (var->type.datatype != PRIMITIVE)
                 printf("Error at line %d: cannot take array as input\n",astNode->tk->lineNo);
             break;
 
@@ -186,52 +227,52 @@ typechecker(ASTNode* astNode){
                 ModuleTableEntry* var = searchVar(curr, astNode->child->tk->val.identifier);
                 if (var == NULL)
                     printf("Error at line %d: identifier\"%s\" not recognized\n",astNode->child->tk->lineNo, astNode->child->tk->val.identifier);
-                else if (var->t.is_primitive == false)
+                else if (var->type.datatype != PRIMITIVE)
                     printf("Error at line %d: cannot print an array\n",astNode->child->tk->lineNo);
             }
             else if (astNode->child->label = ARR_OUTPUT) {
                 ModuleTableEntry* var = searchVar(curr, astNode->child->child->tk->val.identifier);
                 if (var == NULL)
                     printf("Error at line %d: identifier\"%s\" not recognized\n",astNode->child->child->tk->lineNo, astNode->child->child->tk->val.identifier);
-                else if (var->t.is_primitive == true)
+                else if (var->type.datatype == PRIMITIVE)
                     printf("Error at line %d: %s is not an array\n",astNode->child->child->tk->lineNo, astNode->child->child->tk->val.identifier);
                 else {
                     ASTNode* index = astNode->child->child->sibling;
                     if (index == UNARY_MINUS) {
-                        if (index->child->label == NUM && var->t.lower_bound != INT_MIN && var->t.upper_bound != INT_MIN) {
+                        if (index->child->label == NUM && var->type.lower_bound != INT_MIN && var->type.upper_bound != INT_MIN) {
                             int num = (-1) * index->child->tk->val.integer;
-                            if (num < var->t.lower_bound || num > var->t.upper_bound)
+                            if (num < var->type.lower_bound || num > var->type.upper_bound)
                                 printf("Error at line %d: Array index out of bounds\n",index->child->tk->lineNo);
                         }
                         else {
                             ModuleTableEntry* arr_ind = searchVar(curr, index->child->tk->val.identifier);
                             if (arr_ind == NULL)
                                 printf("Error at line %d: indentifier \"%s\" not recognized\n", index->child->tk->lineNo, index->child->tk->val.identifier);
-                            else if (arr_ind->t.primtype != INTEGER || arr_ind->t.is_primitive != true)
+                            else if (arr_ind->type.primtype != INTEGER || arr_ind->type.datatype != PRIMITIVE)
                                 printf("Error at line %d: array index must be an integer", index->child->tk->lineNo);
                         }
                     }
                     else if (index == UNARY_PLUS) {
-                        if (index->child->label == NUM && var->t.lower_bound != INT_MIN && var->t.upper_bound != INT_MIN) {
+                        if (index->child->label == NUM && var->type.lower_bound != INT_MIN && var->type.upper_bound != INT_MIN) {
                             int num = index->child->tk->val.integer;
-                            if (num < var->t.lower_bound || num > var->t.upper_bound)
+                            if (num < var->type.lower_bound || num > var->type.upper_bound)
                                 printf("Error at line %d: Array index out of bounds\n",index->child->tk->lineNo);
                         }
                         else {
                             ModuleTableEntry* arr_ind = searchVar(curr, index->child->tk->val.identifier);
                             if (arr_ind == NULL)
                                 printf("Error at line %d: indentifier \"%s\" not recognized\n", index->child->tk->lineNo, index->child->tk->val.identifier);
-                            else if (arr_ind->t.primtype != INTEGER || arr_ind->t.is_primitive != true)
+                            else if (arr_ind->type.primtype != INTEGER || arr_ind->type.datatype != PRIMITIVE)
                                 printf("Error at line %d: array index must be an integer", index->child->tk->lineNo);
                         }
                     }
-                    else if (index->label == NUM && (index->tk->val.integer < var->t.lower_bound || index->tk->val.integer > var->t.upper_bound))
+                    else if (index->label == NUM && (index->tk->val.integer < var->type.lower_bound || index->tk->val.integer > var->type.upper_bound))
                         printf("Error at line %d: Array index out of bounds\n",index->tk->lineNo);
                     else {
                         ModuleTableEntry* arr_ind = searchVar(curr, index->tk->val.identifier);
                         if (arr_ind == NULL)
                             printf("Error at line %d: indentifier \"%s\" not recognized\n", index->tk->lineNo, index->tk->val.identifier);
-                        else if (arr_ind->t.primtype != INTEGER || arr_ind->t.is_primitive != true)
+                        else if (arr_ind->type.primtype != INTEGER || arr_ind->type.datatype != PRIMITIVE)
                             printf("Error at line %d: array index must be an integer", index->tk->lineNo);
                     }
                 }
@@ -793,7 +834,7 @@ typechecker(ASTNode* astNode){
         case RANGE_WHILE:
             ASTNode* current = astNode->child;
             for (ASTNode* current = astNode->child; current != NULL; current = current -> sibling) typechecker(current);
-            if(astNode->child->type.primtype!=BOOLEAN || astNode->child->type.is_primitive!=1){
+            if(astNode->child->type.primtype!=BOOLEAN || astNode->child->type.datatype!=PRIMITIVE){
                 printf("TYPE ERROR: line:= %d, Module \"%s\" has already been defined\n",astNode->tk->lineNo, astNode->tk->val.identifier);
             } 
             break;
