@@ -854,25 +854,36 @@ typechecker(ASTNode* astNode){
             break;
 
         case RANGE_FOR:
-            ASTNode* num1,*num2;
+            ASTNode *num1,*num2;
             if(astNode->child->type.datatype==PRIMITIVE && astNode->child->type.primtype==INTEGER){
                 num1 = astNode->child;
             }else num1 = astNode->child->child;
             if(astNode->child->sibling->type.datatype==PRIMITIVE && astNode->child->sibling->type.primtype==INTEGER){
                 num2 = astNode->child->sibling;
             }else num2 = astNode->child->sibling->child;
-            if(astNode->child->type.datatype!=PRIMITIVE || astNode->child->type.primtype!=INTEGER){
-                printf("TYPE ERROR: at line:= %d, iterator range bounds must be integer\n",astNode->tk->lineNo);
-            }
-
+            if(!(num1!=NULL && num2 != NULL 
+                && num1->type.datatype == num2->type.datatype 
+                && num1->type.primtype == num2->type.primtype 
+                && num1->type.datatype==PRIMITIVE 
+                && num1->type.primtype==INTEGER
+                )){ 
+                    printf("TYPE ERROR: at line:= %d, iterator range bounds must be integer\n",astNode->tk->lineNo);
+                }
             break;
 
         case CASE_STMT:
-
+            for (ASTNode* current = astNode->child; current != NULL; current = current -> sibling) typechecker(current);
             break;
         
         case CASE:
+            for (ASTNode* current = astNode->child; current != NULL; current = current -> sibling) typechecker(current);
+            break;
+        
+        case DEFAULT:
+            for (ASTNode* current = astNode->child; current != NULL; current = current -> sibling) typechecker(current);
+            break;
 
+        default:
             break;
     }
 }
