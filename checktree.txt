@@ -176,6 +176,17 @@ Terminal TK_TRUE with token value true
 Terminal TK_COLON with token value :
 Non-Terminal statements
 Non-Terminal statement
+Non-Terminal declareStmt
+Terminal TK_DECLARE with token value declare
+Non-Terminal idList
+Terminal TK_ID with token value b
+Non-Terminal N3
+Terminal TK_COLON with token value :
+Non-Terminal dataType
+Terminal TK_INTEGER with token value integer
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal statements
+Non-Terminal statement
 Non-Terminal ioStmt
 Terminal TK_PRINT with token value print
 Terminal TK_BO with token value (
@@ -239,6 +250,17 @@ Terminal TK_FALSE with token value false
 Terminal TK_COLON with token value :
 Non-Terminal statements
 Non-Terminal statement
+Non-Terminal declareStmt
+Terminal TK_DECLARE with token value declare
+Non-Terminal idList
+Terminal TK_ID with token value c
+Non-Terminal N3
+Terminal TK_COLON with token value :
+Non-Terminal dataType
+Terminal TK_INTEGER with token value integer
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal statements
+Non-Terminal statement
 Non-Terminal ioStmt
 Terminal TK_PRINT with token value print
 Terminal TK_BO with token value (
@@ -265,17 +287,6 @@ Non-Terminal _default
 Terminal TK_END with token value end
 Non-Terminal statements
 Terminal TK_END with token value end
-Non-Terminal statements
-Non-Terminal statement
-Non-Terminal declareStmt
-Terminal TK_DECLARE with token value declare
-Non-Terminal idList
-Terminal TK_ID with token value a
-Non-Terminal N3
-Terminal TK_COLON with token value :
-Non-Terminal dataType
-Terminal TK_BOOLEAN with token value boolean
-Terminal TK_SEMICOLON with token value ;
 Non-Terminal statements
 Non-Terminal statement
 Non-Terminal ioStmt

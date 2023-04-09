@@ -1355,9 +1355,14 @@ void makeAST(struct ParseNode* parserNode){
         case 125:
             c1= parserNode->child->sibling->sibling->sibling->sibling->sibling;
             c2= c1->sibling;
+            nest_level++;
+            scope_end2 = scope_end1;
+            scope_start1 = parserNode->child->sibling->sibling->sibling->sibling->val.t->lineNo;
             makeAST(c2);
             c1->addr = c2->addr;
             makeAST(c1);
+            scope_end1 = scope_end2;
+            nest_level--;
             parserNode->addr = makeNode(CASE_STMT,NULL,c1->addr,NULL);
             free(c2->sibling->val.t);
             free(c2->sibling);
@@ -1379,7 +1384,13 @@ void makeAST(struct ParseNode* parserNode){
             c2= c1->sibling->sibling;
             c3= c2->sibling->sibling->sibling;
             makeAST(c1); 
+            nest_level++;
+            scope_end2 = scope_end1;
+            scope_start1 = parserNode->child->val.t->lineNo;
+            scope_end1 = c2->sibling->val.t->lineNo;
             makeAST(c2);
+            scope_end1 = scope_end2;
+            nest_level--;
             c3->addr = parserNode->addr;
             makeAST(c3);
             newNode = makeNode(CASE,NULL,c1->addr,NULL);
@@ -1405,8 +1416,12 @@ void makeAST(struct ParseNode* parserNode){
             c1= parserNode->child->sibling;
             c2= c1->sibling->sibling;
             c3= c2->sibling->sibling->sibling;
+            nest_level++;
+            scope_start1 = parserNode->child->val.t->lineNo;
+            scope_end1 = c2->sibling->val.t->lineNo;
             makeAST(c1); 
             makeAST(c2);
+            nest_level--;
             c3->addr = parserNode->addr;
             makeAST(c3);
             newNode = makeNode(CASE,NULL,c1->addr,NULL);
@@ -1482,6 +1497,7 @@ void makeAST(struct ParseNode* parserNode){
             newNode->child->sibling = c2->addr;
             newNode->scope_begin = parserNode->child->sibling->sibling->val.t->lineNo;
             newNode->scope_end = c2->sibling->val.t->lineNo;
+            newNode->nest_level = nest_level+1;
             parserNode->addr = newNode;
             free(parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->val.t); 
             free(parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling); 
