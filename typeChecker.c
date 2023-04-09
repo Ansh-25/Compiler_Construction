@@ -888,21 +888,47 @@ void typechecker(ASTNode* astNode){
 
         // <moduleReuseStmt> <optional> ID <actual_para_list>
         case MODULE_REUSE:
-            if(astNode->label==ASSIGN){
-                MainTableEntry* entry = searchModule(SymbolTable,astNode->child->sibling->tk->val.identifier);
-                ASTNode* list_in = astNode->child->child->child;
-                ASTNode* list_out = astNode->child->sibling;
-                bool flag = true;
-                ParamList* in_list = entry->inputList;
-                ParamList* in_list = entry->outputList;
-                while(in_list!=NULL){
-                    if(list_in->type.)
-                    list_in = list_in->sibling;
-                    in_list = in_list->next;
+            MainTableEntry* entry = searchModule(SymbolTable,astNode->tk->val.identifier);
+            bool flag = true;
+            if(entry==NULL) {
+                printf("TYPE ERROR: at line:= %d, Module not found\n",astNode->tk->lineNo);
+                break;
+            }
+            if(astNode->child->label==ASSIGN){
+                ASTNode* formal_out = astNode->child->child->child;
+                ASTNode* formal_in = astNode->child->sibling->child;
+                ParamList* real_in = entry->inputList;
+                ParamList* real_out = entry->outputList;
+                while(real_out!=NULL){
+                    if(formal_out == NULL || !compare_Datatype(formal_out->type,real_out->type) ){
+                        flag = false;
+                        break;
+                    }
+                    formal_out = formal_out->sibling;
+                    real_out = real_out->next;
                 }
-                if(!flag){
-                    printf("TYPE ERROR: at line:= %d, Module reuse parameters mismatch\n",astNode->tk->lineNo);
+                while(real_in!=NULL){
+                    if(formal_in == NULL || !compare_Datatype(formal_in->type,real_in->type) ){
+                        flag = false;
+                        break;
+                    }
+                    formal_in = formal_in->sibling;
+                    real_in = real_in->next;
                 }
+            }else{
+                ASTNode* actual_in = astNode->child->child;
+                ParamList* formal_in = entry->inputList;
+                while(formal_in!=NULL){
+                    if(actual_in == NULL || !compare_Datatype(actual_in->type,formal_in->type) ){
+                        flag = false;
+                        break;
+                    }
+                    actual_in = actual_in->sibling;
+                    formal_in = formal_in->next;
+                }
+            }
+            if(!flag){
+                printf("TYPE ERROR: at line:= %d, Module reuse parameters mismatch\n",astNode->tk->lineNo);
             }
             break;
 
