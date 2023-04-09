@@ -5,6 +5,7 @@
 #include "parser.h"
 #include "lexer.h"
 #include "symbolTableDef.h"
+#include "typeChecker.h"
 
 ASTNode* astroot;
 int scope_start1 = 1;
@@ -1584,8 +1585,8 @@ ASTNode* AST(){
 	makeAST(parserNode);
     printf("\nPrinting AST\n\n");
     printAST(astroot);
-    // printf("\nTypeChecking AST ...\n\n");
-    // typechecker(astroot);
+    printf("\nTypeChecking AST ...\n\n");
+    typeChecker(astroot);
 	return astroot;
 }
 

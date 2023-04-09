@@ -8,8 +8,8 @@
 run2: ast.exe
 	./ast.exe
 
-ast.exe: ast.c lexer.c parser.c
-	gcc ast.c lexer.c parser.c typeChecker.c -o ast.exe
+ast.exe: ast.c lexer.c parser.c typeChecker.c hash.c
+	gcc ast.c lexer.c parser.c typeChecker.c hash.c -o ast.exe
 
 run1: stage1.exe
 	stage1.exe testcase4.txt testOutput.txt 32
@@ -25,6 +25,9 @@ parser.c: parserDef.h lexer.h
 
 lexer.c: lexerDef.h hash.h
 	gcc -c lexer.c
+
+hash.c: hash.h
+	gcc -c hash.c
 
 driver.c: lexer.h parser.h
 	gcc -c driver.c

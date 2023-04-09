@@ -1,4 +1,5 @@
 #include "symbolTableDef.h"
+#include "hash.h"
 
 MainTableEntry **SymbolTable;
 MainTableEntry *curr; // set curr at every module node
@@ -36,7 +37,7 @@ ModuleTableEntry* searchVar(ModuleTableEntry** table, char* varName) {
     return NULL;
 }
 
-ParamList* insertlast (ParamList* head, ParamList* newNode) {
+ParamList* insertLast (ParamList* head, ParamList* newNode) {
     newNode -> next = NULL;
     if (head == NULL)
         head = newNode;
@@ -70,7 +71,7 @@ ModuleTableEntry **createModuleTable(int size)
     return newTable;
 }
 
-MainTableEntry *createModule(char *name, ParamList *inputList, ParamList *outputList, ModuleTableEntry *table)
+MainTableEntry *createModule(char *name, ParamList *inputList, ParamList *outputList, ModuleTableEntry **table)
 {
     MainTableEntry *newModule = malloc(sizeof(MainTableEntry));
     newModule->module_name = name;
@@ -80,38 +81,36 @@ MainTableEntry *createModule(char *name, ParamList *inputList, ParamList *output
     return newModule;
 }
 
-void typechecker(ASTNode *astNode)
+void typeChecker(ASTNode *astNode)
 {
     if (astNode == NULL)
         return;
     int c = astNode->label;
-    ASTNode *current = astNode->child;
+    ASTNode *current = NULL;
     MainTableEntry *searched = NULL;
     ModuleTableEntry *var = NULL;
     ASTNode *left_op = NULL;
     ASTNode *right_op = NULL;
-    for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
-        typechecker(current);
     switch (c)
     {
     case PROGRAM:
         for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
-            typechecker(current);
+            typeChecker(current);
         break;
 
     case MODULEDECLARATIONS:
         for (ASTNode *curr = astNode->child; curr != NULL; curr = curr->sibling)
-            typechecker(curr);
+            typeChecker(curr);
         break;
 
     case OTHERMODULES1:
         for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
-            typechecker(current);
+            typeChecker(current);
         break;
 
     case OTHERMODULES2:
         for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
-            typechecker(current);
+            typeChecker(current);
         break;
 
     case MODULEDECLARATION:
@@ -124,7 +123,7 @@ void typechecker(ASTNode *astNode)
     case DRIVERMODULE:
         curr->moduleTable = createModuleTable(20);
         insertModule(SymbolTable, createModule("driver", NULL, NULL, curr->moduleTable));
-        typechecker(astNode->child);
+        typeChecker(astNode->child);
         break;
 
     case MODULE:
@@ -135,7 +134,7 @@ void typechecker(ASTNode *astNode)
         {
             curr->moduleTable = createModuleTable(20);
             if (searched == NULL)
-                insertModule(SymbolTable, createModule(astNode->child->tk->val.identifier, NULL, NULL, curr));
+                insertModule(SymbolTable, createModule(astNode->child->tk->val.identifier, NULL, NULL, curr->moduleTable));
             else
                 searched = curr;
             ASTNode *current = astNode->child->sibling;
@@ -149,10 +148,10 @@ void typechecker(ASTNode *astNode)
                     {
                         ParamList *newnode = (ParamList *)malloc(sizeof(ParamList));
                         newnode->identifier = parameter->tk->val.identifier;
-                        typechecker(parameter->child);
+                        typeChecker(parameter->child);
                         newnode->type = parameter->child->type;
                         newnode->next = NULL;
-                        input_plist = insertlast(input_plist, newnode);
+                        input_plist = insertLast(input_plist, newnode);
                         ModuleTableEntry *newEntry;
                         newEntry->identifier = newnode->identifier;
                         newEntry->nesting_lvl = 1;
@@ -184,10 +183,10 @@ void typechecker(ASTNode *astNode)
                     {
                         ParamList *newnode = (ParamList *)malloc(sizeof(ParamList));
                         newnode->identifier = parameter->tk->val.identifier;
-                        typechecker(parameter->child);
+                        typeChecker(parameter->child);
                         newnode->type = parameter->child->type;
                         newnode->next = NULL;
-                        output_plist = insertlast(output_plist, newnode);
+                        output_plist = insertLast(output_plist, newnode);
                         ModuleTableEntry *newEntry;
                         newEntry->identifier = newnode->identifier;
                         newEntry->nesting_lvl = 1;
@@ -214,7 +213,7 @@ void typechecker(ASTNode *astNode)
                 else
                 {
                     for (ASTNode *stmt = current->child; stmt != NULL; stmt = stmt->sibling)
-                        typechecker(stmt);
+                        typeChecker(stmt);
                 }
                 current = current->sibling;
             }
@@ -237,7 +236,7 @@ void typechecker(ASTNode *astNode)
         break;
 
     case ARRAY_DTYPE:
-        typechecker(astNode->child->sibling);
+        typeChecker(astNode->child->sibling);
         astNode->type.primtype = astNode->child->sibling->type.primtype;
         astNode->type.lower_bound = INT_MIN;
         astNode->type.upper_bound = INT_MIN;
@@ -331,7 +330,7 @@ void typechecker(ASTNode *astNode)
                             printf("Error at line %d: array index must be an integer", index->child->tk->lineNo);
                     }
                 }
-                else if (index == UNARY_PLUS)
+                else if (index->label == UNARY_PLUS)
                 {
                     if (index->child->label == NUM && var->type.datatype == ARRAY_STATIC)
                     {
@@ -363,8 +362,8 @@ void typechecker(ASTNode *astNode)
         break;
 
     case ASSIGN:
-        typechecker(astNode->child);
-        typechecker(astNode->child->sibling);
+        typeChecker(astNode->child);
+        typeChecker(astNode->child->sibling);
         TypeInfo t1 = astNode->child->type;
         TypeInfo t2 = astNode->child->sibling->type;
         if (t1.primtype == ERROR || t2.primtype == ERROR)
@@ -386,7 +385,7 @@ void typechecker(ASTNode *astNode)
         break;
 
     case DECLARE:
-        typechecker(astNode->child->sibling);
+        typeChecker(astNode->child->sibling);
         TypeInfo d = astNode->child->sibling->type;
         int width = 0;
         if (d.primtype == BOOLEAN)
@@ -425,12 +424,12 @@ void typechecker(ASTNode *astNode)
         break;
 
     case UNARY_PLUS:
-        typechecker(astNode->child);
+        typeChecker(astNode->child);
         astNode->type = astNode->child->type;
         break;
 
     case UNARY_MINUS:
-        typechecker(astNode->child);
+        typeChecker(astNode->child);
         astNode->type = astNode->child->type;
         break;
 
@@ -483,7 +482,7 @@ void typechecker(ASTNode *astNode)
         }
         else if (astNode->child->sibling->child != NULL)
         {
-            typechecker(astNode->child->sibling->child);
+            typeChecker(astNode->child->sibling->child);
             if (astNode->child->sibling->child->type.datatype != PRIMITIVE || astNode->child->sibling->child->type.primtype != INTEGER)
             {
                 printf("Type Error at line %d: Index of array variable %s has been found to be of non-integer type\n", astNode->child->tk->lineNo, astNode->child->tk->val.identifier);
@@ -498,8 +497,8 @@ void typechecker(ASTNode *astNode)
         break;
 
     case PLUS:
-        typechecker(astNode->child);
-        typechecker(astNode->child->sibling);
+        typeChecker(astNode->child);
+        typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
@@ -545,8 +544,8 @@ void typechecker(ASTNode *astNode)
         break;
 
     case MINUS:
-        typechecker(astNode->child);
-        typechecker(astNode->child->sibling);
+        typeChecker(astNode->child);
+        typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
@@ -592,8 +591,8 @@ void typechecker(ASTNode *astNode)
         break;
 
     case MUL:
-        typechecker(astNode->child);
-        typechecker(astNode->child->sibling);
+        typeChecker(astNode->child);
+        typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
@@ -639,8 +638,8 @@ void typechecker(ASTNode *astNode)
         break;
 
     case DIV:
-        typechecker(astNode->child);
-        typechecker(astNode->child->sibling);
+        typeChecker(astNode->child);
+        typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
@@ -691,8 +690,8 @@ void typechecker(ASTNode *astNode)
         break;
 
     case AND:
-        typechecker(astNode->child);
-        typechecker(astNode->child->sibling);
+        typeChecker(astNode->child);
+        typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
@@ -725,8 +724,8 @@ void typechecker(ASTNode *astNode)
         break;
 
     case OR:
-        typechecker(astNode->child);
-        typechecker(astNode->child->sibling);
+        typeChecker(astNode->child);
+        typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
@@ -759,8 +758,8 @@ void typechecker(ASTNode *astNode)
         break;
 
     case LT:
-        typechecker(astNode->child);
-        typechecker(astNode->child->sibling);
+        typeChecker(astNode->child);
+        typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
@@ -798,8 +797,8 @@ void typechecker(ASTNode *astNode)
         break;
 
     case LE:
-        typechecker(astNode->child);
-        typechecker(astNode->child->sibling);
+        typeChecker(astNode->child);
+        typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
@@ -837,8 +836,8 @@ void typechecker(ASTNode *astNode)
         break;
 
     case GT:
-        typechecker(astNode->child);
-        typechecker(astNode->child->sibling);
+        typeChecker(astNode->child);
+        typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
@@ -876,8 +875,8 @@ void typechecker(ASTNode *astNode)
         break;
 
     case GE:
-        typechecker(astNode->child);
-        typechecker(astNode->child->sibling);
+        typeChecker(astNode->child);
+        typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
@@ -915,8 +914,8 @@ void typechecker(ASTNode *astNode)
         break;
 
     case EQ:
-        typechecker(astNode->child);
-        typechecker(astNode->child->sibling);
+        typeChecker(astNode->child);
+        typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
@@ -954,8 +953,8 @@ void typechecker(ASTNode *astNode)
         break;
 
     case NE:
-        typechecker(astNode->child);
-        typechecker(astNode->child->sibling);
+        typeChecker(astNode->child);
+        typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
@@ -993,9 +992,9 @@ void typechecker(ASTNode *astNode)
         break;
 
     case RANGE_WHILE:
-        ASTNode *current = astNode->child;
+        current = astNode->child;
         for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
-            typechecker(current);
+            typeChecker(current);
         if (astNode->child->type.primtype != BOOLEAN || astNode->child->type.datatype != PRIMITIVE)
         {
             printf("TYPE ERROR: at line:= %d, Module \"%s\" has already been defined\n", astNode->tk->lineNo, astNode->tk->val.identifier);
@@ -1004,7 +1003,7 @@ void typechecker(ASTNode *astNode)
 
     case ITER_FOR:
         for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
-            typechecker(current);
+            typeChecker(current);
         ModuleTableEntry *newEntry;
         newEntry->identifier = astNode->tk->val.identifier;
         newEntry->nesting_lvl = astNode->nest_level;
@@ -1018,20 +1017,19 @@ void typechecker(ASTNode *astNode)
         break;
 
     case RANGE_FOR:
-        ASTNode *num1, *num2;
         if (astNode->child->type.datatype == PRIMITIVE && astNode->child->type.primtype == INTEGER)
         {
-            num1 = astNode->child;
+            left_op = astNode->child;
         }
         else
-            num1 = astNode->child->child;
+            left_op = astNode->child->child;
         if (astNode->child->sibling->type.datatype == PRIMITIVE && astNode->child->sibling->type.primtype == INTEGER)
         {
-            num2 = astNode->child->sibling;
+            right_op = astNode->child->sibling;
         }
         else
-            num2 = astNode->child->sibling->child;
-        if (!(num1 != NULL && num2 != NULL && num1->type.datatype == num2->type.datatype && num1->type.primtype == num2->type.primtype && num1->type.datatype == PRIMITIVE && num1->type.primtype == INTEGER))
+            right_op = astNode->child->sibling->child;
+        if (!(left_op != NULL && right_op != NULL && left_op->type.datatype == right_op->type.datatype && left_op->type.primtype == right_op->type.primtype && left_op->type.datatype == PRIMITIVE && left_op->type.primtype == INTEGER))
         {
             printf("TYPE ERROR: at line:= %d, iterator range bounds must be integer\n", astNode->tk->lineNo);
         }
@@ -1039,24 +1037,24 @@ void typechecker(ASTNode *astNode)
 
     case CASE_STMT:
         for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
-            typechecker(current);
+            typeChecker(current);
         break;
 
     case CASE:
         for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
-            typechecker(current);
+            typeChecker(current);
         break;
 
     case DEFAULT:
         for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
-            typechecker(current);
+            typeChecker(current);
         break;
 
     // <moduleReuseStmt> <optional> ID <actual_para_list>
     case MODULE_REUSE:
-        MainTableEntry *entry = searchModule(SymbolTable, astNode->tk->val.identifier);
+        searched = searchModule(SymbolTable, astNode->tk->val.identifier);
         bool flag = true;
-        if (entry == NULL)
+        if (searched == NULL)
         {
             printf("TYPE ERROR: at line:= %d, Module not found\n", astNode->tk->lineNo);
             break;
@@ -1065,8 +1063,8 @@ void typechecker(ASTNode *astNode)
         {
             ASTNode *formal_out = astNode->child->child->child;
             ASTNode *formal_in = astNode->child->sibling->child;
-            ParamList *real_in = entry->inputList;
-            ParamList *real_out = entry->outputList;
+            ParamList *real_in = searched->inputList;
+            ParamList *real_out = searched->outputList;
             while (real_out != NULL)
             {
                 if (formal_out == NULL || !compare_Datatype(formal_out->type, real_out->type))
@@ -1091,7 +1089,7 @@ void typechecker(ASTNode *astNode)
         else
         {
             ASTNode *actual_in = astNode->child->child;
-            ParamList *formal_in = entry->inputList;
+            ParamList *formal_in = searched->inputList;
             while (formal_in != NULL)
             {
                 if (actual_in == NULL || !compare_Datatype(actual_in->type, formal_in->type))

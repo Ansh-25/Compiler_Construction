@@ -9,34 +9,5 @@ Terminal TK_DRIVERENDDEF with token value >>>
 Non-Terminal moduleDef
 Terminal TK_START with token value start
 Non-Terminal statements
-Non-Terminal statement
-Non-Terminal simpleStmt
-Non-Terminal moduleReuseStmt
-Non-Terminal optional
-Terminal TK_SQBO with token value [
-Non-Terminal idList
-Terminal TK_ID with token value s
-Non-Terminal N3
-Terminal TK_SQBC with token value ]
-Terminal TK_ASSIGNOP with token value :=
-Terminal TK_USE with token value use
-Terminal TK_MODULE with token value module
-Terminal TK_ID with token value arraySum
-Terminal TK_WITH with token value with
-Terminal TK_PARAMETERS with token value parameters
-Non-Terminal actual_para_list
-Non-Terminal sign
-Non-Terminal K
-Terminal TK_ID with token value A
-Non-Terminal N_11
-Non-Terminal N_12
-Terminal TK_COMMA with token value ,
-Non-Terminal sign
-Non-Terminal K
-Terminal TK_ID with token value k
-Non-Terminal N_11
-Non-Terminal N_12
-Terminal TK_SEMICOLON with token value ;
-Non-Terminal statements
 Terminal TK_END with token value end
 Non-Terminal otherModules

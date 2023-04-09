@@ -10,7 +10,6 @@
 #define symbolTableDef_H
 
 #include "astDef.h"
-#include "hash.h"
 
 typedef struct ParamList{
     TypeInfo type;
@@ -32,7 +31,7 @@ typedef struct{
     char* module_name;
     ParamList* inputList;
     ParamList* outputList;
-    ModuleTableEntry* moduleTable;
+    ModuleTableEntry** moduleTable;
 }MainTableEntry;
 
 #endif
