@@ -1,7 +1,7 @@
 #include "symbolTableDef.h"
 
 MainTableEntry** SymbolTable;
-ModuleTableEntry** curr; //set curr at every module node
+MainTableEntry* curr; //set curr at every module node
 int offset = 0;
 
 void createMainTable(int size) {
@@ -11,12 +11,13 @@ void createMainTable(int size) {
 }
 
 ModuleTableEntry** createModuleTable(int size) {
-    ModuleTableEntry** newTable = (ModuleTableEntry*)malloc(size * sizeof(ModuleTableEntry*));
+    ModuleTableEntry** newTable = (ModuleTableEntry**)malloc(size * sizeof(ModuleTableEntry*));
     for (int i = 0; i < size; i ++)
         newTable[i] = NULL;
+    return newTable;
 }
 
-MainTableEntry* createModule(char* name, ParamList* inputList, ParamList* outputList, ModuleTableEntry** table) {
+MainTableEntry* createModule(char* name, ParamList* inputList, ParamList* outputList, ModuleTableEntry* table) {
     MainTableEntry* newModule = malloc(sizeof(MainTableEntry));
     newModule->module_name = name;
     newModule->inputList = inputList;
@@ -25,11 +26,13 @@ MainTableEntry* createModule(char* name, ParamList* inputList, ParamList* output
     return newModule;
 }
 
-typechecker(ASTNode* astNode){
+void typechecker(ASTNode* astNode){
     if(astNode==NULL)
         return;
     int c = astNode->label;
     ASTNode* current = astNode->child;
+    MainTableEntry* searched = NULL;
+    ModuleTableEntry* var = NULL;
     for (ASTNode* current = astNode->child; current != NULL; current = current -> sibling) typechecker(current);
     switch(c){
         case PROGRAM:
@@ -66,7 +69,7 @@ typechecker(ASTNode* astNode){
             break;
 
         case MODULE:
-            MainTableEntry* searched = searchModule(SymbolTable, astNode->child->tk->val.identifier);
+            searched = searchModule(SymbolTable, astNode->child->tk->val.identifier);
             if (searched != NULL && searched->moduleTable != NULL)
                 printf("ERROR at line %d: Module \"%s\" has already been defined\n",astNode->tk->lineNo, astNode->tk->val.identifier);
             else {
@@ -74,7 +77,7 @@ typechecker(ASTNode* astNode){
                 if (searched == NULL)
                     insertModule(SymbolTable,createModule(astNode->child->tk->val.identifier,NULL,NULL,curr));
                 else
-                    searched->moduleTable = curr;
+                    searched = curr;
                 ASTNode* current = astNode->child->sibling;
                 while (current != NULL) {
                     if (current->label == INPUT_PLIST) {
@@ -110,7 +113,7 @@ typechecker(ASTNode* astNode){
                         }
                         searched->inputList = input_plist;
                     }
-                    else if (current->label = OUTPUT_PLIST) {
+                    else if (current->label == OUTPUT_PLIST) {
                         ASTNode* parameter = current -> child;
                         ParamList* output_plist = NULL;
                         while (parameter != NULL) {
@@ -119,7 +122,7 @@ typechecker(ASTNode* astNode){
                             typechecker(parameter->child);
                             newnode->type = parameter->child->type;
                             newnode->next = NULL;
-                            output_plist = insertlast(input_plist, newnode);
+                            output_plist = insertlast(output_plist, newnode);
                             ModuleTableEntry* newEntry;
                             newEntry->identifier = newnode->identifier;
                             newEntry->nesting_lvl = 1;
@@ -186,7 +189,7 @@ typechecker(ASTNode* astNode){
                 else
                     printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n",left->child->tk->lineNo, left->child->tk->val.identifier);
             }
-            else if (left->label = NUM)
+            else if (left->label == NUM)
                 astNode->type.lower_bound = left->child->tk->val.integer;
             else
                 printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n",left->tk->lineNo, left->tk->val.identifier);
@@ -202,7 +205,7 @@ typechecker(ASTNode* astNode){
                 else
                     printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n",right->child->tk->lineNo, right->child->tk->val.identifier);
             }
-            else if (right->label = NUM)
+            else if (right->label == NUM)
                 astNode->type.lower_bound = right->child->tk->val.integer;
             else
                 printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n",right->tk->lineNo, right->tk->val.identifier);
@@ -215,7 +218,7 @@ typechecker(ASTNode* astNode){
             break;
 
         case INPUT:
-            ModuleTableEntry* var = searchVar(curr, astNode->tk->val.identifier);
+            var = searchVar(curr, astNode->tk->val.identifier);
             if (var == NULL)
                 printf("Error at line %d: identifier\"%s\" not recognized\n",astNode->tk->lineNo, astNode->tk->val.identifier);
             else if (var->type.datatype != PRIMITIVE)
@@ -230,7 +233,7 @@ typechecker(ASTNode* astNode){
                 else if (var->type.datatype != PRIMITIVE)
                     printf("Error at line %d: cannot print an array\n",astNode->child->tk->lineNo);
             }
-            else if (astNode->child->label = ARR_OUTPUT) {
+            else if (astNode->child->label == ARR_OUTPUT) {
                 ModuleTableEntry* var = searchVar(curr, astNode->child->child->tk->val.identifier);
                 if (var == NULL)
                     printf("Error at line %d: identifier\"%s\" not recognized\n",astNode->child->child->tk->lineNo, astNode->child->child->tk->val.identifier);
@@ -238,13 +241,13 @@ typechecker(ASTNode* astNode){
                     printf("Error at line %d: %s is not an array\n",astNode->child->child->tk->lineNo, astNode->child->child->tk->val.identifier);
                 else {
                     ASTNode* index = astNode->child->child->sibling;
-                    if (index == UNARY_MINUS) {
-                        if (index->child->label == NUM && var->type.lower_bound != INT_MIN && var->type.upper_bound != INT_MIN) {
+                    if (index->label == UNARY_MINUS) {
+                        if (index->child->label == NUM && var->type.datatype==ARRAY_STATIC) {
                             int num = (-1) * index->child->tk->val.integer;
                             if (num < var->type.lower_bound || num > var->type.upper_bound)
                                 printf("Error at line %d: Array index out of bounds\n",index->child->tk->lineNo);
                         }
-                        else {
+                        else if(index->child->label==ID){
                             ModuleTableEntry* arr_ind = searchVar(curr, index->child->tk->val.identifier);
                             if (arr_ind == NULL)
                                 printf("Error at line %d: indentifier \"%s\" not recognized\n", index->child->tk->lineNo, index->child->tk->val.identifier);
@@ -253,12 +256,12 @@ typechecker(ASTNode* astNode){
                         }
                     }
                     else if (index == UNARY_PLUS) {
-                        if (index->child->label == NUM && var->type.lower_bound != INT_MIN && var->type.upper_bound != INT_MIN) {
+                        if (index->child->label == NUM && var->type.datatype==ARRAY_STATIC) {
                             int num = index->child->tk->val.integer;
                             if (num < var->type.lower_bound || num > var->type.upper_bound)
                                 printf("Error at line %d: Array index out of bounds\n",index->child->tk->lineNo);
                         }
-                        else {
+                        else if(index->child->label==ID){
                             ModuleTableEntry* arr_ind = searchVar(curr, index->child->tk->val.identifier);
                             if (arr_ind == NULL)
                                 printf("Error at line %d: indentifier \"%s\" not recognized\n", index->child->tk->lineNo, index->child->tk->val.identifier);
@@ -266,7 +269,7 @@ typechecker(ASTNode* astNode){
                                 printf("Error at line %d: array index must be an integer", index->child->tk->lineNo);
                         }
                     }
-                    else if (index->label == NUM && (index->tk->val.integer < var->type.lower_bound || index->tk->val.integer > var->type.upper_bound))
+                    else if (index->label == NUM && var->type.datatype==ARRAY_STATIC && (index->tk->val.integer < var->type.lower_bound || index->tk->val.integer > var->type.upper_bound))
                         printf("Error at line %d: Array index out of bounds\n",index->tk->lineNo);
                     else {
                         ModuleTableEntry* arr_ind = searchVar(curr, index->tk->val.identifier);
@@ -380,7 +383,7 @@ typechecker(ASTNode* astNode){
             break;
         
         case ARRAY:
-            ModuleTableEntry* var = searchVar(curr, astNode->child->tk->val.identifier);
+            var = searchVar(curr, astNode->child->tk->val.identifier);
             if(var==NULL){
                 printf("Error at line %d: Array variable %s not declared\n",astNode->child->tk->lineNo,astNode->child->tk->val.identifier);
                 astNode->type.datatype = PRIMITIVE;
@@ -906,4 +909,19 @@ typechecker(ASTNode* astNode){
         default:
             break;
     }
+}
+
+int main(){
+    ptr = fopen("testcase7.txt","r");
+    ptr = initLexer(ptr, 32);
+    loadgrammar("grammar.txt");
+    computefirstandfollow();
+    createParseTable();
+	ParseNode* parserNode = parse();
+    FILE* fp = fopen("checktree.txt","w");
+    printf("Printing AST ruleno\n");
+    printTree(parserNode,fp);
+    fflush(fp); fclose(fp);
+	ASTNode* astroot = makeAST(parserNode);
+    typechecker(astroot);
 }
