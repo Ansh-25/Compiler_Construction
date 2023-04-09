@@ -10,26 +10,33 @@ Non-Terminal moduleDef
 Terminal TK_START with token value start
 Non-Terminal statements
 Non-Terminal statement
-Non-Terminal iterativeStmt
-Terminal TK_FOR with token value for
-Terminal TK_BO with token value (
-Terminal TK_ID with token value index
-Terminal TK_IN with token value in
-Non-Terminal range_for_loop
-Non-Terminal index_for_loop
+Non-Terminal simpleStmt
+Non-Terminal moduleReuseStmt
+Non-Terminal optional
+Terminal TK_SQBO with token value [
+Non-Terminal idList
+Terminal TK_ID with token value s
+Non-Terminal N3
+Terminal TK_SQBC with token value ]
+Terminal TK_ASSIGNOP with token value :=
+Terminal TK_USE with token value use
+Terminal TK_MODULE with token value module
+Terminal TK_ID with token value arraySum
+Terminal TK_WITH with token value with
+Terminal TK_PARAMETERS with token value parameters
+Non-Terminal actual_para_list
 Non-Terminal sign
-Non-Terminal new_index_for_loop
-Terminal TK_NUM with token value 1
-Terminal TK_RANGEOP with token value ..
-Non-Terminal index_for_loop
+Non-Terminal K
+Terminal TK_ID with token value A
+Non-Terminal N_11
+Non-Terminal N_12
+Terminal TK_COMMA with token value ,
 Non-Terminal sign
-Terminal TK_MINUS with token value -
-Non-Terminal new_index_for_loop
-Terminal TK_NUM with token value 15
-Terminal TK_BC with token value )
-Terminal TK_START with token value start
-Non-Terminal statements
-Terminal TK_END with token value end
+Non-Terminal K
+Terminal TK_ID with token value k
+Non-Terminal N_11
+Non-Terminal N_12
+Terminal TK_SEMICOLON with token value ;
 Non-Terminal statements
 Terminal TK_END with token value end
 Non-Terminal otherModules

@@ -883,6 +883,26 @@ typechecker(ASTNode* astNode){
             for (ASTNode* current = astNode->child; current != NULL; current = current -> sibling) typechecker(current);
             break;
 
+        // <moduleReuseStmt> <optional> ID <actual_para_list>
+        case MODULE_REUSE:
+            if(astNode->label==ASSIGN){
+                MainTableEntry* entry = searchModule(SymbolTable,astNode->child->sibling->tk->val.identifier);
+                ASTNode* list_in = astNode->child->child->child;
+                ASTNode* list_out = astNode->child->sibling;
+                bool flag = true;
+                ParamList* in_list = entry->inputList;
+                ParamList* in_list = entry->outputList;
+                while(in_list!=NULL){
+                    if(list_in->type.)
+                    list_in = list_in->sibling;
+                    in_list = in_list->next;
+                }
+                if(!flag){
+                    printf("TYPE ERROR: at line:= %d, Module reuse parameters mismatch\n",astNode->tk->lineNo);
+                }
+            }
+            break;
+
         default:
             break;
     }

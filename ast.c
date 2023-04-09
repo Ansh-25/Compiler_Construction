@@ -1355,14 +1355,12 @@ void makeAST(struct ParseNode* parserNode){
         case 125:
             c1= parserNode->child->sibling->sibling->sibling->sibling->sibling;
             c2= c1->sibling;
-            nest_level++;
             scope_end2 = scope_end1;
             scope_start1 = parserNode->child->sibling->sibling->sibling->sibling->val.t->lineNo;
             makeAST(c2);
             c1->addr = c2->addr;
             makeAST(c1);
             scope_end1 = scope_end2;
-            nest_level--;
             parserNode->addr = makeNode(CASE_STMT,NULL,c1->addr,NULL);
             free(c2->sibling->val.t);
             free(c2->sibling);

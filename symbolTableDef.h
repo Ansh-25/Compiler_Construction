@@ -81,9 +81,7 @@ ParamList* insertlast (ParamList* head, ParamList* newNode) {
 }
 
 bool compare_Datatype(TypeInfo d1, TypeInfo d2){
-    if(d1.datatype!=d2.datatype)
-        return false;
-    if(d1.primtype!=d2.primtype)
+    if(d1.datatype!=d2.datatype || d1.primtype!=d2.primtype || d1.lower_bound!=d2.lower_bound || d1.upper_bound!=d2.upper_bound)
         return false;
     return true;
 }

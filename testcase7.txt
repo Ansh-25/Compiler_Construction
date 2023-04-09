@@ -1,8 +1,5 @@
 ** This testcase demonstrates correctness of module structure with declaration and simple statements**
 <<<driver program>>>
 start
-	for(index in  1..-15)							
-	start
-		
-	end
+	[s]:= use module arraySum with parameters A,k;
 end
