@@ -1,0 +1,108 @@
+notes about code gen
+
+- each address in the quadruple will either be a pointer to the symbol table, or a constant, or be empty (assuming compiler generated temporaries and labels will also be in the symbol table)
+- each instruction in the array of quadruples will have a label (can use regular array addressing ig)
+- 9 types of instructions (check txtbook)
+- Expression codegen code is fairly simple (just building up from the bottom, with temporaries being stored in the symbol table)
+- Array codegen code - the only difference is we need to also have code that builds the offset from the array indices
+- For conditional and iterative, we'll have B.true, B.false and S.next as inherited attributes. All 3 equal a label (a pointer to some part of the code)
+- while evaluating boolean expressions, we go top-down to calculate the values of B.true and B.false, and then bottom up for the code generation
+- for switch case, we have an array for all cases, and check for all cases
+- labels will be stored in the symbol table
+
+
+Pseudocode: 
+//for the declaration statements and the module declarations, we only need to add them to the symbol table
+//we need programs for createTemp(), createLabel(), gen(), and label()
+//we need attributes like .code, .addr, .next, .true, .left
+
+PROGRAM -> OTHERMODULE... DECLAREMODULE OTHERMODULE... {
+	PROGRAM.code = OTHERMODULE.code + ... + DECLAREMODULE.code + ... + OTHERMODULE.code
+}
+
+//assignment statements : follow the same as in the txtbook, is the exact same
+
+//for each statement list like S1, S2 do
+S1.next = label(S2.code)
+
+INPUT -> ID {
+	INPUT.code = gen(input ID.lexeme)
+}
+
+
+OUTPUT -> ID {
+	OUTPUT.code = gen(print ID.lexeme)
+}
+
+MODULEREUSE -> OUTPUTLIST MODULE {
+	MODULEREUSE.code = MODULE.code + OUTPUTLIST.code
+}
+
+OUTPUTLIST -> ID ID ID... {
+	OUTPUTLIST.code = 
+	for all values in OUTPUTLIST {
+		gen(ID1.addr = ID.lexeme) +
+		//have to add in symbol table for ID1 as well
+	}
+}
+
+MODULE -> ID ID1' ID2' ID3' {
+	MODULE.code = 
+	for all ID' in the list
+		gen(param ID') +
+	gen(call ID, numofID's)
+}
+
+SWITCHCASE -> CASE1 CASE2 ... DEFAULT {
+	createLabel(TEST, NEXT)
+	tempvar = createTemp();
+	SWITCHCASE.code = 
+	gen(tempvar = SWITCHCASE.ID) + gen(goto TEST) +
+	for each case {
+		createLabel(Li)
+		queue.push(Li, CASEi.ID)
+		gen(Li: CASEi.code) +
+	}
+	until queue is not empty
+		gen(if tempvar == queue.pop().CASEi.ID GOTO queue.pop().Li) +
+	
+}
+
+CASE -> S1 S2... {
+	CASE.code = S1.code + S2.code + ...
+	S1.next= S2.code
+	S2.next = S3.code...
+}
+
+//for while loop use same as in txtbook
+
+FOR -> RANGE S {
+	t = createTemp();
+	t' = createTemp();
+	createLabel(TOP,L)
+	FOR.code =
+	gen(t = RANGE.L) + gen(TOP: if t>RANGE.R GOTO L) + S.code + gen(t' = t + 1) + gen(t = t') //put next statement as L
+}
+
+/**********/
+
+For the 9 different instructions, we'll store them as quadruples:
+S.NO. OPERATION    RES    FIRST    SECOND
+1.        op        x       y         z
+2.        op        x                 y
+3.        =         x       y          
+4.       GOTO       L
+5.1.      IF        L       x
+5.2.    IFFALSE     L       x
+6.      IFRELOP     L       x         y
+7.1.    PARAM               x
+7.2.    MCALL               p         n
+7.3.    FCALL       y       p         n
+8.1.    ARRAY1      x       y         i
+8.2.    ARRAY2      x       i         y
+9.1.    INPUT       X
+9.2.    PRINT       x
+
+
+
+
