@@ -88,6 +88,8 @@ void typechecker(ASTNode *astNode)
     ASTNode *current = astNode->child;
     MainTableEntry *searched = NULL;
     ModuleTableEntry *var = NULL;
+    ASTNode *left_op = NULL;
+    ASTNode *right_op = NULL;
     for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
         typechecker(current);
     switch (c)
@@ -120,8 +122,8 @@ void typechecker(ASTNode *astNode)
         break;
 
     case DRIVERMODULE:
-        curr = createModuleTable(20);
-        insertModule(SymbolTable, createModule("driver", NULL, NULL, curr));
+        curr->moduleTable = createModuleTable(20);
+        insertModule(SymbolTable, createModule("driver", NULL, NULL, curr->moduleTable));
         typechecker(astNode->child);
         break;
 
@@ -131,7 +133,7 @@ void typechecker(ASTNode *astNode)
             printf("ERROR at line %d: Module \"%s\" has already been defined\n", astNode->tk->lineNo, astNode->tk->val.identifier);
         else
         {
-            curr = createModuleTable(20);
+            curr->moduleTable = createModuleTable(20);
             if (searched == NULL)
                 insertModule(SymbolTable, createModule(astNode->child->tk->val.identifier, NULL, NULL, curr));
             else
@@ -169,7 +171,7 @@ void typechecker(ASTNode *astNode)
                         else if (newEntry->type.datatype == ARRAY_DYNAMIC)
                             newEntry->width = 1;
                         offset += newEntry->width;
-                        insertVar(curr, newEntry);
+                        insertVar(curr->moduleTable, newEntry);
                         parameter = parameter->sibling;
                     }
                     searched->inputList = input_plist;
@@ -204,7 +206,7 @@ void typechecker(ASTNode *astNode)
                         else if (newEntry->type.datatype == ARRAY_DYNAMIC)
                             newEntry->width = 1;
                         offset += newEntry->width;
-                        insertVar(curr, newEntry);
+                        insertVar(curr->moduleTable, newEntry);
                         parameter = parameter->sibling;
                     }
                     searched->outputList = output_plist;
@@ -286,7 +288,7 @@ void typechecker(ASTNode *astNode)
         break;
 
     case INPUT:
-        var = searchVar(curr, astNode->tk->val.identifier);
+        var = searchVar(curr->moduleTable, astNode->tk->val.identifier);
         if (var == NULL)
             printf("Error at line %d: identifier\"%s\" not recognized\n", astNode->tk->lineNo, astNode->tk->val.identifier);
         else if (var->type.datatype != PRIMITIVE)
@@ -296,7 +298,7 @@ void typechecker(ASTNode *astNode)
     case OUTPUT:
         if (astNode->child->label == ID)
         {
-            ModuleTableEntry *var = searchVar(curr, astNode->child->tk->val.identifier);
+            ModuleTableEntry *var = searchVar(curr->moduleTable, astNode->child->tk->val.identifier);
             if (var == NULL)
                 printf("Error at line %d: identifier\"%s\" not recognized\n", astNode->child->tk->lineNo, astNode->child->tk->val.identifier);
             else if (var->type.datatype != PRIMITIVE)
@@ -304,7 +306,7 @@ void typechecker(ASTNode *astNode)
         }
         else if (astNode->child->label == ARR_OUTPUT)
         {
-            ModuleTableEntry *var = searchVar(curr, astNode->child->child->tk->val.identifier);
+            ModuleTableEntry *var = searchVar(curr->moduleTable, astNode->child->child->tk->val.identifier);
             if (var == NULL)
                 printf("Error at line %d: identifier\"%s\" not recognized\n", astNode->child->child->tk->lineNo, astNode->child->child->tk->val.identifier);
             else if (var->type.datatype == PRIMITIVE)
@@ -322,7 +324,7 @@ void typechecker(ASTNode *astNode)
                     }
                     else if (index->child->label == ID)
                     {
-                        ModuleTableEntry *arr_ind = searchVar(curr, index->child->tk->val.identifier);
+                        ModuleTableEntry *arr_ind = searchVar(curr->moduleTable, index->child->tk->val.identifier);
                         if (arr_ind == NULL)
                             printf("Error at line %d: indentifier \"%s\" not recognized\n", index->child->tk->lineNo, index->child->tk->val.identifier);
                         else if (arr_ind->type.primtype != INTEGER || arr_ind->type.datatype != PRIMITIVE)
@@ -339,7 +341,7 @@ void typechecker(ASTNode *astNode)
                     }
                     else if (index->child->label == ID)
                     {
-                        ModuleTableEntry *arr_ind = searchVar(curr, index->child->tk->val.identifier);
+                        ModuleTableEntry *arr_ind = searchVar(curr->moduleTable, index->child->tk->val.identifier);
                         if (arr_ind == NULL)
                             printf("Error at line %d: indentifier \"%s\" not recognized\n", index->child->tk->lineNo, index->child->tk->val.identifier);
                         else if (arr_ind->type.primtype != INTEGER || arr_ind->type.datatype != PRIMITIVE)
@@ -350,7 +352,7 @@ void typechecker(ASTNode *astNode)
                     printf("Error at line %d: Array index out of bounds\n", index->tk->lineNo);
                 else
                 {
-                    ModuleTableEntry *arr_ind = searchVar(curr, index->tk->val.identifier);
+                    ModuleTableEntry *arr_ind = searchVar(curr->moduleTable, index->tk->val.identifier);
                     if (arr_ind == NULL)
                         printf("Error at line %d: indentifier \"%s\" not recognized\n", index->tk->lineNo, index->tk->val.identifier);
                     else if (arr_ind->type.primtype != INTEGER || arr_ind->type.datatype != PRIMITIVE)
@@ -401,8 +403,8 @@ void typechecker(ASTNode *astNode)
         while (idList != NULL)
         {
             char *s = idList->tk->val.identifier;
-            // if(searchVar(curr,s)!=NULL && idList->scope_begin<=searchVar(curr,s)->scope_end){
-            //     printf("Error at line %d: Variable has already been declared at line %d\n",idList->tk->lineNo,searchVar(curr,s)->scope_begin);
+            // if(searchVar(curr->moduleTable,s)!=NULL && idList->scope_begin<=searchVar(curr->moduleTable,s)->scope_end){
+            //     printf("Error at line %d: Variable has already been declared at line %d\n",idList->tk->lineNo,searchVar(curr->moduleTable,s)->scope_begin);
             // }
 
             ModuleTableEntry *new_entry = (ModuleTableEntry *)malloc(sizeof(ModuleTableEntry));
@@ -416,7 +418,7 @@ void typechecker(ASTNode *astNode)
             }
             new_entry->offset = offset;
             new_entry->nesting_lvl = idList->nest_level;
-            insertVar(curr, new_entry);
+            insertVar(curr->moduleTable, new_entry);
             offset += width;
             idList = idList->sibling;
         }
@@ -433,21 +435,21 @@ void typechecker(ASTNode *astNode)
         break;
 
     case ID:
-        if (searchVar(curr, astNode->tk->val.identifier) == NULL)
+        if (searchVar(curr->moduleTable, astNode->tk->val.identifier) == NULL)
         {
             printf("Error at line %d: Variable %s has not been declared\n", astNode->tk->lineNo, astNode->tk->val.identifier);
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
         }
-        else if (searchVar(curr, astNode->tk->val.identifier) != NULL)
+        else if (searchVar(curr->moduleTable, astNode->tk->val.identifier) != NULL)
         {
-            printf("Scope Error at line %d: Variable %s has been used out of scope\n Previous declaration is at line %d\n", astNode->tk->lineNo, astNode->tk->val.identifier, searchVar(curr, astNode->tk->val.identifier)->scope_begin);
+            printf("Scope Error at line %d: Variable %s has been used out of scope\n Previous declaration is at line %d\n", astNode->tk->lineNo, astNode->tk->val.identifier, searchVar(curr->moduleTable, astNode->tk->val.identifier)->scope_begin);
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
         }
         else
         {
-            astNode->type = searchVar(curr, astNode->tk->val.identifier)->type;
+            astNode->type = searchVar(curr->moduleTable, astNode->tk->val.identifier)->type;
         }
         break;
 
@@ -472,7 +474,7 @@ void typechecker(ASTNode *astNode)
         break;
 
     case ARRAY:
-        var = searchVar(curr, astNode->child->tk->val.identifier);
+        var = searchVar(curr->moduleTable, astNode->child->tk->val.identifier);
         if (var == NULL)
         {
             printf("Error at line %d: Array variable %s not declared\n", astNode->child->tk->lineNo, astNode->child->tk->val.identifier);
@@ -498,8 +500,8 @@ void typechecker(ASTNode *astNode)
     case PLUS:
         typechecker(astNode->child);
         typechecker(astNode->child->sibling);
-        ASTNode *left_op = astNode->child;
-        ASTNode *right_op = astNode->child->sibling;
+        left_op = astNode->child;
+        right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
@@ -545,8 +547,8 @@ void typechecker(ASTNode *astNode)
     case MINUS:
         typechecker(astNode->child);
         typechecker(astNode->child->sibling);
-        ASTNode *left_op = astNode->child;
-        ASTNode *right_op = astNode->child->sibling;
+        left_op = astNode->child;
+        right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
@@ -592,8 +594,8 @@ void typechecker(ASTNode *astNode)
     case MUL:
         typechecker(astNode->child);
         typechecker(astNode->child->sibling);
-        ASTNode *left_op = astNode->child;
-        ASTNode *right_op = astNode->child->sibling;
+        left_op = astNode->child;
+        right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
@@ -639,8 +641,8 @@ void typechecker(ASTNode *astNode)
     case DIV:
         typechecker(astNode->child);
         typechecker(astNode->child->sibling);
-        ASTNode *left_op = astNode->child;
-        ASTNode *right_op = astNode->child->sibling;
+        left_op = astNode->child;
+        right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
@@ -691,8 +693,8 @@ void typechecker(ASTNode *astNode)
     case AND:
         typechecker(astNode->child);
         typechecker(astNode->child->sibling);
-        ASTNode *left_op = astNode->child;
-        ASTNode *right_op = astNode->child->sibling;
+        left_op = astNode->child;
+        right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
@@ -725,8 +727,8 @@ void typechecker(ASTNode *astNode)
     case OR:
         typechecker(astNode->child);
         typechecker(astNode->child->sibling);
-        ASTNode *left_op = astNode->child;
-        ASTNode *right_op = astNode->child->sibling;
+        left_op = astNode->child;
+        right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
@@ -759,8 +761,8 @@ void typechecker(ASTNode *astNode)
     case LT:
         typechecker(astNode->child);
         typechecker(astNode->child->sibling);
-        ASTNode *left_op = astNode->child;
-        ASTNode *right_op = astNode->child->sibling;
+        left_op = astNode->child;
+        right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
@@ -798,8 +800,8 @@ void typechecker(ASTNode *astNode)
     case LE:
         typechecker(astNode->child);
         typechecker(astNode->child->sibling);
-        ASTNode *left_op = astNode->child;
-        ASTNode *right_op = astNode->child->sibling;
+        left_op = astNode->child;
+        right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
@@ -837,8 +839,8 @@ void typechecker(ASTNode *astNode)
     case GT:
         typechecker(astNode->child);
         typechecker(astNode->child->sibling);
-        ASTNode *left_op = astNode->child;
-        ASTNode *right_op = astNode->child->sibling;
+        left_op = astNode->child;
+        right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
@@ -876,8 +878,8 @@ void typechecker(ASTNode *astNode)
     case GE:
         typechecker(astNode->child);
         typechecker(astNode->child->sibling);
-        ASTNode *left_op = astNode->child;
-        ASTNode *right_op = astNode->child->sibling;
+        left_op = astNode->child;
+        right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
@@ -915,8 +917,8 @@ void typechecker(ASTNode *astNode)
     case EQ:
         typechecker(astNode->child);
         typechecker(astNode->child->sibling);
-        ASTNode *left_op = astNode->child;
-        ASTNode *right_op = astNode->child->sibling;
+        left_op = astNode->child;
+        right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
@@ -954,8 +956,8 @@ void typechecker(ASTNode *astNode)
     case NE:
         typechecker(astNode->child);
         typechecker(astNode->child->sibling);
-        ASTNode *left_op = astNode->child;
-        ASTNode *right_op = astNode->child->sibling;
+        left_op = astNode->child;
+        right_op = astNode->child->sibling;
         if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
@@ -1012,7 +1014,7 @@ void typechecker(ASTNode *astNode)
         newEntry->scope_end = astNode->scope_end;
         newEntry->type.datatype = PRIMITIVE;
         newEntry->type.primtype = INTEGER;
-        insertVar(curr, newEntry);
+        insertVar(curr->moduleTable, newEntry);
         break;
 
     case RANGE_FOR:
