@@ -71,7 +71,7 @@
 <U> <unary_op> <new_NT>
 <new_NT> BO <arithmeticExpr> BC
 <new_NT> <var_id_num>
-<unary_op> PLUS 
+<unary_op> PLUS
 <unary_op> MINUS
 <var_id_num> ID
 <var_id_num> NUM

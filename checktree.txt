@@ -122,6 +122,17 @@ Terminal TK_BC with token value )
 Terminal TK_START with token value start
 Non-Terminal statements
 Non-Terminal statement
+Non-Terminal declareStmt
+Terminal TK_DECLARE with token value declare
+Non-Terminal idList
+Terminal TK_ID with token value a
+Non-Terminal N3
+Terminal TK_COLON with token value :
+Non-Terminal dataType
+Terminal TK_INTEGER with token value integer
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal statements
+Non-Terminal statement
 Non-Terminal simpleStmt
 Non-Terminal assignmentStmt
 Terminal TK_ID with token value t
@@ -254,6 +265,17 @@ Non-Terminal _default
 Terminal TK_END with token value end
 Non-Terminal statements
 Terminal TK_END with token value end
+Non-Terminal statements
+Non-Terminal statement
+Non-Terminal declareStmt
+Terminal TK_DECLARE with token value declare
+Non-Terminal idList
+Terminal TK_ID with token value a
+Non-Terminal N3
+Terminal TK_COLON with token value :
+Non-Terminal dataType
+Terminal TK_BOOLEAN with token value boolean
+Terminal TK_SEMICOLON with token value ;
 Non-Terminal statements
 Non-Terminal statement
 Non-Terminal ioStmt
@@ -629,7 +651,7 @@ Terminal TK_ID with token value A
 Non-Terminal N_11
 Terminal TK_SQBO with token value [
 Non-Terminal element_index_with_expressions
-Non-Terminal sign
+Non-Terminal unary_op
 Terminal TK_PLUS with token value +
 Non-Terminal N_10
 Non-Terminal new_index
@@ -645,7 +667,7 @@ Terminal TK_ID with token value A
 Non-Terminal N_11
 Terminal TK_SQBO with token value [
 Non-Terminal element_index_with_expressions
-Non-Terminal sign
+Non-Terminal unary_op
 Terminal TK_MINUS with token value -
 Non-Terminal N_10
 Non-Terminal new_index
