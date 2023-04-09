@@ -1,0 +1,35 @@
+Non-Terminal program
+Non-Terminal moduleDeclarations
+Non-Terminal otherModules
+Non-Terminal driverModule
+Terminal TK_DRIVERDEF with token value <<<
+Terminal TK_DRIVER with token value driver
+Terminal TK_PROGRAM with token value program
+Terminal TK_DRIVERENDDEF with token value >>>
+Non-Terminal moduleDef
+Terminal TK_START with token value start
+Non-Terminal statements
+Non-Terminal statement
+Non-Terminal iterativeStmt
+Terminal TK_FOR with token value for
+Terminal TK_BO with token value (
+Terminal TK_ID with token value index
+Terminal TK_IN with token value in
+Non-Terminal range_for_loop
+Non-Terminal index_for_loop
+Non-Terminal sign
+Non-Terminal new_index_for_loop
+Terminal TK_NUM with token value 1
+Terminal TK_RANGEOP with token value ..
+Non-Terminal index_for_loop
+Non-Terminal sign
+Terminal TK_MINUS with token value -
+Non-Terminal new_index_for_loop
+Terminal TK_NUM with token value 15
+Terminal TK_BC with token value )
+Terminal TK_START with token value start
+Non-Terminal statements
+Terminal TK_END with token value end
+Non-Terminal statements
+Terminal TK_END with token value end
+Non-Terminal otherModules
