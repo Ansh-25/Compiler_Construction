@@ -496,6 +496,16 @@ void typeChecker(ASTNode *astNode)
         }
         break;
 
+    case ARR_INDEX1:
+        typeChecker(astNode->child);
+        astNode->type = astNode->child->type;
+        break;
+
+    case ARR_INDEX2:
+        typeChecker(astNode->child);
+        astNode->type = astNode->child->type;
+        break;
+
     case DECLARE:
         typeChecker(astNode->child->sibling);
         TypeInfo d = astNode->child->sibling->type;
