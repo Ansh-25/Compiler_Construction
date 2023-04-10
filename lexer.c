@@ -621,6 +621,10 @@ struct Token* getNextToken()
             begin = forward = 0;
             flag = 1;
         }
+        if(state==-1 && forward==bufferSize-1){
+            flag=1;
+            begin=0;
+        }
         forward %= bufferSize - 1;
         if(forward<begin){
             flag = 1;
