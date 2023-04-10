@@ -138,7 +138,6 @@ void typeChecker(ASTNode *astNode)
 {
     if (astNode == NULL)
         return;
-    printf("%s\n",arr[astNode->label]);
     int c = astNode->label;
     ASTNode *current = NULL;
     MainTableEntry *searched = NULL;
