@@ -1,7 +1,14 @@
+<<module var_demo_array>>
+takes input [x:integer, m:array [2..20] of integer, p:real];
+returns [ n:integer, k: boolean];
+start
+end
+
 <<<driver module>>>
 start
+    declare j:integer;
 	for (i in range[1..5])
 	start
-		i:=4;
+		j:=i;
 	end
 end

@@ -4,10 +4,22 @@ Non-Terminal otherModules
 Non-Terminal driverModule
 Terminal TK_DRIVERDEF with token value <<<
 Terminal TK_DRIVER with token value driver
-Terminal TK_PROGRAM with token value 
+Terminal TK_PROGRAM with token value owerShell\Modules;C:\WINDOWS\sysBuÏ2
+
 Terminal TK_DRIVERENDDEF with token value >>>
 Non-Terminal moduleDef
 Terminal TK_START with token value start
+Non-Terminal statements
+Non-Terminal statement
+Non-Terminal declareStmt
+Terminal TK_DECLARE with token value declare
+Non-Terminal idList
+Terminal TK_ID with token value j
+Non-Terminal N3
+Terminal TK_COLON with token value :
+Non-Terminal dataType
+Terminal TK_INTEGER with token value integer
+Terminal TK_SEMICOLON with token value ;
 Non-Terminal statements
 Non-Terminal statement
 Non-Terminal iterativeStmt
@@ -31,7 +43,7 @@ Non-Terminal statements
 Non-Terminal statement
 Non-Terminal simpleStmt
 Non-Terminal assignmentStmt
-Terminal TK_ID with token value i
+Terminal TK_ID with token value j
 Non-Terminal whichStmt
 Non-Terminal lvalueIDStmt
 Terminal TK_ASSIGNOP with token value :=
@@ -41,7 +53,8 @@ Non-Terminal AnyTerm
 Non-Terminal arithmeticExpr
 Non-Terminal term
 Non-Terminal factor
-Terminal TK_NUM with token value 4
+Terminal TK_ID with token value i
+Non-Terminal N_11
 Non-Terminal N5
 Non-Terminal N4
 Non-Terminal N8

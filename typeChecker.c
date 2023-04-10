@@ -1250,9 +1250,19 @@ void typeChecker(ASTNode *astNode)
             ASTNode *formal_in = astNode->child->sibling->child;
             ParamList *real_in = searched->inputList;
             ParamList *real_out = searched->outputList;
-            while (real_out != NULL)
+            while(formal_out!=NULL) {
+                typeChecker(formal_out);
+                formal_out = formal_out->sibling;
+            }
+            while(formal_in!=NULL) {
+                typeChecker(formal_in);
+                formal_in = formal_in->sibling;
+            }
+            formal_out = astNode->child->child->child;
+            formal_in = astNode->child->sibling->child;
+            while (formal_out != NULL)
             {
-                if (formal_out == NULL || !compare_Datatype(formal_out->type, real_out->type))
+                if (real_out == NULL || !compare_Datatype(formal_out->type, real_out->type))
                 {
                     flag = false;
                     break;
@@ -1260,9 +1270,9 @@ void typeChecker(ASTNode *astNode)
                 formal_out = formal_out->sibling;
                 real_out = real_out->next;
             }
-            while (real_in != NULL)
+            while (formal_in != NULL)
             {
-                if (formal_in == NULL || !compare_Datatype(formal_in->type, real_in->type))
+                if (real_in == NULL || !compare_Datatype(formal_in->type, real_in->type))
                 {
                     flag = false;
                     break;
