@@ -1575,27 +1575,20 @@ void makeAST(struct ParseNode* parserNode){
 ASTNode* AST(){
     ptr = fopen("testcase7.txt","r");
     ptr = initLexer(ptr, 32);
-    struct Token *tk;
-    do{
-        tk = getNextToken();
-        printToken(tk);
-    }while(tk!=NULL);
-    if(ptr != NULL)
-        fclose(ptr);
-    // loadgrammar("grammar.txt");
-    // computefirstandfollow();
-    // createParseTable();
-	// ParseNode* parserNode = parse();
+    loadgrammar("grammar.txt");
+    computefirstandfollow();
+    createParseTable();
+	ParseNode* parserNode = parse();
     // // FILE* fp = fopen("checktree.txt","w");
     // // printf("Printing AST ruleno\n");
     // // printTree(parserNode,fp);
     // // fflush(fp); fclose(fp);
-	// makeAST(parserNode);
+	makeAST(parserNode);
     // // printf("\nPrinting AST\n\n");
     // // printAST(astroot);
-    // printf("\nTypeChecking AST ...\n\n");
-    // typeChecker(astroot);
-    // printSymbolTable();
+    printf("\nTypeChecking AST ...\n\n");
+    typeChecker(astroot);
+    printSymbolTable();
 	return astroot;
 }
 
