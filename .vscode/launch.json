@@ -7,7 +7,7 @@
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
             "args": [],
-            "stopAtEntry": false,
+            "stopAtEntry": fals,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
