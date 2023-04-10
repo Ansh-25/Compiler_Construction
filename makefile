@@ -17,20 +17,23 @@ run1: stage1.exe
 stage1.exe: driver.c lexer.c parser.c
 	gcc driver.c lexer.c parser.c -o stage1.exe
 
-typeChecker.c: typeChecker.h
-	gcc -c typeChecker.c
+# typeChecker.c: typeChecker.h
+# 	gcc -c typeChecker.c
 
-parser.c: parserDef.h lexer.h
-	gcc -c parser.c
+# parser.c: parserDef.h lexer.h
+# 	gcc -c parser.c
 
-lexer.c: lexerDef.h hash.h
-	gcc -c lexer.c
+# lexer.c: lexerDef.h hash.h
+# 	gcc -c lexer.c
 
-hash.c: hash.h
-	gcc -c hash.c
+# hash.c: hash.h
+# 	gcc -c hash.c
 
-driver.c: lexer.h parser.h
-	gcc -c driver.c
+# driver.c: lexer.h parser.h
+# 	gcc -c driver.c
+
+cleanw:
+	del *.o *.exe
 
 clean: 
 	rm -v *.o stage1.exe commentFreeFile.txt 
