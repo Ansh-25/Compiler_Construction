@@ -1,6 +1,7 @@
 <<<driver program>>>
 start
 	declare a:integer;
-	declare a:integer;
 	a := 5;
+	declare b:array[12..20] of integer;
+	b[13]:=a;
 end

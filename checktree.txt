@@ -21,17 +21,6 @@ Terminal TK_INTEGER with token value integer
 Terminal TK_SEMICOLON with token value ;
 Non-Terminal statements
 Non-Terminal statement
-Non-Terminal declareStmt
-Terminal TK_DECLARE with token value declare
-Non-Terminal idList
-Terminal TK_ID with token value a
-Non-Terminal N3
-Terminal TK_COLON with token value :
-Non-Terminal dataType
-Terminal TK_INTEGER with token value integer
-Terminal TK_SEMICOLON with token value ;
-Non-Terminal statements
-Non-Terminal statement
 Non-Terminal simpleStmt
 Non-Terminal assignmentStmt
 Terminal TK_ID with token value a
@@ -45,6 +34,62 @@ Non-Terminal arithmeticExpr
 Non-Terminal term
 Non-Terminal factor
 Terminal TK_NUM with token value 5
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N8
+Non-Terminal N7
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal statements
+Non-Terminal statement
+Non-Terminal declareStmt
+Terminal TK_DECLARE with token value declare
+Non-Terminal idList
+Terminal TK_ID with token value b
+Non-Terminal N3
+Terminal TK_COLON with token value :
+Non-Terminal dataType
+Terminal TK_ARRAY with token value array
+Terminal TK_SQBO with token value [
+Non-Terminal range_arrays
+Non-Terminal index_arr
+Non-Terminal sign
+Non-Terminal new_index
+Terminal TK_NUM with token value 12
+Terminal TK_RANGEOP with token value ..
+Non-Terminal index_arr
+Non-Terminal sign
+Non-Terminal new_index
+Terminal TK_NUM with token value 20
+Terminal TK_SQBC with token value ]
+Terminal TK_OF with token value of
+Non-Terminal _type
+Terminal TK_INTEGER with token value integer
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal statements
+Non-Terminal statement
+Non-Terminal simpleStmt
+Non-Terminal assignmentStmt
+Terminal TK_ID with token value b
+Non-Terminal whichStmt
+Non-Terminal lvalueARRStmt
+Terminal TK_SQBO with token value [
+Non-Terminal element_index_with_expressions
+Non-Terminal arrExpr
+Non-Terminal arrTerm
+Non-Terminal arrFactor
+Terminal TK_NUM with token value 13
+Non-Terminal arr_N5
+Non-Terminal arr_N4
+Terminal TK_SQBC with token value ]
+Terminal TK_ASSIGNOP with token value :=
+Non-Terminal expression
+Non-Terminal arithmeticOrBooleanExpr
+Non-Terminal AnyTerm
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_ID with token value a
+Non-Terminal N_11
 Non-Terminal N5
 Non-Terminal N4
 Non-Terminal N8

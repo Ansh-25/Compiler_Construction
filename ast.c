@@ -587,13 +587,9 @@ void makeAST(struct ParseNode* parserNode){
             newNode->label = ARR_ASSIGN;
             newNode->tk = NULL;
             newNode->child = parserNode->addr;
-            newNode->sibling = parserNode->child->sibling->sibling->sibling->sibling->addr;
-            newNode->child->sibling = parserNode->child->sibling->addr;
-            parserNode->addr = (ASTNode*)malloc(sizeof(ASTNode));
-            parserNode->addr->label = ASSIGN;
-            parserNode->addr->tk = NULL;
-            parserNode->addr->child = newNode;
-            parserNode->addr->sibling = NULL;
+            newNode->child->sibling = parserNode->child->sibling->sibling->sibling->sibling->addr;
+            newNode->child->child = parserNode->child->sibling->addr;
+            parserNode->addr = newNode;
             free(parserNode->child->sibling->sibling->sibling->sibling->sibling->val.t);
             free(parserNode->child->sibling->sibling->sibling->sibling->sibling);
             free(parserNode->child->sibling->sibling->sibling->sibling);
@@ -1588,7 +1584,7 @@ ASTNode* AST(){
     printAST(astroot);
     printf("\nTypeChecking AST ...\n\n");
     typeChecker(astroot);
-    //printSymbolTable();
+    printSymbolTable();
 	return astroot;
 }
 
