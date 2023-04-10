@@ -1350,7 +1350,7 @@ void makeAST(struct ParseNode* parserNode){
             c1->addr = c2->addr;
             makeAST(c1);
             scope_end1 = scope_end2;
-            parserNode->addr = makeNode(CASE_STMT,NULL,c1->addr,NULL);
+            parserNode->addr = makeNode(CASE_STMT,parserNode->child->sibling->sibling->val.t,c1->addr,NULL);
             free(c2->sibling->val.t);
             free(c2->sibling);
             free(c2);

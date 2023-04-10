@@ -24,32 +24,36 @@ Terminal TK_INTEGER with token value integer
 Terminal TK_SEMICOLON with token value ;
 Non-Terminal statements
 Non-Terminal statement
-Non-Terminal simpleStmt
-Non-Terminal assignmentStmt
+Non-Terminal conditionalStmt
+Terminal TK_SWITCH with token value switch
+Terminal TK_BO with token value (
 Terminal TK_ID with token value i
-Non-Terminal whichStmt
-Non-Terminal lvalueIDStmt
-Terminal TK_ASSIGNOP with token value :=
-Non-Terminal expression
-Non-Terminal arithmeticOrBooleanExpr
-Non-Terminal AnyTerm
-Non-Terminal arithmeticExpr
-Non-Terminal term
-Non-Terminal factor
-Terminal TK_ID with token value i
-Non-Terminal N_11
-Non-Terminal N5
-Non-Terminal N4
-Non-Terminal op1
-Terminal TK_MINUS with token value -
-Non-Terminal term
-Non-Terminal factor
-Terminal TK_NUM with token value 5
-Non-Terminal N5
-Non-Terminal N4
-Non-Terminal N8
-Non-Terminal N7
+Terminal TK_BC with token value )
+Terminal TK_START with token value start
+Non-Terminal caseStmts
+Terminal TK_CASE with token value case
+Non-Terminal value
+Terminal TK_NUM with token value 10
+Terminal TK_COLON with token value :
+Non-Terminal statements
+Terminal TK_BREAK with token value break
 Terminal TK_SEMICOLON with token value ;
+Non-Terminal N9
+Terminal TK_CASE with token value case
+Non-Terminal value
+Terminal TK_NUM with token value 20
+Terminal TK_COLON with token value :
+Non-Terminal statements
+Terminal TK_BREAK with token value break
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal N9
+Non-Terminal _default
+Terminal TK_DEFAULT with token value default
+Terminal TK_COLON with token value :
+Non-Terminal statements
+Terminal TK_BREAK with token value break
+Terminal TK_SEMICOLON with token value ;
+Terminal TK_END with token value end
 Non-Terminal statements
 Terminal TK_END with token value end
 Non-Terminal otherModules

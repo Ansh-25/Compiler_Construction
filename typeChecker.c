@@ -17,7 +17,7 @@ void printSymbolTable() {
     ModuleTableEntry** currModule;
     for (int i = 0; i < 20; i ++) {
         if (SymbolTable[i] != NULL) {
-            printf("MODULE: %s\n", SymbolTable[i]->module_name);
+            printf("\nMODULE: %s\n", SymbolTable[i]->module_name);
             printf("Input Plist:\n");
             for (current = SymbolTable[i]->inputList; current != NULL; current = current->next){
                 printf("Name: %s, DataType: %d, PrimType = %d", current->identifier, current->type.datatype, current->type.primtype);
@@ -1193,6 +1193,12 @@ void typeChecker(ASTNode *astNode)
         break;
 
     case CASE_STMT:
+        newEntry = searchVar(curr->moduleTable, astNode->tk->val.identifier,astNode->tk->lineNo);
+        if (newEntry == NULL)
+        {
+            printf("TYPE ERROR: at line:= %d, identifier not declared previously\n", astNode->tk->lineNo);
+            break;
+        }
         for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
             typeChecker(current);
         break;
