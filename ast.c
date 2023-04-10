@@ -41,8 +41,6 @@ ASTNode* makeNode(Label label_1,struct Token* token_1,struct ASTNode* child_1,st
 void makeAST(struct ParseNode* parserNode){
     ASTNode *newNode = NULL, *newNode1 = NULL;
     ParseNode *c1=NULL,*c2=NULL,*c3=NULL;
-    printf("%d ",parserNode->ruleno + 1);
-    printf("%s\n",mapnttostring(parserNode->val.nt));
     switch(parserNode->ruleno) {
 
         case 0:
@@ -1575,13 +1573,13 @@ ASTNode* AST(){
     computefirstandfollow();
     createParseTable();
 	ParseNode* parserNode = parse();
-    FILE* fp = fopen("checktree.txt","w");
-    printf("Printing AST ruleno\n");
-    printTree(parserNode,fp);
-    fflush(fp); fclose(fp);
+    // FILE* fp = fopen("checktree.txt","w");
+    // printf("Printing AST ruleno\n");
+    // printTree(parserNode,fp);
+    // fflush(fp); fclose(fp);
 	makeAST(parserNode);
-    printf("\nPrinting AST\n\n");
-    printAST(astroot);
+    // printf("\nPrinting AST\n\n");
+    // printAST(astroot);
     printf("\nTypeChecking AST ...\n\n");
     typeChecker(astroot);
     printSymbolTable();
