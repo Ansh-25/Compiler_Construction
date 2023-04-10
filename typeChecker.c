@@ -243,6 +243,7 @@ void typeChecker(ASTNode *astNode)
                             else if (newEntry->type.datatype == ARRAY_DYNAMIC)
                                 newEntry->width = 1;
                             insertVar(curr->moduleTable, newEntry);
+                            offset+=newEntry->width;
                         }
                         parameter = parameter->sibling;
                     }
@@ -294,6 +295,7 @@ void typeChecker(ASTNode *astNode)
                                 else
                                     newEntry->width = 4;
                                 insertVar(curr->moduleTable, newEntry);
+                                offset+=newEntry->width;
                             }
                         }
                         parameter = parameter->sibling;
@@ -570,12 +572,7 @@ void typeChecker(ASTNode *astNode)
                 if (newEntry->vartype != INPUT_VAR)
                     printf("Semantic Error at line %d: Variable %s has already been declared in this scope\n",idList->tk->lineNo,idList->tk->val.identifier);
                 else {
-                    free(newEntry);
-                    newEntry = (ModuleTableEntry *)malloc(sizeof(ModuleTableEntry));
-                    newEntry->identifier = s;
                     newEntry->type = d;
-                    newEntry->scope_begin = idList->scope_begin;
-                    newEntry->scope_end = idList->scope_end;
                     newEntry->is_changed = false;
                     newEntry->vartype = NORMAL_VAR;
                     if (d.datatype != ARRAY_DYNAMIC)
@@ -584,7 +581,6 @@ void typeChecker(ASTNode *astNode)
                     }
                     newEntry->offset = offset;
                     newEntry->nesting_lvl = idList->nest_level;
-                    insertVar(curr->moduleTable, newEntry);
                     offset += width;
                 }
             }
