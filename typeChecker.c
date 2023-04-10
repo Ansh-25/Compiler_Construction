@@ -246,8 +246,8 @@ void typeChecker(ASTNode *astNode)
     case ARRAY_DTYPE:
         typeChecker(astNode->child->sibling);
         astNode->type.primtype = astNode->child->sibling->type.primtype;
-        astNode->type.lower_bound = INT_MIN;
-        astNode->type.upper_bound = INT_MIN;
+        astNode->type.lower_bound = -1e9;
+        astNode->type.upper_bound = -1e9;
         ASTNode *left = astNode->child->child->child;
         ASTNode *right = astNode->child->child->sibling->child;
         if (left->label == UNARY_MINUS)
@@ -286,9 +286,9 @@ void typeChecker(ASTNode *astNode)
             astNode->type.lower_bound = right->tk->val.integer;
         else
             printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n", right->tk->lineNo, right->tk->val.identifier);
-        if (astNode->type.upper_bound != INT_MIN && astNode->type.lower_bound != INT_MIN && astNode->type.upper_bound < astNode->type.lower_bound)
+        if (astNode->type.upper_bound != -1e9 && astNode->type.lower_bound != -1e9 && astNode->type.upper_bound < astNode->type.lower_bound)
             printf("Error: lower bound of array should be less than or equal to upper bound\n");
-        if (astNode->type.upper_bound != INT_MIN && astNode->type.lower_bound != INT_MIN)
+        if (astNode->type.upper_bound != -1e9 && astNode->type.lower_bound != -1e9)
             astNode->type.datatype = ARRAY_STATIC;
         else
             astNode->type.datatype = ARRAY_DYNAMIC;
