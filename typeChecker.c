@@ -421,7 +421,7 @@ void typeChecker(ASTNode *astNode)
                 printf("Error at line %d: %s is not an array\n", astNode->child->child->tk->lineNo, astNode->child->child->tk->val.identifier);
             else
             {
-                ASTNode *index = astNode->child->child->sibling;
+                ASTNode *index = astNode->child->child->sibling->child;
                 if (index->label == UNARY_MINUS)
                 {
                     if (index->child->label == NUM && newEntry->type.datatype == ARRAY_STATIC)
@@ -456,8 +456,10 @@ void typeChecker(ASTNode *astNode)
                             printf("Error at line %d: array index must be an integer", index->child->tk->lineNo);
                     }
                 }
-                else if (index->label == NUM && newEntry->type.datatype == ARRAY_STATIC && (index->tk->val.integer < newEntry->type.lower_bound || index->tk->val.integer > newEntry->type.upper_bound))
-                    printf("Error at line %d: Array index out of bounds\n", index->tk->lineNo);
+                else if (index->label == NUM) {
+                    if (newEntry->type.datatype == ARRAY_STATIC && (index->tk->val.integer < newEntry->type.lower_bound || index->tk->val.integer > newEntry->type.upper_bound))
+                        printf("Error at line %d: Array index out of bounds\n", index->tk->lineNo);
+                }
                 else
                 {
                     ModuleTableEntry *arr_ind = searchVar(curr->moduleTable, index->tk->val.identifier, index->tk->lineNo);
