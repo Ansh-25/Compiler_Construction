@@ -523,9 +523,7 @@ void typeChecker(ASTNode *astNode)
         Prim_type pt1 = astNode->child->type.primtype;
         Prim_type pt2 = astNode->child->sibling->type.primtype;
         Prim_type pt3 = astNode->child->child->type.primtype;
-        // printf("%d\n",pt1);
-        // printf("%d\n",pt2);
-        // printf("%d\n",pt3);
+        if(pt1==ERROR || pt2==ERROR) break;
         if(pt3!=INTEGER){
             printf("Semantic Error at line %d: Index of array variable %s found to be of non-integer type\n",astNode->child->tk->lineNo,astNode->child->tk->val.identifier);
         }
