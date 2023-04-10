@@ -28,6 +28,26 @@ Terminal TK_NUM with token value 15
 Terminal TK_BC with token value )
 Terminal TK_START with token value start
 Non-Terminal statements
+Non-Terminal statement
+Non-Terminal simpleStmt
+Non-Terminal assignmentStmt
+Terminal TK_ID with token value a
+Non-Terminal whichStmt
+Non-Terminal lvalueIDStmt
+Terminal TK_ASSIGNOP with token value :=
+Non-Terminal expression
+Non-Terminal arithmeticOrBooleanExpr
+Non-Terminal AnyTerm
+Non-Terminal arithmeticExpr
+Non-Terminal term
+Non-Terminal factor
+Terminal TK_NUM with token value 5
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal N8
+Non-Terminal N7
+Terminal TK_SEMICOLON with token value ;
+Non-Terminal statements
 Terminal TK_END with token value end
 Non-Terminal statements
 Terminal TK_END with token value end

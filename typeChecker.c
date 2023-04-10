@@ -17,7 +17,7 @@ void printSymbolTable() {
     ModuleTableEntry** currModule;
     for (int i = 0; i < 20; i ++) {
         if (SymbolTable[i] != NULL) {
-            printf("\n\nMODULE: %s\n", SymbolTable[i]->module_name);
+            printf("MODULE: %s\n", SymbolTable[i]->module_name);
             printf("Input Plist:\n");
             for (current = SymbolTable[i]->inputList; current != NULL; current = current->next){
                 printf("Name: %s, DataType: %d, PrimType = %d", current->identifier, current->type.datatype, current->type.primtype);
@@ -77,19 +77,19 @@ void insertVar(ModuleTableEntry** table, ModuleTableEntry* new_var) {
 
 ModuleTableEntry* searchVar(ModuleTableEntry** table, char* varName, int lineNo) {
     int ind=0, bestNest = 0;
-    ModuleTableEntry* var = NULL;
+    ModuleTableEntry* newEntry = NULL;
     for(int i=0;varName[i]!='\0';++i){
         ind = (ind+varName[i])%20;
     }
     while(table[ind]!=NULL){
         if(strcmp(varName, table[ind] -> identifier)==0 && table[ind]->nesting_lvl > bestNest && table[ind]->scope_begin <= lineNo && table[ind]->scope_end >= lineNo) {
             bestNest = table[ind]->nesting_lvl;
-            var = table[ind];
+            newEntry = table[ind];
         }
         ind++;
         ind %= 20;
     }
-    return var;
+    return newEntry;
 }
 
 ParamList* insertLast (ParamList* head, ParamList* newNode) {
@@ -144,7 +144,7 @@ void typeChecker(ASTNode *astNode)
     int c = astNode->label;
     ASTNode *current = NULL;
     MainTableEntry *searched = NULL;
-    ModuleTableEntry *var = NULL;
+    ModuleTableEntry *newEntry = NULL;
     ASTNode *left_op = NULL;
     ASTNode *right_op = NULL;
     switch (c)
@@ -396,38 +396,38 @@ void typeChecker(ASTNode *astNode)
         break;
 
     case INPUT:
-        var = searchVar(curr->moduleTable, astNode->tk->val.identifier, astNode->tk->lineNo);
-        if (var == NULL)
+        newEntry = searchVar(curr->moduleTable, astNode->tk->val.identifier, astNode->tk->lineNo);
+        if (newEntry == NULL)
             printf("Error at line %d: identifier\"%s\" not recognized\n", astNode->tk->lineNo, astNode->tk->val.identifier);
-        else if (var->type.datatype != PRIMITIVE)
+        else if (newEntry->type.datatype != PRIMITIVE)
             printf("Error at line %d: cannot take array as input\n", astNode->tk->lineNo);
         break;
 
     case OUTPUT:
         if (astNode->child->label == ID)
         {
-            ModuleTableEntry *var = searchVar(curr->moduleTable, astNode->child->tk->val.identifier, astNode->child->tk->lineNo);
-            if (var == NULL)
+            ModuleTableEntry *newEntry = searchVar(curr->moduleTable, astNode->child->tk->val.identifier, astNode->child->tk->lineNo);
+            if (newEntry == NULL)
                 printf("Error at line %d: identifier\"%s\" not recognized\n", astNode->child->tk->lineNo, astNode->child->tk->val.identifier);
-            else if (var->type.datatype != PRIMITIVE)
+            else if (newEntry->type.datatype != PRIMITIVE)
                 printf("Error at line %d: cannot print an array\n", astNode->child->tk->lineNo);
         }
         else if (astNode->child->label == ARR_OUTPUT)
         {
-            ModuleTableEntry *var = searchVar(curr->moduleTable, astNode->child->child->tk->val.identifier, astNode->child->child->tk->lineNo);
-            if (var == NULL)
+            ModuleTableEntry *newEntry = searchVar(curr->moduleTable, astNode->child->child->tk->val.identifier, astNode->child->child->tk->lineNo);
+            if (newEntry == NULL)
                 printf("Error at line %d: identifier\"%s\" not recognized\n", astNode->child->child->tk->lineNo, astNode->child->child->tk->val.identifier);
-            else if (var->type.datatype == PRIMITIVE)
+            else if (newEntry->type.datatype == PRIMITIVE)
                 printf("Error at line %d: %s is not an array\n", astNode->child->child->tk->lineNo, astNode->child->child->tk->val.identifier);
             else
             {
                 ASTNode *index = astNode->child->child->sibling;
                 if (index->label == UNARY_MINUS)
                 {
-                    if (index->child->label == NUM && var->type.datatype == ARRAY_STATIC)
+                    if (index->child->label == NUM && newEntry->type.datatype == ARRAY_STATIC)
                     {
                         int num = (-1) * index->child->tk->val.integer;
-                        if (num < var->type.lower_bound || num > var->type.upper_bound)
+                        if (num < newEntry->type.lower_bound || num > newEntry->type.upper_bound)
                             printf("Error at line %d: Array index out of bounds\n", index->child->tk->lineNo);
                     }
                     else if (index->child->label == ID)
@@ -441,10 +441,10 @@ void typeChecker(ASTNode *astNode)
                 }
                 else if (index->label == UNARY_PLUS)
                 {
-                    if (index->child->label == NUM && var->type.datatype == ARRAY_STATIC)
+                    if (index->child->label == NUM && newEntry->type.datatype == ARRAY_STATIC)
                     {
                         int num = index->child->tk->val.integer;
-                        if (num < var->type.lower_bound || num > var->type.upper_bound)
+                        if (num < newEntry->type.lower_bound || num > newEntry->type.upper_bound)
                             printf("Error at line %d: Array index out of bounds\n", index->child->tk->lineNo);
                     }
                     else if (index->child->label == ID)
@@ -456,7 +456,7 @@ void typeChecker(ASTNode *astNode)
                             printf("Error at line %d: array index must be an integer", index->child->tk->lineNo);
                     }
                 }
-                else if (index->label == NUM && var->type.datatype == ARRAY_STATIC && (index->tk->val.integer < var->type.lower_bound || index->tk->val.integer > var->type.upper_bound))
+                else if (index->label == NUM && newEntry->type.datatype == ARRAY_STATIC && (index->tk->val.integer < newEntry->type.lower_bound || index->tk->val.integer > newEntry->type.upper_bound))
                     printf("Error at line %d: Array index out of bounds\n", index->tk->lineNo);
                 else
                 {
@@ -548,9 +548,9 @@ void typeChecker(ASTNode *astNode)
         while (idList != NULL)
         {
             char *s = idList->tk->val.identifier;
-            var = searchVar(curr->moduleTable,s,idList->tk->lineNo);
-            if(var!=NULL && idList->scope_begin==var->scope_begin && idList->scope_end==var->scope_end){
-                printf("Error at line %d: Variable has already been declared at line %d\n",idList->tk->lineNo,var->scope_begin);
+            newEntry = searchVar(curr->moduleTable,s,idList->tk->lineNo);
+            if(newEntry!=NULL && idList->scope_begin==newEntry->scope_begin && idList->scope_end==newEntry->scope_end){
+                printf("Error at line %d: Variable has already been declared at line %d\n",idList->tk->lineNo,newEntry->scope_begin);
             }
             else{
                 ModuleTableEntry *new_entry = (ModuleTableEntry *)malloc(sizeof(ModuleTableEntry));
@@ -582,14 +582,14 @@ void typeChecker(ASTNode *astNode)
         break;
 
     case ID:
-        var = searchVar(curr->moduleTable, astNode->tk->val.identifier, astNode->tk->lineNo);
-        if (var == NULL)
+        newEntry = searchVar(curr->moduleTable, astNode->tk->val.identifier, astNode->tk->lineNo);
+        if (newEntry == NULL)
         {
             printf("Error at line %d: Variable %s has not been declared\n", astNode->tk->lineNo, astNode->tk->val.identifier);
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
         }
-        // else if (var) != NULL)
+        // else if (newEntry) != NULL)
         // {
         //     printf("Scope Error at line %d: Variable %s has been used out of scope\n Previous declaration is at line %d\n", astNode->tk->lineNo, astNode->tk->val.identifier, searchVar(curr->moduleTable, astNode->tk->val.identifier)->scope_begin);
         //     astNode->type.datatype = PRIMITIVE;
@@ -597,7 +597,7 @@ void typeChecker(ASTNode *astNode)
         // }
         else
         {
-            astNode->type = var->type;
+            astNode->type = newEntry->type;
         }
         break;
 
@@ -622,8 +622,8 @@ void typeChecker(ASTNode *astNode)
         break;
 
     case ARRAY:
-        var = searchVar(curr->moduleTable, astNode->child->tk->val.identifier, astNode->child->tk->lineNo);
-        if (var == NULL)
+        newEntry = searchVar(curr->moduleTable, astNode->child->tk->val.identifier, astNode->child->tk->lineNo);
+        if (newEntry == NULL)
         {
             printf("Error at line %d: Array variable %s not declared\n", astNode->child->tk->lineNo, astNode->child->tk->val.identifier);
             astNode->type.datatype = PRIMITIVE;
@@ -641,7 +641,7 @@ void typeChecker(ASTNode *astNode)
         }
         else
         {
-            astNode->type = var->type;
+            astNode->type = newEntry->type;
         }
         break;
 
@@ -1151,9 +1151,7 @@ void typeChecker(ASTNode *astNode)
         break;
 
     case ITER_FOR:
-        for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
-            typeChecker(current);
-        ModuleTableEntry *newEntry = (ModuleTableEntry*)malloc(sizeof(ModuleTableEntry));
+        newEntry = (ModuleTableEntry*)malloc(sizeof(ModuleTableEntry));
         newEntry->identifier = astNode->tk->val.identifier;
         newEntry->nesting_lvl = astNode->nest_level;
         newEntry->offset = offset;
@@ -1163,6 +1161,8 @@ void typeChecker(ASTNode *astNode)
         newEntry->type.datatype = PRIMITIVE;
         newEntry->type.primtype = INTEGER;
         insertVar(curr->moduleTable, newEntry);
+        for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
+            typeChecker(current);
         break;
 
     case RANGE_FOR:

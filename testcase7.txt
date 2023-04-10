@@ -8,5 +8,6 @@ end**
 start
 	for(a in 1..15)
     start
+        a:=5;
     end
 end
