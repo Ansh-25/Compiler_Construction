@@ -37,6 +37,7 @@ cleanw:
 
 clean: 
 	rm -v *.o stage1.exe commentFreeFile.txt 
-	
+
 commit:
 	git commit -am "."
+	git push origin main
