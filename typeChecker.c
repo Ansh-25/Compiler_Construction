@@ -8,6 +8,9 @@ MainTableEntry *curr; // set curr at every module node
 int offset = 0;
 
 char* arr[] = {"PROGRAM","ITER_FOR","MODULEDECLARATIONS","OTHERMODULES1","OTHERMODULES2","UNARY_PLUS","UNARY_MINUS", "ID", "NUM", "RNUM", "ARRAY_DTYPE", "ARRAY","ARRAY_RANGE","ARR_INDEX1", "ARR_INDEX2", "PLUS", "MINUS", "MUL", "DIV", "AND", "OR", "LT", "LE", "GT", "GE", "EQ", "NE", "MODULEDECLARATION", "DRIVERMODULE","MODULE_REUSE", "MODULE", "RET", "PARAMETER", "INTEGER_", "REAL_", "BOOLEAN_", "RANGE_WHILE","RANGE_FOR", "STATEMENTS", "INPUT", "OUTPUT", "ARR_OUTPUT", "TRUE", "FALSE", "ASSIGN", "ARR_ASSIGN", "INDEX_ARR", "DECLARE", "ID_LIST", "CASE","CASE_STMT","RANGE", "INPUT_PLIST", "OUTPUT_PLIST","DEFAULT"};
+char* prim_type_arr[] =  {"INTEGER", "REAL", "BOOLEAN", "ERROR"} ;
+
+char* data_type_arr[] =  {"ARRAY_STATIC", "ARRAY_DYNAMIC", "PRIMITIVE"} ;
 
 void printSymbolTable() {
     ParamList* current = NULL;
@@ -31,10 +34,10 @@ void printSymbolTable() {
             }
             printf("\nModule's symbol table\n");
             currModule = SymbolTable[i]->moduleTable;
-            printf("Name    Scope_begin    Scope_end    DataType    PrimitiveType    LowerBound     UpperBound    Offset    Width    NestingLvl\n");
+            printf("Name    Scope_begin    Scope_end    DataType      PrimitiveType    LowerBound     UpperBound    Offset    Width    NestingLvl\n");
             for (int j = 0; j < 20; j ++) {
                 if (currModule[j] != NULL) {
-                    printf("%-12s %-12d %-12d %-12d %-11d %-15d %-16d %-8d %-10d %d\n",currModule[j]->identifier,currModule[j]->scope_begin,currModule[j]->scope_end,currModule[j]->type.datatype,currModule[j]->type.primtype,currModule[j]->type.lower_bound,currModule[j]->type.upper_bound,currModule[j]->offset,currModule[j]->width,currModule[j]->nesting_lvl);
+                    printf("%-12s %-12d %-9d %-16s %-13s %-14d %-16d %-8d %-10d %d\n",currModule[j]->identifier,currModule[j]->scope_begin,currModule[j]->scope_end,data_type_arr[currModule[j]->type.datatype],prim_type_arr[currModule[j]->type.primtype],currModule[j]->type.lower_bound,currModule[j]->type.upper_bound,currModule[j]->offset,currModule[j]->width,currModule[j]->nesting_lvl);
                 }
             }
         }
