@@ -455,7 +455,7 @@ void typeChecker(ASTNode *astNode)
         // printf("\n%d",t1.datatype);
 
         if (t1.primtype == ERROR || t2.primtype == ERROR){
-            printf("hi");
+            // printf("hi");
             break;
         }
         else if (t1.datatype != t2.datatype || t1.primtype != t2.primtype)
@@ -1129,7 +1129,7 @@ void typeChecker(ASTNode *astNode)
     case ITER_FOR:
         for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
             typeChecker(current);
-        ModuleTableEntry *newEntry;
+        ModuleTableEntry *newEntry = (ModuleTableEntry*)malloc(sizeof(ModuleTableEntry));
         newEntry->identifier = astNode->tk->val.identifier;
         newEntry->nesting_lvl = astNode->nest_level;
         newEntry->offset = offset;
@@ -1142,19 +1142,19 @@ void typeChecker(ASTNode *astNode)
         break;
 
     case RANGE_FOR:
-        if (astNode->child->type.datatype == PRIMITIVE && astNode->child->type.primtype == INTEGER)
+        if (astNode->child->tk->type == TK_NUM)
         {
             left_op = astNode->child;
         }
         else
             left_op = astNode->child->child;
-        if (astNode->child->sibling->type.datatype == PRIMITIVE && astNode->child->sibling->type.primtype == INTEGER)
+        if (astNode->child->sibling->tk->type == TK_NUM)
         {
             right_op = astNode->child->sibling;
         }
         else
             right_op = astNode->child->sibling->child;
-        if (!(left_op != NULL && right_op != NULL && left_op->type.datatype == right_op->type.datatype && left_op->type.primtype == right_op->type.primtype && left_op->type.datatype == PRIMITIVE && left_op->type.primtype == INTEGER))
+        if (!(left_op != NULL && right_op != NULL && left_op->tk->type == right_op->tk->type && left_op->tk->type == TK_NUM))
         {
             printf("TYPE ERROR: at line:= %d, iterator range bounds must be integer\n", astNode->tk->lineNo);
         }

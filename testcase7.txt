@@ -1,13 +1,12 @@
-<<module var_demo>>
+**<<module var_demo>>
 takes input [x:integer, x: boolean, p:real];
 returns [p: real, q: boolean];
 start
-end
+end**
 
 <<<driver program>>>
 start
-	declare a:integer;
-	a := 5;
-	declare b:array[12..20] of integer;
-	b[13]:=a;
+	for(a in 1..15)
+    start
+    end
 end
