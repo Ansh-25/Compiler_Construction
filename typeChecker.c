@@ -692,12 +692,14 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
+        Prim_type p1 = left_op->type.primtype;
+        Prim_type p2 = right_op->type.primtype;
         if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
         }
-        else if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
+        else if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
@@ -715,9 +717,10 @@ void typeChecker(ASTNode *astNode)
             else if (right_op->tk != NULL)
                 printf("Semantic Error at line %d: Boolean operand found in addition\n", right_op->tk->lineNo);
         }
-        else if (left_op->type.primtype != BOOLEAN && left_op->type.primtype != ERROR && compare_Datatype(left_op->type, right_op->type) == true)
+        else if (p1==p2)
         {
-            astNode->type = left_op->type;
+            astNode->type.datatype = PRIMITIVE;
+            astNode->type.primtype = p1;
         } 
         else
         {
@@ -739,12 +742,14 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
+         p1 = left_op->type.primtype;
+         p2 = right_op->type.primtype;
         if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
         }
-        else if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
+        else if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
@@ -762,9 +767,10 @@ void typeChecker(ASTNode *astNode)
             else if (right_op->tk != NULL)
                 printf("Semantic Error at line %d: Boolean operand found in subtraction\n", right_op->tk->lineNo);
         }
-        else if (left_op->type.primtype != BOOLEAN && left_op->type.primtype != ERROR && compare_Datatype(left_op->type, right_op->type) == true)
+        else if (p1==p2)
         {
-            astNode->type = left_op->type;
+            astNode->type.datatype = PRIMITIVE;
+            astNode->type.primtype = p1;
         }
         else
         {
@@ -786,7 +792,9 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
-        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
+         p1 = left_op->type.primtype;
+         p2 = right_op->type.primtype;
+        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
@@ -809,9 +817,10 @@ void typeChecker(ASTNode *astNode)
             else if (right_op->tk != NULL)
                 printf("Semantic Error at line %d: Boolean operand found in multiplication\n", right_op->tk->lineNo);
         }
-        else if (left_op->type.primtype != BOOLEAN && left_op->type.primtype != ERROR && compare_Datatype(left_op->type, right_op->type) == true)
+        else if (p1==p2)
         {
-            astNode->type = left_op->type;
+            astNode->type.datatype = PRIMITIVE;
+            astNode->type.primtype = p1;
         }
         else
         {
@@ -833,7 +842,9 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
-        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
+         p1 = left_op->type.primtype;
+         p2 = right_op->type.primtype;
+        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
@@ -856,9 +867,10 @@ void typeChecker(ASTNode *astNode)
             else if (right_op->tk != NULL)
                 printf("Semantic Error at line %d: Boolean operand found in division\n", right_op->tk->lineNo);
         }
-        else if (compare_Datatype(left_op->type, right_op->type) == true)
+        else if (p1==p2)
         {
-            astNode->type = left_op->type;
+            astNode->type.datatype = PRIMITIVE;
+            astNode->type.primtype = p1;
         }
         else if ((left_op->type.primtype == INTEGER && right_op->type.primtype == REAL) || (right_op->type.primtype == INTEGER && left_op->type.primtype == REAL))
         {
@@ -885,7 +897,7 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
-        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
+        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
@@ -924,7 +936,7 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
-        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
+        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
@@ -963,7 +975,7 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
-        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
+        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
@@ -1007,7 +1019,7 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
-        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
+        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
@@ -1051,7 +1063,7 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
-        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
+        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
@@ -1095,7 +1107,7 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
-        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
+        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
@@ -1139,7 +1151,7 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
-        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
+        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
@@ -1183,7 +1195,7 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
-        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
+        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
