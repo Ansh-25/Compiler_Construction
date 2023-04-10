@@ -31,10 +31,10 @@ void printSymbolTable() {
             }
             printf("\nModule's symbol table\n");
             currModule = SymbolTable[i]->moduleTable;
-            printf("Name\tScope_begin\tScope_end\tDataType\tPrimitiveType\tLowerBound\tUpperBound\tOffset\tWidth\tNestingLvl\n");
+            printf("Name    Scope_begin    Scope_end    DataType    PrimitiveType    LowerBound     UpperBound    Offset    Width    NestingLvl\n");
             for (int j = 0; j < 20; j ++) {
                 if (currModule[j] != NULL) {
-                    printf("%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n",currModule[j]->identifier,currModule[j]->scope_begin,currModule[j]->scope_end,currModule[j]->type.datatype,currModule[j]->type.primtype,currModule[j]->type.lower_bound,currModule[j]->type.upper_bound,currModule[j]->offset,currModule[j]->width,currModule[j]->nesting_lvl);
+                    printf("%-12s %-12d %-12d %-12d %-11d %-15d %-16d %-8d %-10d %d\n",currModule[j]->identifier,currModule[j]->scope_begin,currModule[j]->scope_end,currModule[j]->type.datatype,currModule[j]->type.primtype,currModule[j]->type.lower_bound,currModule[j]->type.upper_bound,currModule[j]->offset,currModule[j]->width,currModule[j]->nesting_lvl);
                 }
             }
         }
