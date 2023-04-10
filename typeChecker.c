@@ -433,23 +433,25 @@ void typeChecker(ASTNode *astNode)
         while (idList != NULL)
         {
             char *s = idList->tk->val.identifier;
-            // if(searchVar(curr->moduleTable,s)!=NULL && idList->scope_begin<=searchVar(curr->moduleTable,s)->scope_end){
-            //     printf("Error at line %d: Variable has already been declared at line %d\n",idList->tk->lineNo,searchVar(curr->moduleTable,s)->scope_begin);
-            // }
-
-            ModuleTableEntry *new_entry = (ModuleTableEntry *)malloc(sizeof(ModuleTableEntry));
-            new_entry->identifier = s;
-            new_entry->type = d;
-            new_entry->scope_begin = idList->scope_begin;
-            new_entry->scope_end = idList->scope_end;
-            if (d.datatype != ARRAY_DYNAMIC)
-            {
-                new_entry->width = width;
+            var = searchVar(curr->moduleTable,s);
+            if(var!=NULL && idList->scope_begin==var->scope_begin && idList->scope_end==var->scope_end){
+                printf("Error at line %d: Variable has already been declared at line %d\n",idList->tk->lineNo,var->scope_begin);
             }
-            new_entry->offset = offset;
-            new_entry->nesting_lvl = idList->nest_level;
-            insertVar(curr->moduleTable, new_entry);
-            offset += width;
+            else{
+                ModuleTableEntry *new_entry = (ModuleTableEntry *)malloc(sizeof(ModuleTableEntry));
+                new_entry->identifier = s;
+                new_entry->type = d;
+                new_entry->scope_begin = idList->scope_begin;
+                new_entry->scope_end = idList->scope_end;
+                if (d.datatype != ARRAY_DYNAMIC)
+                {
+                    new_entry->width = width;
+                }
+                new_entry->offset = offset;
+                new_entry->nesting_lvl = idList->nest_level;
+                insertVar(curr->moduleTable, new_entry);
+                offset += width;
+            }
             idList = idList->sibling;
         }
         break;

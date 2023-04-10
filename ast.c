@@ -357,6 +357,7 @@ void makeAST(struct ParseNode* parserNode){
         case 24:
             nest_level++;
             scope_end2 = scope_end1;
+            scope_start1 = parserNode->child->val.t->lineNo;
             scope_end1 = parserNode->child->sibling->sibling->val.t->lineNo;
             makeAST(parserNode->child->sibling);
             scope_end1 = scope_end2;
@@ -1587,7 +1588,7 @@ ASTNode* AST(){
     printAST(astroot);
     printf("\nTypeChecking AST ...\n\n");
     typeChecker(astroot);
-    printSymbolTable();
+    //printSymbolTable();
 	return astroot;
 }
 

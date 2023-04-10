@@ -1,11 +1,6 @@
-<<module empty>>
-takes input[a:boolean, b:array[12..a] of integer];
-returns [c:real, d:integer, e:boolean];
-start
-
-end
-
 <<<driver program>>>
 start
-	
+	declare a:integer;
+	declare a:integer;
+	a := 5;
 end
