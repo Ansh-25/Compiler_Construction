@@ -6,7 +6,7 @@
 #include "lexer.h"
 #include "symbolTableDef.h"
 #include "typeChecker.h"
-#include "IntCodeGenDef.h"
+//#include "IntCodeGenDef.h"
 
 
 ASTNode* astroot;
@@ -45,8 +45,6 @@ void makeAST(struct ParseNode* parserNode){
     ParseNode *c1=NULL,*c2=NULL,*c3=NULL;
     printf("%d ",parserNode->ruleno + 1);
     printf("%s\n",mapnttostring(parserNode->val.nt));
-    QuadNode* newLabel1 = (QuadNode*)malloc(sizeof(Quadruple));
-    QuadNode* newLabel2 = (QuadNode*)malloc(sizeof(Quadruple));
     switch(parserNode->ruleno) {
 
         case 0:
@@ -918,8 +916,8 @@ void makeAST(struct ParseNode* parserNode){
             break;
 
         case 80:
-            parserNode->addr->True = newLabel1;
-            parserNode->addr->False = newLabel2;
+            // parserNode->addr->True = newLabel1;
+            // parserNode->addr->False = newLabel2;
             break;
 
         case 81:
