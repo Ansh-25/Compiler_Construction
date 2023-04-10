@@ -567,7 +567,22 @@ void typeChecker(ASTNode *astNode)
             char *s = idList->tk->val.identifier;
             newEntry = searchVar(curr->moduleTable,s,idList->tk->lineNo);
             if(newEntry!=NULL && idList->scope_begin==newEntry->scope_begin && idList->scope_end==newEntry->scope_end){
-                printf("Semantic Error at line %d: Variable %s has already been declared in this scope\n",idList->tk->lineNo,idList->tk->val.identifier);
+                if (newEntry->vartype != INPUT_VAR)
+                    printf("Semantic Error at line %d: Variable %s has already been declared in this scope\n",idList->tk->lineNo,idList->tk->val.identifier);
+                newEntry->identifier = s;
+                newEntry->type = d;
+                newEntry->scope_begin = idList->scope_begin;
+                newEntry->scope_end = idList->scope_end;
+                newEntry->is_changed = false;
+                newEntry->vartype = NORMAL_VAR;
+                if (d.datatype != ARRAY_DYNAMIC)
+                {
+                    newEntry->width = width;
+                }
+                newEntry->offset = offset;
+                newEntry->nesting_lvl = idList->nest_level;
+                insertVar(curr->moduleTable, newEntry);
+                offset += width;
             }
             else{
                 ModuleTableEntry *new_entry = (ModuleTableEntry *)malloc(sizeof(ModuleTableEntry));
