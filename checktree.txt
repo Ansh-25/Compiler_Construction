@@ -10,28 +10,23 @@ Non-Terminal moduleDef
 Terminal TK_START with token value start
 Non-Terminal statements
 Non-Terminal statement
-Non-Terminal iterativeStmt
-Terminal TK_FOR with token value for
-Terminal TK_BO with token value (
-Terminal TK_ID with token value a
-Terminal TK_IN with token value in
-Non-Terminal range_for_loop
-Non-Terminal index_for_loop
-Non-Terminal sign
-Non-Terminal new_index_for_loop
-Terminal TK_NUM with token value 1
-Terminal TK_RANGEOP with token value ..
-Non-Terminal index_for_loop
-Non-Terminal sign
-Non-Terminal new_index_for_loop
-Terminal TK_NUM with token value 15
-Terminal TK_BC with token value )
-Terminal TK_START with token value start
+Non-Terminal declareStmt
+Terminal TK_DECLARE with token value declare
+Non-Terminal idList
+Terminal TK_ID with token value i
+Non-Terminal N3
+Terminal TK_COMMA with token value ,
+Terminal TK_ID with token value j
+Non-Terminal N3
+Terminal TK_COLON with token value :
+Non-Terminal dataType
+Terminal TK_INTEGER with token value integer
+Terminal TK_SEMICOLON with token value ;
 Non-Terminal statements
 Non-Terminal statement
 Non-Terminal simpleStmt
 Non-Terminal assignmentStmt
-Terminal TK_ID with token value a
+Terminal TK_ID with token value i
 Non-Terminal whichStmt
 Non-Terminal lvalueIDStmt
 Terminal TK_ASSIGNOP with token value :=
@@ -41,14 +36,20 @@ Non-Terminal AnyTerm
 Non-Terminal arithmeticExpr
 Non-Terminal term
 Non-Terminal factor
+Terminal TK_ID with token value i
+Non-Terminal N_11
+Non-Terminal N5
+Non-Terminal N4
+Non-Terminal op1
+Terminal TK_MINUS with token value -
+Non-Terminal term
+Non-Terminal factor
 Terminal TK_NUM with token value 5
 Non-Terminal N5
 Non-Terminal N4
 Non-Terminal N8
 Non-Terminal N7
 Terminal TK_SEMICOLON with token value ;
-Non-Terminal statements
-Terminal TK_END with token value end
 Non-Terminal statements
 Terminal TK_END with token value end
 Non-Terminal otherModules
