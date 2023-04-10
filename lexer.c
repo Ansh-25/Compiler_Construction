@@ -183,7 +183,7 @@ struct Token* getNextToken()
                 state = 33;
             else if (ch == '/')
                 state = 35;
-            else if (ch == '.')
+            else if (ch == '.') 
                 state = 36;
             else if (ch == '\n')
                 state = 38;
@@ -617,9 +617,19 @@ struct Token* getNextToken()
                 state = 0;
                 begin = forward;
         }
+        if (forward == -1) {
+            forward = bufferSize - 2;
+            begin = bufferSize - 2;
+            flag = 0;
+            break;
+        }
         if((forward == bufferSize-1) && (state == 14 || state == 15)){
             begin = forward = 0;
             flag = 1;
+        }
+        if(state==-1 && forward==bufferSize-1){
+            flag=1;
+            begin=0;
         }
         forward %= bufferSize - 1;
         if(forward<begin){
@@ -705,13 +715,13 @@ void printToken(struct Token *tk){
     }
     printf("Line_number := %d\t",tk->lineNo);
     if(tk -> type == TK_NUM){
-        printf("lexeme := %d\t\t",tk->val.integer);
+        printf("lexeme := %-15d",tk->val.integer);
     }
     else if(tk -> type == TK_RNUM){
-        printf("lexeme := %30.17lf\t\t",tk->val.decimal);
+        printf("lexeme := %-20.17lf",tk->val.decimal);
     }
     else{
-        printf("lexeme := %s\t\t",tk->val.identifier);
+        printf("lexeme := %-15s",tk->val.identifier);
     }
     printf("Token_name := %s\n",tokens[tk->type]);
 }
