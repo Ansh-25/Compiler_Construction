@@ -9,6 +9,7 @@
 
 ASTNode* astroot;
 int scope_start1 = 1;
+int scope_start2 = 1;
 int scope_end1 = 1e9;
 int scope_end2 = 1e9;
 int nest_level = 0;
@@ -98,6 +99,7 @@ void makeAST(struct ParseNode* parserNode){
             break;
 
         case 6:
+            scope_start1 = parserNode->child->val.t->lineNo;
             makeAST(parserNode->child->sibling->sibling->sibling->sibling);
             parserNode->addr = (ASTNode*)malloc(sizeof(ASTNode));
             parserNode->addr->label = DRIVERMODULE;
@@ -116,7 +118,7 @@ void makeAST(struct ParseNode* parserNode){
             break;
 
         case 7:
-            scope_start1 = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->child->val.t->lineNo;
+            scope_start1 = parserNode->child->val.t->lineNo;
             scope_end1 = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->child->sibling->sibling->val.t->lineNo;
             c1 = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling;
             c2 = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling;
@@ -126,6 +128,8 @@ void makeAST(struct ParseNode* parserNode){
             makeAST(c3);
             parserNode->addr = makeNode(MODULE,NULL,NULL,NULL);
             parserNode->addr->child = makeNode(ID,parserNode->child->sibling->sibling->val.t,NULL,c1->addr);
+            parserNode->addr->scope_begin = parserNode->child->val.t->lineNo;
+            parserNode->addr->scope_end = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->child->sibling->sibling->val.t->lineNo;
             if(c1->addr==NULL) parserNode->addr->child->sibling = c2->addr;
             else parserNode->addr->child->sibling->sibling = c2->addr; 
             if(c2->addr==NULL) {
@@ -355,7 +359,7 @@ void makeAST(struct ParseNode* parserNode){
         case 24:
             nest_level++;
             scope_end2 = scope_end1;
-            scope_start1 = parserNode->child->val.t->lineNo;
+            //scope_start1 = scope_start2;
             scope_end1 = parserNode->child->sibling->sibling->val.t->lineNo;
             makeAST(parserNode->child->sibling);
             scope_end1 = scope_end2;
@@ -1474,6 +1478,7 @@ void makeAST(struct ParseNode* parserNode){
             makeAST(c1); 
             nest_level++;
             scope_end2 = scope_end1;
+            scope_start1 = parserNode->child->val.t->lineNo;
             scope_end1 = c2->sibling->val.t->lineNo;
             makeAST(c2);
             scope_end1 = scope_end2;
@@ -1507,6 +1512,7 @@ void makeAST(struct ParseNode* parserNode){
             makeAST(c1); 
             nest_level++;
             scope_end2 = scope_end1;
+            scope_start1 = parserNode->child->val.t->lineNo;
             scope_end1 = c2->sibling->val.t->lineNo;
             makeAST(c2);
             scope_end1 = scope_end2;
