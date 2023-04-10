@@ -173,7 +173,7 @@ void typeChecker(ASTNode *astNode)
 
     case MODULEDECLARATION:
         if (searchModule(SymbolTable, astNode->tk->val.identifier))
-            printf("Semantic Error at line %d: Module \"%s\" has already been declared\n", astNode->tk->lineNo, astNode->tk->val.identifier);
+            printf("Semantic Error at line %d: Module %s has already been declared\n", astNode->tk->lineNo, astNode->tk->val.identifier);
         else
             insertModule(createModule(astNode->tk->val.identifier, NULL, NULL, NULL));
         break;
@@ -188,7 +188,7 @@ void typeChecker(ASTNode *astNode)
     case MODULE:
         searched = searchModule(SymbolTable, astNode->child->tk->val.identifier);
         if (searched != NULL && searched->moduleTable != NULL)
-            printf("Semantic Error at line %d: Module \"%s\" has already been defined\n", astNode->tk->lineNo, astNode->tk->val.identifier);
+            printf("Semantic Error at line %d: Module %s has already been defined\n", astNode->tk->lineNo, astNode->tk->val.identifier);
         else
         {
             if (searched == NULL) {
@@ -402,7 +402,7 @@ void typeChecker(ASTNode *astNode)
     case INPUT:
         newEntry = searchVar(curr->moduleTable, astNode->tk->val.identifier, astNode->tk->lineNo);
         if (newEntry == NULL)
-            printf("Semantic Error at line %d: identifier\"%s\" not recognized\n", astNode->tk->lineNo, astNode->tk->val.identifier);
+            printf("Semantic Error at line %d: variable %s not declared in this scope\n", astNode->tk->lineNo, astNode->tk->val.identifier);
         else if (newEntry->type.datatype != PRIMITIVE)
             printf("Semantic Error at line %d: cannot take array as input\n", astNode->tk->lineNo);
         else if (newEntry->vartype == FOR_LOOP_VAR)
@@ -416,7 +416,7 @@ void typeChecker(ASTNode *astNode)
         {
             ModuleTableEntry *newEntry = searchVar(curr->moduleTable, astNode->child->tk->val.identifier, astNode->child->tk->lineNo);
             if (newEntry == NULL)
-                printf("Semantic Error at line %d: identifier\"%s\" not recognized\n", astNode->child->tk->lineNo, astNode->child->tk->val.identifier);
+                printf("Semantic Error at line %d: variable %s has not been declared in this scope\n", astNode->child->tk->lineNo, astNode->child->tk->val.identifier);
             else if (newEntry->type.datatype != PRIMITIVE)
                 printf("Semantic Error at line %d: cannot print an array\n", astNode->child->tk->lineNo);
         }
@@ -424,7 +424,7 @@ void typeChecker(ASTNode *astNode)
         {
             ModuleTableEntry *newEntry = searchVar(curr->moduleTable, astNode->child->child->tk->val.identifier, astNode->child->child->tk->lineNo);
             if (newEntry == NULL)
-                printf("Semantic Error at line %d: identifier\"%s\" not recognized\n", astNode->child->child->tk->lineNo, astNode->child->child->tk->val.identifier);
+                printf("Semantic Error at line %d: variable %s vas not been declared in this scope\n", astNode->child->child->tk->lineNo, astNode->child->child->tk->val.identifier);
             else if (newEntry->type.datatype == PRIMITIVE)
                 printf("Semantic Error at line %d: %s is not an array\n", astNode->child->child->tk->lineNo, astNode->child->child->tk->val.identifier);
             else
@@ -442,7 +442,7 @@ void typeChecker(ASTNode *astNode)
                     {
                         ModuleTableEntry *arr_ind = searchVar(curr->moduleTable, index->child->tk->val.identifier, index->child->tk->lineNo);
                         if (arr_ind == NULL)
-                            printf("Semantic Error at line %d: indentifier \"%s\" not recognized\n", index->child->tk->lineNo, index->child->tk->val.identifier);
+                            printf("Semantic Error at line %d: variable %s has not been declared in this scope\n", index->child->tk->lineNo, index->child->tk->val.identifier);
                         else if (arr_ind->type.primtype != INTEGER || arr_ind->type.datatype != PRIMITIVE)
                             printf("Semantic Error at line %d: array index must be an integer", index->child->tk->lineNo);
                     }
@@ -459,7 +459,7 @@ void typeChecker(ASTNode *astNode)
                     {
                         ModuleTableEntry *arr_ind = searchVar(curr->moduleTable, index->child->tk->val.identifier, index->child->tk->lineNo);
                         if (arr_ind == NULL)
-                            printf("Semantic Error at line %d: indentifier \"%s\" not recognized\n", index->child->tk->lineNo, index->child->tk->val.identifier);
+                            printf("Semantic Error at line %d: variable %s has not been declared in this scope\n", index->child->tk->lineNo, index->child->tk->val.identifier);
                         else if (arr_ind->type.primtype != INTEGER || arr_ind->type.datatype != PRIMITIVE)
                             printf("Semantic Error at line %d: array index must be an integer", index->child->tk->lineNo);
                     }
@@ -472,7 +472,7 @@ void typeChecker(ASTNode *astNode)
                 {
                     ModuleTableEntry *arr_ind = searchVar(curr->moduleTable, index->tk->val.identifier, index->tk->lineNo);
                     if (arr_ind == NULL)
-                        printf("Semantic Error at line %d: indentifier \"%s\" not recognized\n", index->tk->lineNo, index->tk->val.identifier);
+                        printf("Semantic Error at line %d: variable %s has not been declared in this scope\n", index->tk->lineNo, index->tk->val.identifier);
                     else if (arr_ind->type.primtype != INTEGER || arr_ind->type.datatype != PRIMITIVE)
                         printf("Semantic Error at line %d: array index must be an integer", index->tk->lineNo);
                 }
@@ -569,20 +569,24 @@ void typeChecker(ASTNode *astNode)
             if(newEntry!=NULL && idList->scope_begin==newEntry->scope_begin && idList->scope_end==newEntry->scope_end){
                 if (newEntry->vartype != INPUT_VAR)
                     printf("Semantic Error at line %d: Variable %s has already been declared in this scope\n",idList->tk->lineNo,idList->tk->val.identifier);
-                newEntry->identifier = s;
-                newEntry->type = d;
-                newEntry->scope_begin = idList->scope_begin;
-                newEntry->scope_end = idList->scope_end;
-                newEntry->is_changed = false;
-                newEntry->vartype = NORMAL_VAR;
-                if (d.datatype != ARRAY_DYNAMIC)
-                {
-                    newEntry->width = width;
+                else {
+                    free(newEntry);
+                    newEntry = (ModuleTableEntry *)malloc(sizeof(ModuleTableEntry));
+                    newEntry->identifier = s;
+                    newEntry->type = d;
+                    newEntry->scope_begin = idList->scope_begin;
+                    newEntry->scope_end = idList->scope_end;
+                    newEntry->is_changed = false;
+                    newEntry->vartype = NORMAL_VAR;
+                    if (d.datatype != ARRAY_DYNAMIC)
+                    {
+                        newEntry->width = width;
+                    }
+                    newEntry->offset = offset;
+                    newEntry->nesting_lvl = idList->nest_level;
+                    insertVar(curr->moduleTable, newEntry);
+                    offset += width;
                 }
-                newEntry->offset = offset;
-                newEntry->nesting_lvl = idList->nest_level;
-                insertVar(curr->moduleTable, newEntry);
-                offset += width;
             }
             else{
                 ModuleTableEntry *new_entry = (ModuleTableEntry *)malloc(sizeof(ModuleTableEntry));
@@ -1188,7 +1192,7 @@ void typeChecker(ASTNode *astNode)
             typeChecker(current);
         if (astNode->child->type.primtype != BOOLEAN || astNode->child->type.datatype != PRIMITIVE)
         {
-            printf("Semantic Error: at line:= %d, Module \"%s\" has already been defined\n", astNode->tk->lineNo, astNode->tk->val.identifier);
+            printf("Semantic Error: at line:= %d, Module %s has already been defined\n", astNode->tk->lineNo, astNode->tk->val.identifier);
         }
         break;
 
