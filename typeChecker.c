@@ -210,8 +210,8 @@ void typeChecker(ASTNode *astNode)
                         newEntry->identifier = newnode->identifier;
                         newEntry->nesting_lvl = 1;
                         newEntry->offset = offset;
-                        newEntry->scope_begin = astNode->scope_begin;
-                        newEntry->scope_end = astNode->scope_end;
+                        newEntry->scope_begin = parameter->scope_begin;
+                        newEntry->scope_end = parameter->scope_end;
                         newEntry->type = newnode->type;
                         if (newEntry->type.primtype == BOOLEAN)
                             newEntry->width = 1;
@@ -244,8 +244,8 @@ void typeChecker(ASTNode *astNode)
                         newEntry->identifier = newnode->identifier;
                         newEntry->nesting_lvl = 1;
                         newEntry->offset = offset;
-                        newEntry->scope_begin = astNode->scope_begin;
-                        newEntry->scope_end = astNode->scope_end;
+                        newEntry->scope_begin = parameter->scope_begin;
+                        newEntry->scope_end = parameter->scope_end;
                         newEntry->type = newnode->type;
                         if (newEntry->type.primtype == BOOLEAN)
                             newEntry->width = 1;
