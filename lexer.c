@@ -183,7 +183,7 @@ struct Token* getNextToken()
                 state = 33;
             else if (ch == '/')
                 state = 35;
-            else if (ch == '.')
+            else if (ch == '.') 
                 state = 36;
             else if (ch == '\n')
                 state = 38;
@@ -616,6 +616,12 @@ struct Token* getNextToken()
                 printf("\nERROR: Token not recognized at line %d\n\n", line);
                 state = 0;
                 begin = forward;
+        }
+        if (forward == -1) {
+            forward = bufferSize - 2;
+            begin = bufferSize - 2;
+            flag = 0;
+            break;
         }
         if((forward == bufferSize-1) && (state == 14 || state == 15)){
             begin = forward = 0;
