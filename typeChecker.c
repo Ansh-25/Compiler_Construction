@@ -418,8 +418,13 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         TypeInfo t1 = astNode->child->type;
         TypeInfo t2 = astNode->child->sibling->type;
-        if (t1.primtype == ERROR || t2.primtype == ERROR)
+        // printf("\n%d",t1.datatype);
+        // printf("\n%d",t1.datatype);
+
+        if (t1.primtype == ERROR || t2.primtype == ERROR){
+            printf("hi");
             break;
+        }
         else if (t1.datatype != t2.datatype || t1.primtype != t2.primtype)
         {
             if (astNode->child->child == NULL)
@@ -429,11 +434,33 @@ void typeChecker(ASTNode *astNode)
                 printf("Type Error at line %d: Operand types don't match in assignment operation\n", astNode->child->child->tk->lineNo);
             }
         }
-        else if (t1.datatype == ARRAY_STATIC && t2.datatype == ARRAY_STATIC && (t1.lower_bound != t2.lower_bound || t1.upper_bound != t2.upper_bound))
+        else if (t1.datatype == ARRAY_STATIC && t2.datatype == ARRAY_STATIC && t1.upper_bound-t1.lower_bound!=t2.upper_bound-t2.lower_bound)
         { // static type checking
-            printf("Type Error at line %d: Operands of array datatype have different bounds in assignment operation\n", astNode->child->child->tk->lineNo);
+            // printf("hi1");
+            printf("Type Error at line %d: Arrays are not structurally equivalent in assignment operation\n", astNode->child->child->tk->lineNo);
         }
         // dynamic type checking
+        break;
+
+    case ARR_ASSIGN:
+        typeChecker(astNode->child);
+        typeChecker(astNode->child->child);
+        typeChecker(astNode->child->sibling);
+        Prim_type pt1 = astNode->child->type.primtype;
+        Prim_type pt2 = astNode->child->sibling->type.primtype;
+        Prim_type pt3 = astNode->child->child->type.primtype;
+        printf("%d\n",pt1);
+        printf("%d\n",pt2);
+        printf("%d\n",pt3);
+        if(pt3!=INTEGER){
+            printf("Type Error at line %d: Index of array variable %s found to be of non-integer type\n",astNode->child->tk->lineNo,astNode->child->tk->val.identifier);
+        }
+        // else if((astNode->child->child->label==ID || astNode->child->child->label==NUM) && (astNode->child->child->tk->val.integer<astNode->child->type.lower_bound || astNode->child->child->tk->val.integer>astNode->child->type.upper_bound)){
+        //     printf("Error at line %d: Array index out of bounds for array variable %s",astNode->child->tk->lineNo,astNode->child->tk->val.identifier);
+        // }
+        if(pt1!=pt2){
+            printf("Type Error at line %d: Operand types don't match in assignment operation\n", astNode->child->tk->lineNo);
+        }
         break;
 
     case DECLARE:
