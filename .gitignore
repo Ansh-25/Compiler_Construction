@@ -1,3 +1,7 @@
+<<<<<<< HEAD
 .vscode
 *.json
 *.o
+=======
+.vscode/
+>>>>>>> 6cf3cf3d5d72e5a24372b9e3545bac487e8e3648
