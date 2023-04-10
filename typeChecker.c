@@ -567,7 +567,7 @@ void typeChecker(ASTNode *astNode)
             char *s = idList->tk->val.identifier;
             newEntry = searchVar(curr->moduleTable,s,idList->tk->lineNo);
             if(newEntry!=NULL && idList->scope_begin==newEntry->scope_begin && idList->scope_end==newEntry->scope_end){
-                printf("Semantic Error at line %d: Variable has already been declared in this scope\n",idList->tk->lineNo);
+                printf("Semantic Error at line %d: Variable %s has already been declared in this scope\n",idList->tk->lineNo,idList->tk->val.identifier);
             }
             else{
                 ModuleTableEntry *new_entry = (ModuleTableEntry *)malloc(sizeof(ModuleTableEntry));

@@ -11,6 +11,8 @@
 
 #include "astDef.h"
 
+typedef enum {INPUT_VAR, FOR_LOOP_VAR, NORMAL_VAR} typeOfVar;
+
 typedef struct ParamList{
     TypeInfo type;
     char* identifier;
@@ -27,6 +29,7 @@ typedef struct{
     TypeInfo type;
     bool is_changed;
     bool isforloopvar;
+    typeOfVar vartype;
 }ModuleTableEntry;
 
 typedef struct{
