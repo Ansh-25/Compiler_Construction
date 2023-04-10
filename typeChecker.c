@@ -889,6 +889,11 @@ void typeChecker(ASTNode *astNode)
         break;
 
     case AND:
+        QuadNode* newLabel = (QuadNode*)malloc(sizeof(Quadruple));
+        astNode->child->True = newLabel;
+        astNode->child->False = astNode->False;
+        astNode->child->sibling->True = astNode->True;
+        astNode->child->sibling->False = astNode->False;
         typeChecker(astNode->child);
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
@@ -928,6 +933,11 @@ void typeChecker(ASTNode *astNode)
         break;
 
     case OR:
+        QuadNode* newLabel = (QuadNode*)malloc(sizeof(Quadruple));
+        astNode->child->True = astNode->True;
+        astNode->child->False = newLabel;
+        astNode->child->sibling->True = astNode->True;
+        astNode->child->sibling->False = astNode->False; 
         typeChecker(astNode->child);
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;

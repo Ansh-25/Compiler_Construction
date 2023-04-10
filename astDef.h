@@ -19,6 +19,9 @@ typedef enum {INTEGER, REAL, BOOLEAN, ERROR} Prim_type;
 
 typedef enum {ARRAY_STATIC, ARRAY_DYNAMIC, PRIMITIVE} DataType;
 
+typedef struct Quadruple Quadruple;
+typedef struct QuadNode QuadNode;
+
 typedef struct TypeInfo{
     DataType datatype;
     Prim_type primtype; 
@@ -35,6 +38,9 @@ typedef struct ASTNode{
     int scope_begin;
     int scope_end;
     int nest_level;
+    QuadNode* True;
+    QuadNode* False;
+    QuadNode* code;
 }ASTNode;
 
 
