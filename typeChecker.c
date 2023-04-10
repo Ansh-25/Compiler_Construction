@@ -174,7 +174,8 @@ void typeChecker(ASTNode *astNode)
     case DRIVERMODULE:
         curr = createModule("driver", NULL, NULL, createModuleTable(20));
         insertModule(curr);
-        typeChecker(astNode->child);
+        for (ASTNode *stmt = astNode->child->child; stmt != NULL; stmt = stmt->sibling)
+            typeChecker(stmt);
         break;
 
     case MODULE:
