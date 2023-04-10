@@ -338,35 +338,59 @@ void typeChecker(ASTNode *astNode)
         if (left->label == UNARY_MINUS) {
             if (left->child->label == NUM)
                 astNode->type.lower_bound = (-1) * left->child->tk->val.integer;
-            else
+            else {
                 astNode->type.datatype = ARRAY_DYNAMIC;
+                typeChecker(left->child);
+                if (left->child->type.datatype != PRIMITIVE || left->child->type.primtype != INTEGER)
+                    printf("ERROR at line %d: Array index has to be an integer\n",left->child->tk->lineNo);
+            }
         }
         else if (left->label == UNARY_PLUS) {
             if (left->child->label == NUM)
                 astNode->type.lower_bound = left->child->tk->val.integer;
-            else
+            else {
                 astNode->type.datatype = ARRAY_DYNAMIC;
+                typeChecker(left->child);
+                if (left->child->type.datatype != PRIMITIVE || left->child->type.primtype != INTEGER)
+                    printf("ERROR at line %d: Array index has to be an integer\n",left->child->tk->lineNo);
+            }
         }
         else if (left->label == NUM)
             astNode->type.lower_bound = left->tk->val.integer;
-        else
+        else {
             astNode->type.datatype = ARRAY_DYNAMIC;
+            typeChecker(left);
+            if (left->type.datatype != PRIMITIVE || left->type.primtype != INTEGER)
+                printf("ERROR at line %d: Array index has to be an integer\n",left->child->tk->lineNo);
+        }
         if (right->label == UNARY_MINUS){
             if (right->child->label == NUM)
                 astNode->type.lower_bound = (-1) * right->child->tk->val.integer;
-            else
+            else {
                 astNode->type.datatype = ARRAY_DYNAMIC;
+                typeChecker(right->child);
+                if (right->child->type.datatype != PRIMITIVE || right->child->type.primtype != INTEGER)
+                    printf("ERROR at line %d: Array index has to be an integer\n",right->child->tk->lineNo);
+            }
         }
         else if (right->label == UNARY_PLUS){
             if (right->child->label == NUM)
                 astNode->type.lower_bound = right->child->tk->val.integer;
-            else
+            else {
                 astNode->type.datatype = ARRAY_DYNAMIC;
+                typeChecker(right->child);
+                if (right->child->type.datatype != PRIMITIVE || right->child->type.primtype != INTEGER)
+                    printf("ERROR at line %d: Array index has to be an integer\n",right->child->tk->lineNo);
+            }
         }
         else if (right->label == NUM)
             astNode->type.upper_bound = right->tk->val.integer;
-        else
+        else {
             astNode->type.datatype = ARRAY_DYNAMIC;
+            typeChecker(right);
+            if (right->type.datatype != PRIMITIVE || right->type.primtype != INTEGER)
+                printf("ERROR at line %d: Array index has to be an integer\n", right->tk->lineNo);
+        }
         if (astNode->type.upper_bound != -1e9 && astNode->type.lower_bound != -1e9 && astNode->type.upper_bound < astNode->type.lower_bound)
             printf("Error: lower bound of array should be less than or equal to upper bound\n");
         break;
