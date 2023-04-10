@@ -271,16 +271,22 @@ void typeChecker(ASTNode *astNode)
     case INTEGER_:
         astNode->type.datatype = PRIMITIVE;
         astNode->type.primtype = INTEGER;
+        astNode->type.lower_bound = -1e9;
+        astNode->type.upper_bound = -1e9;
         break;
 
     case REAL_:
         astNode->type.datatype = PRIMITIVE;
         astNode->type.primtype = REAL;
+        astNode->type.lower_bound = -1e9;
+        astNode->type.upper_bound = -1e9;
         break;
 
     case BOOLEAN_:
         astNode->type.datatype = PRIMITIVE;
         astNode->type.primtype = BOOLEAN;
+        astNode->type.lower_bound = -1e9;
+        astNode->type.upper_bound = -1e9;
         break;
 
     case ARRAY_DTYPE:
