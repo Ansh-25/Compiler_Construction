@@ -120,6 +120,8 @@ void makeAST(struct ParseNode* parserNode){
         case 7:
             scope_start1 = parserNode->child->val.t->lineNo;
             scope_end1 = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->child->sibling->sibling->val.t->lineNo;
+            scope_start2 = scope_start1;
+            scope_end2 = scope_end1;
             c1 = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling;
             c2 = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling;
             c3 = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling;
@@ -128,8 +130,8 @@ void makeAST(struct ParseNode* parserNode){
             makeAST(c3);
             parserNode->addr = makeNode(MODULE,NULL,NULL,NULL);
             parserNode->addr->child = makeNode(ID,parserNode->child->sibling->sibling->val.t,NULL,c1->addr);
-            parserNode->addr->scope_begin = parserNode->child->val.t->lineNo;
-            parserNode->addr->scope_end = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->child->sibling->sibling->val.t->lineNo;
+            parserNode->addr->scope_begin = scope_start2;
+            parserNode->addr->scope_end = scope_end2;
             if(c1->addr==NULL) parserNode->addr->child->sibling = c2->addr;
             else parserNode->addr->child->sibling->sibling = c2->addr; 
             if(c2->addr==NULL) {
@@ -1579,13 +1581,13 @@ ASTNode* AST(){
     computefirstandfollow();
     createParseTable();
 	ParseNode* parserNode = parse();
-    // // FILE* fp = fopen("checktree.txt","w");
-    // // printf("Printing AST ruleno\n");
-    // // printTree(parserNode,fp);
-    // // fflush(fp); fclose(fp);
+    // FILE* fp = fopen("checktree.txt","w");
+    // printf("Printing AST ruleno\n");
+    // printTree(parserNode,fp);
+    // fflush(fp); fclose(fp);
 	makeAST(parserNode);
-    // // printf("\nPrinting AST\n\n");
-    // // printAST(astroot);
+    printf("\nPrinting AST\n\n");
+    printAST(astroot);
     printf("\nTypeChecking AST ...\n\n");
     typeChecker(astroot);
     printSymbolTable();
