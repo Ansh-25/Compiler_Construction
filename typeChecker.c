@@ -299,26 +299,43 @@ void typeChecker(ASTNode *astNode)
         astNode->type.primtype = astNode->child->sibling->type.primtype;
         astNode->type.lower_bound = -1e9;
         astNode->type.upper_bound = -1e9;
+        astNode->type.datatype = ARRAY_STATIC;
         ASTNode *left = astNode->child->child->child;
         ASTNode *right = astNode->child->child->sibling->child;
-        if (left->label == UNARY_MINUS && left->child->label == NUM)
+        if (left->label == UNARY_MINUS) {
+            if (left->child->label == NUM)
                 astNode->type.lower_bound = (-1) * left->child->tk->val.integer;
-        else if (left->label == UNARY_PLUS && left->child->label == NUM)
+            else
+                astNode->type.datatype = ARRAY_DYNAMIC;
+        }
+        else if (left->label == UNARY_PLUS) {
+            if (left->child->label == NUM)
                 astNode->type.lower_bound = left->child->tk->val.integer;
+            else
+                astNode->type.datatype = ARRAY_DYNAMIC;
+        }
         else if (left->label == NUM)
             astNode->type.lower_bound = left->tk->val.integer;
-        if (right->label == UNARY_MINUS && right->child->label == NUM)
-                astNode->type.lower_bound = (-1) * right->child->tk->val.integer;
-        else if (right->label == UNARY_PLUS && right->child->label == NUM)
-                astNode->type.lower_bound = right->child->tk->val.integer;
-        else if (right->label == NUM)
-            astNode->type.lower_bound = right->tk->val.integer;
-        if (astNode->type.upper_bound != -1e9 && astNode->type.lower_bound != -1e9 && astNode->type.upper_bound < astNode->type.lower_bound)
-            printf("Error: lower bound of array should be less than or equal to upper bound\n");
-        if (astNode->type.upper_bound != -1e9 && astNode->type.lower_bound != -1e9)
-            astNode->type.datatype = ARRAY_STATIC;
         else
             astNode->type.datatype = ARRAY_DYNAMIC;
+        if (right->label == UNARY_MINUS){
+            if (right->child->label == NUM)
+                astNode->type.lower_bound = (-1) * right->child->tk->val.integer;
+            else
+                astNode->type.datatype = ARRAY_DYNAMIC;
+        }
+        else if (right->label == UNARY_PLUS){
+            if (right->child->label == NUM)
+                astNode->type.lower_bound = right->child->tk->val.integer;
+            else
+                astNode->type.datatype = ARRAY_DYNAMIC;
+        }
+        else if (right->label == NUM)
+            astNode->type.lower_bound = right->tk->val.integer;
+        else
+            astNode->type.datatype = ARRAY_DYNAMIC;
+        if (astNode->type.upper_bound != -1e9 && astNode->type.lower_bound != -1e9 && astNode->type.upper_bound < astNode->type.lower_bound)
+            printf("Error: lower bound of array should be less than or equal to upper bound\n");
         break;
 
     case INPUT:
