@@ -230,6 +230,7 @@ void typeChecker(ASTNode *astNode)
                             newEntry->scope_begin = parameter->scope_begin;
                             newEntry->scope_end = parameter->scope_end;
                             newEntry->type = newnode->type;
+                            newEntry->is_changed = false;
                             if (newEntry->type.primtype == BOOLEAN)
                                 newEntry->width = 1;
                             else if (newEntry->type.primtype == INTEGER)
@@ -283,6 +284,7 @@ void typeChecker(ASTNode *astNode)
                                 newEntry->scope_begin = parameter->scope_begin;
                                 newEntry->scope_end = parameter->scope_end;
                                 newEntry->type = newnode->type;
+                                newEntry->is_changed = false;
                                 if (newEntry->type.primtype == BOOLEAN)
                                     newEntry->width = 1;
                                 else if (newEntry->type.primtype == INTEGER)
@@ -335,6 +337,8 @@ void typeChecker(ASTNode *astNode)
         astNode->type.datatype = ARRAY_STATIC;
         ASTNode *left = astNode->child->child->child;
         ASTNode *right = astNode->child->child->sibling->child;
+        printf("%d\n",left->tk->val.integer);
+        printf("%d\n",right->tk->val.integer);
         if (left->label == UNARY_MINUS) {
             if (left->child->label == NUM)
                 astNode->type.lower_bound = (-1) * left->child->tk->val.integer;
@@ -375,7 +379,7 @@ void typeChecker(ASTNode *astNode)
         }
         else if (right->label == UNARY_PLUS){
             if (right->child->label == NUM)
-                astNode->type.lower_bound = right->child->tk->val.integer;
+                astNode->type.upper_bound = right->child->tk->val.integer;
             else {
                 astNode->type.datatype = ARRAY_DYNAMIC;
                 typeChecker(right->child);
@@ -560,6 +564,7 @@ void typeChecker(ASTNode *astNode)
                 new_entry->type = d;
                 new_entry->scope_begin = idList->scope_begin;
                 new_entry->scope_end = idList->scope_end;
+                new_entry->is_changed = false;
                 if (d.datatype != ARRAY_DYNAMIC)
                 {
                     new_entry->width = width;
@@ -1168,6 +1173,7 @@ void typeChecker(ASTNode *astNode)
         offset += 2;
         newEntry->scope_begin = astNode->scope_begin;
         newEntry->scope_end = astNode->scope_end;
+        newEntry->is_changed = false;
         newEntry->type.datatype = PRIMITIVE;
         newEntry->type.primtype = INTEGER;
         insertVar(curr->moduleTable, newEntry);

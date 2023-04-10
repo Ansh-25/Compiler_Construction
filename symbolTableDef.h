@@ -25,6 +25,7 @@ typedef struct{
     int width;
     int offset;
     TypeInfo type;
+    bool is_changed;
 }ModuleTableEntry;
 
 typedef struct{
