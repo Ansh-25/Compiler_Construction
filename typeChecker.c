@@ -231,6 +231,7 @@ void typeChecker(ASTNode *astNode)
                             newEntry->scope_end = parameter->scope_end;
                             newEntry->type = newnode->type;
                             newEntry->is_changed = false;
+                            newEntry->isforloopvar = false;
                             if (newEntry->type.primtype == BOOLEAN)
                                 newEntry->width = 1;
                             else if (newEntry->type.primtype == INTEGER)
@@ -285,6 +286,7 @@ void typeChecker(ASTNode *astNode)
                                 newEntry->scope_end = parameter->scope_end;
                                 newEntry->type = newnode->type;
                                 newEntry->is_changed = false;
+                                newEntry->isforloopvar = false;
                                 if (newEntry->type.primtype == BOOLEAN)
                                     newEntry->width = 1;
                                 else if (newEntry->type.primtype == INTEGER)
@@ -337,8 +339,6 @@ void typeChecker(ASTNode *astNode)
         astNode->type.datatype = ARRAY_STATIC;
         ASTNode *left = astNode->child->child->child;
         ASTNode *right = astNode->child->child->sibling->child;
-        printf("%d\n",left->tk->val.integer);
-        printf("%d\n",right->tk->val.integer);
         if (left->label == UNARY_MINUS) {
             if (left->child->label == NUM)
                 astNode->type.lower_bound = (-1) * left->child->tk->val.integer;
@@ -405,6 +405,10 @@ void typeChecker(ASTNode *astNode)
             printf("Error at line %d: identifier\"%s\" not recognized\n", astNode->tk->lineNo, astNode->tk->val.identifier);
         else if (newEntry->type.datatype != PRIMITIVE)
             printf("Error at line %d: cannot take array as input\n", astNode->tk->lineNo);
+        else if (newEntry->isforloopvar)
+            printf("Error at lien %d: cannot modify for loop variable\n", astNode->tk->lineNo);
+        else
+            newEntry->is_changed = true;
         break;
 
     case OUTPUT:
@@ -502,6 +506,13 @@ void typeChecker(ASTNode *astNode)
             // printf("hi1");
             printf("Type Error at line %d: Arrays are not structurally equivalent in assignment operation\n", astNode->child->child->tk->lineNo);
         }
+        else if (t1.datatype == PRIMITIVE){
+            newEntry = searchVar(curr->moduleTable, astNode->child->tk->val.identifier, astNode->child->tk->lineNo);
+            if (newEntry->isforloopvar)
+                printf("Error at line %d: For loop variable cannot be modified\n",astNode->child->tk->lineNo);
+            else
+                newEntry->is_changed = true;
+        }
         // dynamic type checking
         break;
 
@@ -565,6 +576,7 @@ void typeChecker(ASTNode *astNode)
                 new_entry->scope_begin = idList->scope_begin;
                 new_entry->scope_end = idList->scope_end;
                 new_entry->is_changed = false;
+                new_entry->isforloopvar = false;
                 if (d.datatype != ARRAY_DYNAMIC)
                 {
                     new_entry->width = width;
@@ -1179,6 +1191,8 @@ void typeChecker(ASTNode *astNode)
         insertVar(curr->moduleTable, newEntry);
         for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
             typeChecker(current);
+        if (newEntry->is_changed == true)
+            printf("Error: For loop variable cannot be modified\n");
         break;
 
     case RANGE_FOR:

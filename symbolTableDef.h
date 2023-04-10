@@ -26,6 +26,7 @@ typedef struct{
     int offset;
     TypeInfo type;
     bool is_changed;
+    bool isforloopvar;
 }ModuleTableEntry;
 
 typedef struct{
