@@ -6,6 +6,8 @@
 
 extern char * arr[];
 
+void printSymbolTable();
+
 void typeChecker(ASTNode *astNode);
 
 #endif

@@ -1,6 +1,6 @@
 <<module empty>>
-takes input[a:boolean, b:array[12..50] of integer];
-returns [b:real, c:integer, d:boolean];
+takes input[a:boolean, b:array[12..a] of integer];
+returns [c:real, d:integer, e:boolean];
 start
 
 end

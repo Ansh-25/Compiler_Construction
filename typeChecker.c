@@ -1,16 +1,53 @@
 #include "symbolTableDef.h"
 #include "hash.h"
 
+//size of hash table??
+
 MainTableEntry **SymbolTable;
 MainTableEntry *curr; // set curr at every module node
 int offset = 0;
 
 char* arr[] = {"PROGRAM","ITER_FOR","MODULEDECLARATIONS","OTHERMODULES1","OTHERMODULES2","UNARY_PLUS","UNARY_MINUS", "ID", "NUM", "RNUM", "ARRAY_DTYPE", "ARRAY","ARRAY_RANGE","ARR_INDEX1", "ARR_INDEX2", "PLUS", "MINUS", "MUL", "DIV", "AND", "OR", "LT", "LE", "GT", "GE", "EQ", "NE", "MODULEDECLARATION", "DRIVERMODULE","MODULE_REUSE", "MODULE", "RET", "PARAMETER", "INTEGER_", "REAL_", "BOOLEAN_", "RANGE_WHILE","RANGE_FOR", "STATEMENTS", "INPUT", "OUTPUT", "ARR_OUTPUT", "TRUE", "FALSE", "ASSIGN", "ARR_ASSIGN", "INDEX_ARR", "DECLARE", "ID_LIST", "CASE","CASE_STMT","RANGE", "INPUT_PLIST", "OUTPUT_PLIST","DEFAULT"};
 
-void insertModule(MainTableEntry** table, MainTableEntry* new_module) {
-    int ind = sumchars(new_module->module_name);
-    while(table[ind] != NULL) {ind++; ind %=20;}
-    table[ind] = new_module;
+void printSymbolTable() {
+    ParamList* current = NULL;
+    ModuleTableEntry** currModule;
+    for (int i = 0; i < 20; i ++) {
+        if (SymbolTable[i] != NULL) {
+            printf("\n\nMODULE: %s\n", SymbolTable[i]->module_name);
+            printf("Input Plist:\n");
+            for (current = SymbolTable[i]->inputList; current != NULL; current = current->next){
+                printf("Name: %s, DataType: %d, PrimType = %d", current->identifier, current->type.datatype, current->type.primtype);
+                if (current->type.datatype == ARRAY_STATIC)
+                    printf(", LB = %d, UB = %d",current->type.lower_bound, current->type.upper_bound);
+                printf("\n");
+            }
+            printf("Output Plist:\n");
+            for (current = SymbolTable[i]->outputList; current != NULL; current = current->next){
+                printf("Name: %s, DataType: %d, PrimType = %d", current->identifier, current->type.datatype, current->type.primtype);
+                if (current->type.datatype == ARRAY_STATIC)
+                    printf(", LB = %d, UB = %d",current->type.lower_bound, current->type.upper_bound);
+                printf("\n");
+            }
+            printf("\nModule's symbol table\n");
+            currModule = SymbolTable[i]->moduleTable;
+            printf("Name\tScope_begin\tScope_end\tDataType\tPrimitiveType\tLowerBound\tUpperBound\tOffset\tWidth\tNestingLvl\n");
+            for (int j = 0; j < 20; j ++) {
+                if (currModule[j] != NULL) {
+                    printf("%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n",currModule[j]->identifier,currModule[j]->scope_begin,currModule[j]->scope_end,currModule[j]->type.datatype,currModule[j]->type.primtype,currModule[j]->type.lower_bound,currModule[j]->type.upper_bound,currModule[j]->offset,currModule[j]->width,currModule[j]->nesting_lvl);
+                }
+            }
+        }
+    }
+}
+
+void insertModule(MainTableEntry* new_module) {
+    int ind=0;
+    for(int i=0;new_module->module_name[i]!='\0';++i){
+        ind = (ind+new_module->module_name[i])%20;
+    }
+    while(SymbolTable[ind] != NULL) {ind++; ind %=20;}
+    SymbolTable[ind] = new_module;
 }
 
 MainTableEntry* searchModule(MainTableEntry** table, char* moduleName) {
@@ -27,7 +64,10 @@ MainTableEntry* searchModule(MainTableEntry** table, char* moduleName) {
 }
 
 void insertVar(ModuleTableEntry** table, ModuleTableEntry* new_var) {
-    int ind = sumchars(new_var->identifier);
+    int ind=0;
+    for(int i=0;new_var->identifier[i]!='\0';++i){
+        ind = (ind+new_var->identifier[i])%20;
+    }
     while(table[ind] != NULL) {ind++; ind %=20;}
     table[ind] = new_var;
 }
@@ -89,11 +129,11 @@ MainTableEntry *createModule(char *name, ParamList *inputList, ParamList *output
     return newModule;
 }
 
+
 void typeChecker(ASTNode *astNode)
 {
     if (astNode == NULL)
         return;
-    printf("%s\n",arr[astNode->label]);
     int c = astNode->label;
     ASTNode *current = NULL;
     MainTableEntry *searched = NULL;
@@ -128,12 +168,12 @@ void typeChecker(ASTNode *astNode)
         if (searchModule(SymbolTable, astNode->tk->val.identifier))
             printf("ERROR at line %d: Module \"%s\" has already been declared\n", astNode->tk->lineNo, astNode->tk->val.identifier);
         else
-            insertModule(SymbolTable, createModule(astNode->tk->val.identifier, NULL, NULL, NULL));
+            insertModule(createModule(astNode->tk->val.identifier, NULL, NULL, NULL));
         break;
 
     case DRIVERMODULE:
         curr = createModule("driver", NULL, NULL, createModuleTable(20));
-        insertModule(SymbolTable, curr);
+        insertModule(curr);
         typeChecker(astNode->child);
         break;
 
@@ -145,7 +185,7 @@ void typeChecker(ASTNode *astNode)
         {
             if (searched == NULL) {
                 curr = createModule(astNode->child->tk->val.identifier, NULL, NULL, createModuleTable(20));
-                insertModule(SymbolTable, curr);
+                insertModule(curr);
             }
             else {
                 searched->moduleTable = createModuleTable(20);
@@ -250,42 +290,18 @@ void typeChecker(ASTNode *astNode)
         astNode->type.upper_bound = -1e9;
         ASTNode *left = astNode->child->child->child;
         ASTNode *right = astNode->child->child->sibling->child;
-        if (left->label == UNARY_MINUS)
-        {
-            if (left->child->label == NUM)
+        if (left->label == UNARY_MINUS && left->child->label == NUM)
                 astNode->type.lower_bound = (-1) * left->child->tk->val.integer;
-            else
-                printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n", left->child->tk->lineNo, left->child->tk->val.identifier);
-        }
-        else if (left->label == UNARY_PLUS)
-        {
-            if (left->child->label == NUM)
+        else if (left->label == UNARY_PLUS && left->child->label == NUM)
                 astNode->type.lower_bound = left->child->tk->val.integer;
-            else
-                printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n", left->child->tk->lineNo, left->child->tk->val.identifier);
-        }
         else if (left->label == NUM)
             astNode->type.lower_bound = left->tk->val.integer;
-        else
-            printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n", left->tk->lineNo, left->tk->val.identifier);
-        if (right->label == UNARY_MINUS)
-        {
-            if (right->child->label == NUM)
+        if (right->label == UNARY_MINUS && right->child->label == NUM)
                 astNode->type.lower_bound = (-1) * right->child->tk->val.integer;
-            else
-                printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n", right->child->tk->lineNo, right->child->tk->val.identifier);
-        }
-        else if (right->label == UNARY_PLUS)
-        {
-            if (right->child->label == NUM)
+        else if (right->label == UNARY_PLUS && right->child->label == NUM)
                 astNode->type.lower_bound = right->child->tk->val.integer;
-            else
-                printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n", right->child->tk->lineNo, right->child->tk->val.identifier);
-        }
         else if (right->label == NUM)
             astNode->type.lower_bound = right->tk->val.integer;
-        else
-            printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n", right->tk->lineNo, right->tk->val.identifier);
         if (astNode->type.upper_bound != -1e9 && astNode->type.lower_bound != -1e9 && astNode->type.upper_bound < astNode->type.lower_bound)
             printf("Error: lower bound of array should be less than or equal to upper bound\n");
         if (astNode->type.upper_bound != -1e9 && astNode->type.lower_bound != -1e9)

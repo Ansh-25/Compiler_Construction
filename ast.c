@@ -1322,7 +1322,7 @@ void makeAST(struct ParseNode* parserNode){
 
         // ANSH
         case 124:
-            scope_start1 = parserNode->child->sibling->sibling->sibling->sibling->val.t->lineNo;
+            // scope_start1 = parserNode->child->sibling->sibling->sibling->sibling->val.t->lineNo;
             makeAST(parserNode->child->sibling);
             makeAST(parserNode->child->sibling->sibling->sibling);
             parserNode->addr = makeNode(DECLARE,NULL,parserNode->child->sibling->addr,NULL);
@@ -1587,6 +1587,7 @@ ASTNode* AST(){
     printAST(astroot);
     printf("\nTypeChecking AST ...\n\n");
     typeChecker(astroot);
+    printSymbolTable();
 	return astroot;
 }
 
