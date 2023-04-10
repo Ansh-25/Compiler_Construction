@@ -1298,7 +1298,7 @@ void typeChecker(ASTNode *astNode)
         }
         if (!flag)
         {
-            printf("Semantic Error: at line:= %d, Module reuse parameters mismatch\n", astNode->tk->lineNo);
+            printf("Semantic Error at line %d: Module reuse parameters mismatch\n", astNode->tk->lineNo);
         }
         break;
 
