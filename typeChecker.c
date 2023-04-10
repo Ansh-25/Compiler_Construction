@@ -15,7 +15,7 @@ char* data_type_arr[] =  {"ARRAY_STATIC", "ARRAY_DYNAMIC", "PRIMITIVE"} ;
 void printSymbolTable() {
     ParamList* current = NULL;
     ModuleTableEntry** currModule;
-    for (int i = 0; i < 20; i ++) {
+    for (int i = 0; i < 40; i ++) {
         if (SymbolTable[i] != NULL) {
             printf("\nMODULE: %s\n", SymbolTable[i]->module_name);
             printf("Input Plist:\n");
@@ -35,7 +35,7 @@ void printSymbolTable() {
             printf("\nModule's symbol table\n");
             currModule = SymbolTable[i]->moduleTable;
             printf("Name    Scope_begin    Scope_end    DataType      PrimitiveType    LowerBound     UpperBound    Offset    Width    NestingLvl\n");
-            for (int j = 0; j < 20; j ++) {
+            for (int j = 0; j < 40; j ++) {
                 if (currModule[j] != NULL) {
                     printf("%-12s %-12d %-9d %-16s %-13s %-14d %-16d %-8d %-10d %d\n",currModule[j]->identifier,currModule[j]->scope_begin,currModule[j]->scope_end,data_type_arr[currModule[j]->type.datatype],prim_type_arr[currModule[j]->type.primtype],currModule[j]->type.lower_bound,currModule[j]->type.upper_bound,currModule[j]->offset,currModule[j]->width,currModule[j]->nesting_lvl);
                 }
@@ -47,21 +47,21 @@ void printSymbolTable() {
 void insertModule(MainTableEntry* new_module) {
     int ind=0;
     for(int i=0;new_module->module_name[i]!='\0';++i){
-        ind = (ind+new_module->module_name[i])%20;
+        ind = (ind+new_module->module_name[i])%40;
     }
-    while(SymbolTable[ind] != NULL) {ind++; ind %=20;}
+    while(SymbolTable[ind] != NULL) {ind++; ind %=40;}
     SymbolTable[ind] = new_module;
 }
 
 MainTableEntry* searchModule(MainTableEntry** table, char* moduleName) {
     int ind=0;
     for(int i=0;moduleName[i]!='\0';++i){
-        ind = (ind+moduleName[i])%20;
+        ind = (ind+moduleName[i])%40;
     }
     while(table[ind]!=NULL){
         if(strcmp(moduleName, table[ind] -> module_name)==0) return table[ind];
         ind++;
-        ind %= 20;
+        ind %= 40;
     }
     return NULL;
 }
@@ -69,9 +69,9 @@ MainTableEntry* searchModule(MainTableEntry** table, char* moduleName) {
 void insertVar(ModuleTableEntry** table, ModuleTableEntry* new_var) {
     int ind=0;
     for(int i=0;new_var->identifier[i]!='\0';++i){
-        ind = (ind+new_var->identifier[i])%20;
+        ind = (ind+new_var->identifier[i])%40;
     }
-    while(table[ind] != NULL) {ind++; ind %=20;}
+    while(table[ind] != NULL) {ind++; ind %=40;}
     table[ind] = new_var;
 }
 
@@ -79,7 +79,7 @@ ModuleTableEntry* searchVar(ModuleTableEntry** table, char* varName, int lineNo)
     int ind=0, bestNest = 0;
     ModuleTableEntry* newEntry = NULL;
     for(int i=0;varName[i]!='\0';++i){
-        ind = (ind+varName[i])%20;
+        ind = (ind+varName[i])%40;
     }
     while(table[ind]!=NULL){
         if(strcmp(varName, table[ind] -> identifier)==0 && table[ind]->nesting_lvl > bestNest && table[ind]->scope_begin <= lineNo && table[ind]->scope_end >= lineNo) {
@@ -87,7 +87,7 @@ ModuleTableEntry* searchVar(ModuleTableEntry** table, char* varName, int lineNo)
             newEntry = table[ind];
         }
         ind++;
-        ind %= 20;
+        ind %= 40;
     }
     return newEntry;
 }
@@ -150,7 +150,7 @@ void typeChecker(ASTNode *astNode)
     switch (c)
     {
     case PROGRAM:
-        createMainTable(20);
+        createMainTable(40);
         curr = NULL;
         for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
             typeChecker(current);
@@ -179,7 +179,7 @@ void typeChecker(ASTNode *astNode)
         break;
 
     case DRIVERMODULE:
-        curr = createModule("driver", NULL, NULL, createModuleTable(20));
+        curr = createModule("driver", NULL, NULL, createModuleTable(40));
         insertModule(curr);
         for (ASTNode *stmt = astNode->child->child; stmt != NULL; stmt = stmt->sibling)
             typeChecker(stmt);
@@ -192,11 +192,11 @@ void typeChecker(ASTNode *astNode)
         else
         {
             if (searched == NULL) {
-                curr = createModule(astNode->child->tk->val.identifier, NULL, NULL, createModuleTable(20));
+                curr = createModule(astNode->child->tk->val.identifier, NULL, NULL, createModuleTable(40));
                 insertModule(curr);
             }
             else {
-                searched->moduleTable = createModuleTable(20);
+                searched->moduleTable = createModuleTable(40);
                 curr = searched;
             }
             ASTNode *current = astNode->child->sibling;
