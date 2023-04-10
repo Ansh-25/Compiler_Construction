@@ -715,13 +715,13 @@ void printToken(struct Token *tk){
     }
     printf("Line_number := %d\t",tk->lineNo);
     if(tk -> type == TK_NUM){
-        printf("lexeme := %d\t\t",tk->val.integer);
+        printf("lexeme := %-15d",tk->val.integer);
     }
     else if(tk -> type == TK_RNUM){
-        printf("lexeme := %30.17lf\t\t",tk->val.decimal);
+        printf("lexeme := %-20.17lf",tk->val.decimal);
     }
     else{
-        printf("lexeme := %s\t\t",tk->val.identifier);
+        printf("lexeme := %-15s",tk->val.identifier);
     }
     printf("Token_name := %s\n",tokens[tk->type]);
 }
