@@ -1,3 +1,9 @@
+<<module var_demo>>
+takes input [x:integer, x: boolean, p:real];
+returns [p: real, q: boolean];
+start
+end
+
 <<<driver program>>>
 start
 	declare a:integer;

@@ -138,6 +138,7 @@ void typeChecker(ASTNode *astNode)
 {
     if (astNode == NULL)
         return;
+    printf("%s\n",arr[astNode->label]);
     int c = astNode->label;
     ASTNode *current = NULL;
     MainTableEntry *searched = NULL;
@@ -205,30 +206,40 @@ void typeChecker(ASTNode *astNode)
                     ParamList *input_plist = NULL;
                     while (parameter != NULL)
                     {
-                        ParamList *newnode = (ParamList *)malloc(sizeof(ParamList));
-                        newnode->identifier = parameter->tk->val.identifier;
-                        typeChecker(parameter->child);
-                        newnode->type = parameter->child->type;
-                        newnode->next = NULL;
-                        input_plist = insertLast(input_plist, newnode);
-                        ModuleTableEntry *newEntry = (ModuleTableEntry*)malloc(sizeof(ModuleTableEntry));
-                        newEntry->identifier = newnode->identifier;
-                        newEntry->nesting_lvl = 1;
-                        newEntry->offset = offset;
-                        newEntry->scope_begin = parameter->scope_begin;
-                        newEntry->scope_end = parameter->scope_end;
-                        newEntry->type = newnode->type;
-                        if (newEntry->type.primtype == BOOLEAN)
-                            newEntry->width = 1;
-                        else if (newEntry->type.primtype == INTEGER)
-                            newEntry->width = 2;
-                        else
-                            newEntry->width = 4;
-                        if (newEntry->type.datatype == ARRAY_STATIC)
-                            newEntry->width = (newEntry->width * (newEntry->type.upper_bound - newEntry->type.lower_bound + 1)) - 1;
-                        else if (newEntry->type.datatype == ARRAY_DYNAMIC)
-                            newEntry->width = 1;
-                        insertVar(curr->moduleTable, newEntry);
+                        ParamList* currentParam = input_plist;
+                        while(currentParam!= NULL){
+                            if (strcmp(currentParam->identifier,parameter->tk->val.identifier) == 0)
+                                break;
+                            currentParam = currentParam -> next;
+                        }
+                        if (currentParam != NULL)
+                            printf("Error at line %d: Identifier %s has already been declared\n", parameter->tk->lineNo, parameter->tk->val.identifier);
+                        else {
+                            ParamList *newnode = (ParamList *)malloc(sizeof(ParamList));
+                            newnode->identifier = parameter->tk->val.identifier;
+                            typeChecker(parameter->child);
+                            newnode->type = parameter->child->type;
+                            newnode->next = NULL;
+                            input_plist = insertLast(input_plist, newnode);
+                            ModuleTableEntry *newEntry = (ModuleTableEntry*)malloc(sizeof(ModuleTableEntry));
+                            newEntry->identifier = newnode->identifier;
+                            newEntry->nesting_lvl = 1;
+                            newEntry->offset = offset;
+                            newEntry->scope_begin = parameter->scope_begin;
+                            newEntry->scope_end = parameter->scope_end;
+                            newEntry->type = newnode->type;
+                            if (newEntry->type.primtype == BOOLEAN)
+                                newEntry->width = 1;
+                            else if (newEntry->type.primtype == INTEGER)
+                                newEntry->width = 2;
+                            else
+                                newEntry->width = 4;
+                            if (newEntry->type.datatype == ARRAY_STATIC)
+                                newEntry->width = (newEntry->width * (newEntry->type.upper_bound - newEntry->type.lower_bound + 1)) + 1;
+                            else if (newEntry->type.datatype == ARRAY_DYNAMIC)
+                                newEntry->width = 1;
+                            insertVar(curr->moduleTable, newEntry);
+                        }
                         parameter = parameter->sibling;
                     }
                     curr->inputList = input_plist;
@@ -239,26 +250,46 @@ void typeChecker(ASTNode *astNode)
                     ParamList *output_plist = NULL;
                     while (parameter != NULL)
                     {
-                        ParamList *newnode = (ParamList *)malloc(sizeof(ParamList));
-                        newnode->identifier = parameter->tk->val.identifier;
-                        typeChecker(parameter->child);
-                        newnode->type = parameter->child->type;
-                        newnode->next = NULL;
-                        output_plist = insertLast(output_plist, newnode);
-                        ModuleTableEntry *newEntry = (ModuleTableEntry*)malloc(sizeof(ModuleTableEntry));
-                        newEntry->identifier = newnode->identifier;
-                        newEntry->nesting_lvl = 1;
-                        newEntry->offset = offset;
-                        newEntry->scope_begin = parameter->scope_begin;
-                        newEntry->scope_end = parameter->scope_end;
-                        newEntry->type = newnode->type;
-                        if (newEntry->type.primtype == BOOLEAN)
-                            newEntry->width = 1;
-                        else if (newEntry->type.primtype == INTEGER)
-                            newEntry->width = 2;
-                        else
-                            newEntry->width = 4;
-                        insertVar(curr->moduleTable, newEntry);
+                        ParamList* currentParam = curr->inputList;
+                        while(currentParam!= NULL){
+                            if (strcmp(currentParam->identifier,parameter->tk->val.identifier) == 0)
+                                break;
+                            currentParam = currentParam -> next;
+                        }
+                        if (currentParam != NULL)
+                            printf("Error at line %d: Identifier %s has already been declared\n", parameter->tk->lineNo, parameter->tk->val.identifier);
+                        else {
+                            currentParam = output_plist;
+                            while(currentParam!= NULL){
+                                if (strcmp(currentParam->identifier,parameter->tk->val.identifier) == 0)
+                                    break;
+                                currentParam = currentParam -> next;
+                            }
+                            if (currentParam != NULL)
+                                printf("Error at line %d: Identifier %s has already been declared\n", parameter->tk->lineNo, parameter->tk->val.identifier);
+                            else {
+                                ParamList *newnode = (ParamList *)malloc(sizeof(ParamList));
+                                newnode->identifier = parameter->tk->val.identifier;
+                                typeChecker(parameter->child);
+                                newnode->type = parameter->child->type;
+                                newnode->next = NULL;
+                                output_plist = insertLast(output_plist, newnode);
+                                ModuleTableEntry *newEntry = (ModuleTableEntry*)malloc(sizeof(ModuleTableEntry));
+                                newEntry->identifier = newnode->identifier;
+                                newEntry->nesting_lvl = 1;
+                                newEntry->offset = offset;
+                                newEntry->scope_begin = parameter->scope_begin;
+                                newEntry->scope_end = parameter->scope_end;
+                                newEntry->type = newnode->type;
+                                if (newEntry->type.primtype == BOOLEAN)
+                                    newEntry->width = 1;
+                                else if (newEntry->type.primtype == INTEGER)
+                                    newEntry->width = 2;
+                                else
+                                    newEntry->width = 4;
+                                insertVar(curr->moduleTable, newEntry);
+                            }
+                        }
                         parameter = parameter->sibling;
                     }
                     curr->outputList = output_plist;
@@ -449,9 +480,9 @@ void typeChecker(ASTNode *astNode)
         Prim_type pt1 = astNode->child->type.primtype;
         Prim_type pt2 = astNode->child->sibling->type.primtype;
         Prim_type pt3 = astNode->child->child->type.primtype;
-        printf("%d\n",pt1);
-        printf("%d\n",pt2);
-        printf("%d\n",pt3);
+        // printf("%d\n",pt1);
+        // printf("%d\n",pt2);
+        // printf("%d\n",pt3);
         if(pt3!=INTEGER){
             printf("Type Error at line %d: Index of array variable %s found to be of non-integer type\n",astNode->child->tk->lineNo,astNode->child->tk->val.identifier);
         }
