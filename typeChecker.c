@@ -405,8 +405,6 @@ void typeChecker(ASTNode *astNode)
         newEntry = searchVar(curr->moduleTable, astNode->tk->val.identifier, astNode->tk->lineNo);
         if (newEntry == NULL)
             printf("Semantic Error at line %d: variable %s not declared in this scope\n", astNode->tk->lineNo, astNode->tk->val.identifier);
-        else if (newEntry->type.datatype != PRIMITIVE)
-            printf("Semantic Error at line %d: cannot take array as input\n", astNode->tk->lineNo);
         else if (newEntry->vartype == FOR_LOOP_VAR)
             printf("Semantic Error at lien %d: cannot modify for loop variable\n", astNode->tk->lineNo);
         else
