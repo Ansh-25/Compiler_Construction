@@ -763,6 +763,7 @@ void makeAST(struct ParseNode* parserNode){
                 parserNode->addr = makeNode(ARRAY,NULL,newNode,NULL);
                 newNode->sibling = c1->addr;
             }
+            parserNode->addr->tk = parserNode->child->val.t;
             free(parserNode->child->sibling);
             free(parserNode->child);
             break;
@@ -1053,6 +1054,7 @@ void makeAST(struct ParseNode* parserNode){
             }
             else
                 parserNode->addr = newNode;
+            parserNode->addr->tk = parserNode->child->val.t;;
             free(parserNode->child->sibling);
             free(parserNode->child);
             break;
