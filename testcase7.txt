@@ -1,3 +1,10 @@
+<<module empty>>
+takes input[a:boolean, b:array[12..50] of integer];
+returns [b:real, c:integer, d:boolean];
+start
+
+end
+
 <<<driver program>>>
 start
 	

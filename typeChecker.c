@@ -5,34 +5,42 @@ MainTableEntry **SymbolTable;
 MainTableEntry *curr; // set curr at every module node
 int offset = 0;
 
+char* arr[] = {"PROGRAM","ITER_FOR","MODULEDECLARATIONS","OTHERMODULES1","OTHERMODULES2","UNARY_PLUS","UNARY_MINUS", "ID", "NUM", "RNUM", "ARRAY_DTYPE", "ARRAY","ARRAY_RANGE","ARR_INDEX1", "ARR_INDEX2", "PLUS", "MINUS", "MUL", "DIV", "AND", "OR", "LT", "LE", "GT", "GE", "EQ", "NE", "MODULEDECLARATION", "DRIVERMODULE","MODULE_REUSE", "MODULE", "RET", "PARAMETER", "INTEGER_", "REAL_", "BOOLEAN_", "RANGE_WHILE","RANGE_FOR", "STATEMENTS", "INPUT", "OUTPUT", "ARR_OUTPUT", "TRUE", "FALSE", "ASSIGN", "ARR_ASSIGN", "INDEX_ARR", "DECLARE", "ID_LIST", "CASE","CASE_STMT","RANGE", "INPUT_PLIST", "OUTPUT_PLIST","DEFAULT"};
+
 void insertModule(MainTableEntry** table, MainTableEntry* new_module) {
     int ind = sumchars(new_module->module_name);
-    while(table[ind] != NULL) {ind++; ind %=47;}
+    while(table[ind] != NULL) {ind++; ind %=20;}
     table[ind] = new_module;
 }
 
 MainTableEntry* searchModule(MainTableEntry** table, char* moduleName) {
-    int ind = sumchars(moduleName);
+    int ind=0;
+    for(int i=0;moduleName[i]!='\0';++i){
+        ind = (ind+moduleName[i])%20;
+    }
     while(table[ind]!=NULL){
         if(strcmp(moduleName, table[ind] -> module_name)==0) return table[ind];
         ind++;
-        ind %= 47;
+        ind %= 20;
     }
     return NULL;
 }
 
 void insertVar(ModuleTableEntry** table, ModuleTableEntry* new_var) {
     int ind = sumchars(new_var->identifier);
-    while(table[ind] != NULL) {ind++; ind %=47;}
+    while(table[ind] != NULL) {ind++; ind %=20;}
     table[ind] = new_var;
 }
 
 ModuleTableEntry* searchVar(ModuleTableEntry** table, char* varName) {
-    int ind = sumchars(varName);
+    int ind=0;
+    for(int i=0;varName[i]!='\0';++i){
+        ind = (ind+varName[i])%20;
+    }
     while(table[ind]!=NULL){
         if(strcmp(varName, table[ind] -> identifier)==0) return table[ind];
         ind++;
-        ind %= 47;
+        ind %= 20;
     }
     return NULL;
 }
@@ -85,6 +93,7 @@ void typeChecker(ASTNode *astNode)
 {
     if (astNode == NULL)
         return;
+    printf("%s\n",arr[astNode->label]);
     int c = astNode->label;
     ASTNode *current = NULL;
     MainTableEntry *searched = NULL;
@@ -94,6 +103,8 @@ void typeChecker(ASTNode *astNode)
     switch (c)
     {
     case PROGRAM:
+        createMainTable(20);
+        curr = NULL;
         for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
             typeChecker(current);
         break;
@@ -121,8 +132,8 @@ void typeChecker(ASTNode *astNode)
         break;
 
     case DRIVERMODULE:
-        curr->moduleTable = createModuleTable(20);
-        insertModule(SymbolTable, createModule("driver", NULL, NULL, curr->moduleTable));
+        curr = createModule("driver", NULL, NULL, createModuleTable(20));
+        insertModule(SymbolTable, curr);
         typeChecker(astNode->child);
         break;
 
@@ -132,11 +143,14 @@ void typeChecker(ASTNode *astNode)
             printf("ERROR at line %d: Module \"%s\" has already been defined\n", astNode->tk->lineNo, astNode->tk->val.identifier);
         else
         {
-            curr->moduleTable = createModuleTable(20);
-            if (searched == NULL)
-                insertModule(SymbolTable, createModule(astNode->child->tk->val.identifier, NULL, NULL, curr->moduleTable));
-            else
-                searched = curr;
+            if (searched == NULL) {
+                curr = createModule(astNode->child->tk->val.identifier, NULL, NULL, createModuleTable(20));
+                insertModule(SymbolTable, curr);
+            }
+            else {
+                searched->moduleTable = createModuleTable(20);
+                curr = searched;
+            }
             ASTNode *current = astNode->child->sibling;
             while (current != NULL)
             {
@@ -152,7 +166,7 @@ void typeChecker(ASTNode *astNode)
                         newnode->type = parameter->child->type;
                         newnode->next = NULL;
                         input_plist = insertLast(input_plist, newnode);
-                        ModuleTableEntry *newEntry;
+                        ModuleTableEntry *newEntry = (ModuleTableEntry*)malloc(sizeof(ModuleTableEntry));
                         newEntry->identifier = newnode->identifier;
                         newEntry->nesting_lvl = 1;
                         newEntry->offset = offset;
@@ -169,11 +183,10 @@ void typeChecker(ASTNode *astNode)
                             newEntry->width = (newEntry->width * (newEntry->type.upper_bound - newEntry->type.lower_bound + 1)) - 1;
                         else if (newEntry->type.datatype == ARRAY_DYNAMIC)
                             newEntry->width = 1;
-                        offset += newEntry->width;
                         insertVar(curr->moduleTable, newEntry);
                         parameter = parameter->sibling;
                     }
-                    searched->inputList = input_plist;
+                    curr->inputList = input_plist;
                 }
                 else if (current->label == OUTPUT_PLIST)
                 {
@@ -187,7 +200,7 @@ void typeChecker(ASTNode *astNode)
                         newnode->type = parameter->child->type;
                         newnode->next = NULL;
                         output_plist = insertLast(output_plist, newnode);
-                        ModuleTableEntry *newEntry;
+                        ModuleTableEntry *newEntry = (ModuleTableEntry*)malloc(sizeof(ModuleTableEntry));
                         newEntry->identifier = newnode->identifier;
                         newEntry->nesting_lvl = 1;
                         newEntry->offset = offset;
@@ -200,15 +213,10 @@ void typeChecker(ASTNode *astNode)
                             newEntry->width = 2;
                         else
                             newEntry->width = 4;
-                        if (newEntry->type.datatype == ARRAY_STATIC)
-                            newEntry->width = (newEntry->width * (newEntry->type.upper_bound - newEntry->type.lower_bound + 1)) - 1;
-                        else if (newEntry->type.datatype == ARRAY_DYNAMIC)
-                            newEntry->width = 1;
-                        offset += newEntry->width;
                         insertVar(curr->moduleTable, newEntry);
                         parameter = parameter->sibling;
                     }
-                    searched->outputList = output_plist;
+                    curr->outputList = output_plist;
                 }
                 else
                 {
@@ -240,8 +248,8 @@ void typeChecker(ASTNode *astNode)
         astNode->type.primtype = astNode->child->sibling->type.primtype;
         astNode->type.lower_bound = INT_MIN;
         astNode->type.upper_bound = INT_MIN;
-        ASTNode *left = astNode->child->child;
-        ASTNode *right = astNode->child->child->sibling;
+        ASTNode *left = astNode->child->child->child;
+        ASTNode *right = astNode->child->child->sibling->child;
         if (left->label == UNARY_MINUS)
         {
             if (left->child->label == NUM)
@@ -257,7 +265,7 @@ void typeChecker(ASTNode *astNode)
                 printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n", left->child->tk->lineNo, left->child->tk->val.identifier);
         }
         else if (left->label == NUM)
-            astNode->type.lower_bound = left->child->tk->val.integer;
+            astNode->type.lower_bound = left->tk->val.integer;
         else
             printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n", left->tk->lineNo, left->tk->val.identifier);
         if (right->label == UNARY_MINUS)
@@ -275,7 +283,7 @@ void typeChecker(ASTNode *astNode)
                 printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n", right->child->tk->lineNo, right->child->tk->val.identifier);
         }
         else if (right->label == NUM)
-            astNode->type.lower_bound = right->child->tk->val.integer;
+            astNode->type.lower_bound = right->tk->val.integer;
         else
             printf("Error at line %d: identifier \"%s\" not expected. Expected an integer\n", right->tk->lineNo, right->tk->val.identifier);
         if (astNode->type.upper_bound != INT_MIN && astNode->type.lower_bound != INT_MIN && astNode->type.upper_bound < astNode->type.lower_bound)

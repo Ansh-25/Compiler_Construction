@@ -4,6 +4,8 @@
 
 #include "astDef.h"
 
+extern char * arr[];
+
 void typeChecker(ASTNode *astNode);
 
 #endif
