@@ -6,6 +6,7 @@
     ID: 2020A7PS0116P | Name: Ansh Gupta
 */
 
+#include <stdbool.h>
 #include "parserDef.h"
 #include "stdlib.h"
 #include "string.h"
@@ -670,6 +671,7 @@ ParseNode* parse(){
     while(L!=NULL){
         if(isEmpty(S)){ //if stack is empty and we still have a token, it means there is an error
             printf("\nSyntax Error at line no %d ... empty stack\n",L->lineNo); 
+            compile_error = true;
             break;
         }
         //printf("hi");
@@ -694,6 +696,7 @@ ParseNode* parse(){
             }
             else{ //if we the top of the stack is a different terminal to the token, then we have an error
                 printf("\nSyntax Error at line no %d ... terminal mismatch\n",L->lineNo);
+                compile_error = true;
                 printf("actual : %s\n",mapttokentostring(L->type));
                 printf("exp : %s\n",mapttokentostring(X->val.t->type));
                 S = pop(S); //we pop the stack and also get the next token
@@ -721,11 +724,13 @@ ParseNode* parse(){
 
             else if(contains(synchronizingSet[X->val.nt],L->type)){ //otherwise if we can't find the right rule, check if the non-terminal contains the top of the stack in the synchronizing set. if yes, we can pop the stack and continue
                 printf("\nSyntax Error at line no %d ... non-terminal mismatch, popping stack\n",L->lineNo);
+                compile_error = true;
                 S = pop(S);
             }
 
             else { //otherwise get next token
                 printf("\nSyntax Error at line no %d ... non-terminal mismatch, getting new token\n",L->lineNo);
+                compile_error = true;
                 if (L -> type == TK_EOF) { //if L is TK_EOF, we can't get next token, so we just break
                     break;
                 }
@@ -741,6 +746,7 @@ ParseNode* parse(){
     }
     if(!isEmpty(S)){ //if stack is not empty after consuming all tokens, we have an error
         printf("\nERROR: stack not empty yet\n");
+        compile_error=true;
     }
     return Root;
 }

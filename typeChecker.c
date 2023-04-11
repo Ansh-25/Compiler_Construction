@@ -230,8 +230,10 @@ void typeChecker(ASTNode *astNode)
         break;
 
     case MODULEDECLARATION:
-        if (searchModule(SymbolTable, astNode->tk->val.identifier))
+        if (searchModule(SymbolTable, astNode->tk->val.identifier)){
             printf("Semantic Error at line %d: Module %s has already been declared\n", astNode->tk->lineNo, astNode->tk->val.identifier);
+            compile_error = true;
+        }
         else
             insertModule(createModule(astNode->tk->val.identifier, NULL, NULL, NULL));
         break;
@@ -246,8 +248,10 @@ void typeChecker(ASTNode *astNode)
 
     case MODULE:
         searched = searchModule(SymbolTable, astNode->child->tk->val.identifier);
-        if (searched != NULL && searched->moduleTable != NULL)
+        if (searched != NULL && searched->moduleTable != NULL){
             printf("Semantic Error at line %d: Module %s has already been defined\n", astNode->tk->lineNo, astNode->tk->val.identifier);
+            compile_error = true;
+        }
         else
         {
             if (searched == NULL) {
@@ -273,8 +277,10 @@ void typeChecker(ASTNode *astNode)
                                 break;
                             currentParam = currentParam -> next;
                         }
-                        if (currentParam != NULL)
+                        if (currentParam != NULL){
                             printf("Semantic Error at line %d: Identifier %s has already been declared\n", parameter->tk->lineNo, parameter->tk->val.identifier);
+                            compile_error = true;
+                        }
                         else {
                             ParamList *newnode = (ParamList *)malloc(sizeof(ParamList));
                             newnode->identifier = parameter->tk->val.identifier;
@@ -320,8 +326,10 @@ void typeChecker(ASTNode *astNode)
                                 break;
                             currentParam = currentParam -> next;
                         }
-                        if (currentParam != NULL)
+                        if (currentParam != NULL){
                             printf("Semantic Error at line %d: Identifier %s has already been declared\n", parameter->tk->lineNo, parameter->tk->val.identifier);
+                            compile_error = true;
+                        }
                         else {
                             currentParam = output_plist;
                             while(currentParam!= NULL){
@@ -329,8 +337,10 @@ void typeChecker(ASTNode *astNode)
                                     break;
                                 currentParam = currentParam -> next;
                             }
-                            if (currentParam != NULL)
+                            if (currentParam != NULL){
                                 printf("Semantic Error at line %d: Identifier %s has already been declared\n", parameter->tk->lineNo, parameter->tk->val.identifier);
+                                compile_error = true;
+                            }
                             else {
                                 ParamList *newnode = (ParamList *)malloc(sizeof(ParamList));
                                 newnode->identifier = parameter->tk->val.identifier;
@@ -407,8 +417,10 @@ void typeChecker(ASTNode *astNode)
             else {
                 astNode->type.datatype = ARRAY_DYNAMIC;
                 typeChecker(left->child);
-                if (left->child->type.datatype != PRIMITIVE || left->child->type.primtype != INTEGER)
+                if (left->child->type.datatype != PRIMITIVE || left->child->type.primtype != INTEGER){
                     printf("Semantic Error at line %d: Array index has to be an integer\n",left->child->tk->lineNo);
+                    compile_error = true;
+                }
             }
         }
         else if (left->label == UNARY_PLUS) {
@@ -417,8 +429,10 @@ void typeChecker(ASTNode *astNode)
             else {
                 astNode->type.datatype = ARRAY_DYNAMIC;
                 typeChecker(left->child);
-                if (left->child->type.datatype != PRIMITIVE || left->child->type.primtype != INTEGER)
+                if (left->child->type.datatype != PRIMITIVE || left->child->type.primtype != INTEGER){
                     printf("Semantic Error at line %d: Array index has to be an integer\n",left->child->tk->lineNo);
+                    compile_error = true;
+                }
             }
         }
         else if (left->label == NUM)
@@ -426,8 +440,10 @@ void typeChecker(ASTNode *astNode)
         else {
             astNode->type.datatype = ARRAY_DYNAMIC;
             typeChecker(left);
-            if (left->type.datatype != PRIMITIVE || left->type.primtype != INTEGER)
+            if (left->type.datatype != PRIMITIVE || left->type.primtype != INTEGER){
                 printf("Semantic Error at line %d: Array index has to be an integer\n",left->child->tk->lineNo);
+                compile_error = true;
+            }
         }
         if (right->label == UNARY_MINUS){
             if (right->child->label == NUM)
@@ -435,8 +451,10 @@ void typeChecker(ASTNode *astNode)
             else {
                 astNode->type.datatype = ARRAY_DYNAMIC;
                 typeChecker(right->child);
-                if (right->child->type.datatype != PRIMITIVE || right->child->type.primtype != INTEGER)
+                if (right->child->type.datatype != PRIMITIVE || right->child->type.primtype != INTEGER){
                     printf("Semantic Error at line %d: Array index has to be an integer\n",right->child->tk->lineNo);
+                    compile_error = true;
+                }
             }
         }
         else if (right->label == UNARY_PLUS){
@@ -445,8 +463,10 @@ void typeChecker(ASTNode *astNode)
             else {
                 astNode->type.datatype = ARRAY_DYNAMIC;
                 typeChecker(right->child);
-                if (right->child->type.datatype != PRIMITIVE || right->child->type.primtype != INTEGER)
+                if (right->child->type.datatype != PRIMITIVE || right->child->type.primtype != INTEGER){
                     printf("Semantic Error at line %d: Array index has to be an integer\n",right->child->tk->lineNo);
+                    compile_error = true;
+                }
             }
         }
         else if (right->label == NUM)
@@ -454,19 +474,27 @@ void typeChecker(ASTNode *astNode)
         else {
             astNode->type.datatype = ARRAY_DYNAMIC;
             typeChecker(right);
-            if (right->type.datatype != PRIMITIVE || right->type.primtype != INTEGER)
+            if (right->type.datatype != PRIMITIVE || right->type.primtype != INTEGER){
                 printf("Semantic Error at line %d: Array index has to be an integer\n", right->tk->lineNo);
+                compile_error = true;
+            }
         }
-        if (astNode->type.upper_bound != -1e9 && astNode->type.lower_bound != -1e9 && astNode->type.upper_bound < astNode->type.lower_bound)
+        if (astNode->type.upper_bound != -1e9 && astNode->type.lower_bound != -1e9 && astNode->type.upper_bound < astNode->type.lower_bound){
             printf("Semantic Error: lower bound of array should be less than or equal to upper bound\n");
+            compile_error = true;
+        }
         break;
 
     case INPUT:
         newEntry = searchVar(curr->moduleTable, astNode->tk->val.identifier, astNode->tk->lineNo);
-        if (newEntry == NULL)
+        if (newEntry == NULL){
             printf("Semantic Error at line %d: variable %s not declared in this scope\n", astNode->tk->lineNo, astNode->tk->val.identifier);
-        else if (newEntry->vartype == FOR_LOOP_VAR)
+            compile_error = true;
+        }
+        else if (newEntry->vartype == FOR_LOOP_VAR){
             printf("Semantic Error at lien %d: cannot modify for loop variable\n", astNode->tk->lineNo);
+            compile_error = true;
+        }
         else
             newEntry->is_changed = true;
         break;
@@ -475,18 +503,26 @@ void typeChecker(ASTNode *astNode)
         if (astNode->child->label == ID)
         {
             ModuleTableEntry *newEntry = searchVar(curr->moduleTable, astNode->child->tk->val.identifier, astNode->child->tk->lineNo);
-            if (newEntry == NULL)
+            if (newEntry == NULL){
                 printf("Semantic Error at line %d: variable %s has not been declared in this scope\n", astNode->child->tk->lineNo, astNode->child->tk->val.identifier);
-            else if (newEntry->type.datatype != PRIMITIVE)
+                compile_error = true;
+            }
+            else if (newEntry->type.datatype != PRIMITIVE){
+                compile_error = true;
                 printf("Semantic Error at line %d: cannot print an array\n", astNode->child->tk->lineNo);
+            }
         }
         else if (astNode->child->label == ARR_OUTPUT)
         {
             ModuleTableEntry *newEntry = searchVar(curr->moduleTable, astNode->child->child->tk->val.identifier, astNode->child->child->tk->lineNo);
-            if (newEntry == NULL)
+            if (newEntry == NULL){
                 printf("Semantic Error at line %d: variable %s vas not been declared in this scope\n", astNode->child->child->tk->lineNo, astNode->child->child->tk->val.identifier);
-            else if (newEntry->type.datatype == PRIMITIVE)
+                compile_error = true;
+            }
+            else if (newEntry->type.datatype == PRIMITIVE){
                 printf("Semantic Error at line %d: %s is not an array\n", astNode->child->child->tk->lineNo, astNode->child->child->tk->val.identifier);
+                compile_error = true;
+            }
             else
             {
                 ASTNode *index = astNode->child->child->sibling->child;
@@ -495,16 +531,22 @@ void typeChecker(ASTNode *astNode)
                     if (index->child->label == NUM && newEntry->type.datatype == ARRAY_STATIC)
                     {
                         int num = (-1) * index->child->tk->val.integer;
-                        if (num < newEntry->type.lower_bound || num > newEntry->type.upper_bound)
+                        if (num < newEntry->type.lower_bound || num > newEntry->type.upper_bound){
                             printf("Semantic Error at line %d: Array index out of bounds\n", index->child->tk->lineNo);
+                            compile_error = true;
+                        }
                     }
                     else if (index->child->label == ID)
                     {
                         ModuleTableEntry *arr_ind = searchVar(curr->moduleTable, index->child->tk->val.identifier, index->child->tk->lineNo);
-                        if (arr_ind == NULL)
+                        if (arr_ind == NULL){
                             printf("Semantic Error at line %d: variable %s has not been declared in this scope\n", index->child->tk->lineNo, index->child->tk->val.identifier);
-                        else if (arr_ind->type.primtype != INTEGER || arr_ind->type.datatype != PRIMITIVE)
+                            compile_error = true;
+                        }
+                        else if (arr_ind->type.primtype != INTEGER || arr_ind->type.datatype != PRIMITIVE){
                             printf("Semantic Error at line %d: array index must be an integer", index->child->tk->lineNo);
+                            compile_error = true;
+                        }
                     }
                 }
                 else if (index->label == UNARY_PLUS)
@@ -512,29 +554,41 @@ void typeChecker(ASTNode *astNode)
                     if (index->child->label == NUM && newEntry->type.datatype == ARRAY_STATIC)
                     {
                         int num = index->child->tk->val.integer;
-                        if (num < newEntry->type.lower_bound || num > newEntry->type.upper_bound)
+                        if (num < newEntry->type.lower_bound || num > newEntry->type.upper_bound){
                             printf("Semantic Error at line %d: Array index out of bounds\n", index->child->tk->lineNo);
+                            compile_error = true;
+                        }
                     }
                     else if (index->child->label == ID)
                     {
                         ModuleTableEntry *arr_ind = searchVar(curr->moduleTable, index->child->tk->val.identifier, index->child->tk->lineNo);
-                        if (arr_ind == NULL)
+                        if (arr_ind == NULL){
                             printf("Semantic Error at line %d: variable %s has not been declared in this scope\n", index->child->tk->lineNo, index->child->tk->val.identifier);
-                        else if (arr_ind->type.primtype != INTEGER || arr_ind->type.datatype != PRIMITIVE)
+                            compile_error = true;
+                        }
+                        else if (arr_ind->type.primtype != INTEGER || arr_ind->type.datatype != PRIMITIVE){
                             printf("Semantic Error at line %d: array index must be an integer", index->child->tk->lineNo);
+                            compile_error = true;
+                        }
                     }
                 }
                 else if (index->label == NUM) {
-                    if (newEntry->type.datatype == ARRAY_STATIC && (index->tk->val.integer < newEntry->type.lower_bound || index->tk->val.integer > newEntry->type.upper_bound))
+                    if (newEntry->type.datatype == ARRAY_STATIC && (index->tk->val.integer < newEntry->type.lower_bound || index->tk->val.integer > newEntry->type.upper_bound)){
                         printf("Semantic Error at line %d: Array index out of bounds\n", index->tk->lineNo);
+                        compile_error = true;
+                    }
                 }
                 else
                 {
                     ModuleTableEntry *arr_ind = searchVar(curr->moduleTable, index->tk->val.identifier, index->tk->lineNo);
-                    if (arr_ind == NULL)
+                    if (arr_ind == NULL){
                         printf("Semantic Error at line %d: variable %s has not been declared in this scope\n", index->tk->lineNo, index->tk->val.identifier);
-                    else if (arr_ind->type.primtype != INTEGER || arr_ind->type.datatype != PRIMITIVE)
+                        compile_error = true;
+                    }
+                    else if (arr_ind->type.primtype != INTEGER || arr_ind->type.datatype != PRIMITIVE){
                         printf("Semantic Error at line %d: array index must be an integer", index->tk->lineNo);
+                        compile_error = true;
+                    }
                 }
             }
         }
@@ -557,22 +611,28 @@ void typeChecker(ASTNode *astNode)
 
         else if (t1.datatype != t2.datatype || t1.primtype != t2.primtype)
         {
-            if (astNode->child->child == NULL)
+            if (astNode->child->child == NULL){
                 printf("Semantic Error at line %d: Operand types don't match in assignment operation\n", astNode->child->tk->lineNo);
+                compile_error = true;
+            }
             else
             {
+                compile_error = true;
                 printf("Semantic Error at line %d: Operand types don't match in assignment operation\n", astNode->child->child->tk->lineNo);
             }
         }
         else if (t1.datatype == ARRAY_STATIC && t2.datatype == ARRAY_STATIC && t1.upper_bound-t1.lower_bound!=t2.upper_bound-t2.lower_bound)
-        { // static type checking
-            // printf("hi1");
+        { 
+            compile_error = true;
             printf("Semantic Error at line %d: Arrays are not structurally equivalent in assignment operation\n", astNode->child->tk->lineNo);
         }
         else if (t1.datatype == PRIMITIVE){
             newEntry = searchVar(curr->moduleTable, astNode->child->tk->val.identifier, astNode->child->tk->lineNo);
             if (newEntry->vartype == FOR_LOOP_VAR)
-                printf("Semantic Error at line %d: For loop variable cannot be modified\n",astNode->child->tk->lineNo);
+                {
+                    compile_error = true;
+                    printf("Semantic Error at line %d: For loop variable cannot be modified\n",astNode->child->tk->lineNo);
+                }
             else
                 newEntry->is_changed = true;
         }
@@ -596,21 +656,23 @@ void typeChecker(ASTNode *astNode)
         }
         if(pt1==ERROR || pt2==ERROR) break;
         if(pt3!=INTEGER){
+            compile_error = true;
             printf("Semantic Error at line %d: Index of array variable %s found to be of non-integer type\n",astNode->child->tk->lineNo,astNode->child->tk->val.identifier);
         }
         // else if((astNode->child->child->label==ID || astNode->child->child->label==NUM) && (astNode->child->child->tk->val.integer<astNode->child->type.lower_bound || astNode->child->child->tk->val.integer>astNode->child->type.upper_bound)){
         //     printf("Semantic Error at line %d: Array index out of bounds for array variable %s",astNode->child->tk->lineNo,astNode->child->tk->val.identifier);
         // }
         if(pt1!=pt2){
+            compile_error = true;
             printf("Semantic Error at line %d: Operand types don't match in assignment operation\n", astNode->child->tk->lineNo);
         }
         ASTNode* index = astNode->child->child->child;
         if (index->label == NUM && newEntry->type.datatype == ARRAY_STATIC && (index->tk->val.integer < newEntry->type.lower_bound || index->tk->val.integer > newEntry->type.upper_bound))
-            printf("Semantic Error at line %d: Array index out of bounds\n",index->tk->lineNo);
+            { compile_error=true; { compile_error=true; printf("Semantic Error at line %d: Array index out of bounds\n",index->tk->lineNo);}}
         else if (index->label == UNARY_PLUS && index->child->label == NUM && newEntry->type.datatype == ARRAY_STATIC && (index->child->tk->val.integer < newEntry->type.lower_bound || index->child->tk->val.integer > newEntry->type.upper_bound))
-            printf("Semantic Error at line %d: Array index out of bounds\n",index->tk->lineNo);
+            { compile_error=true; { compile_error=true; printf("Semantic Error at line %d: Array index out of bounds\n",index->tk->lineNo);}}
         else if (index->label == UNARY_MINUS && index->child->label == NUM && newEntry->type.datatype == ARRAY_STATIC && (((-1) * index->child->tk->val.integer) <  newEntry->type.lower_bound || ((-1) * index->child->tk->val.integer) > newEntry->type.upper_bound))
-            printf("Semantic Error at line %d: Array index out of bounds\n",index->tk->lineNo);
+            { compile_error=true; { compile_error=true; printf("Semantic Error at line %d: Array index out of bounds\n",index->tk->lineNo);}}
         break;
 
     case ARR_INDEX1:
@@ -642,11 +704,15 @@ void typeChecker(ASTNode *astNode)
         {
             char *s = idList->tk->val.identifier;
             newEntry = searchVar(curr->moduleTable,s,idList->tk->lineNo);
-            if (newEntry != NULL && newEntry->vartype == OUTPUT_VAR)
+            if (newEntry != NULL && newEntry->vartype == OUTPUT_VAR){
+                compile_error = true;
                 printf("Semantic error at line %d: Output paramater %s cannot be shadowed\n",idList->tk->lineNo, idList->tk->val.identifier);
+            }
             else if(newEntry!=NULL && idList->scope_begin==newEntry->scope_begin && idList->scope_end==newEntry->scope_end){
-                if (newEntry->vartype != INPUT_VAR)
+                if (newEntry->vartype != INPUT_VAR){
+                    compile_error = true;
                     printf("Semantic Error at line %d: Variable %s has already been declared in this scope\n",idList->tk->lineNo,idList->tk->val.identifier);
+                }
                 else {
                     newEntry->type = d;
                     newEntry->is_changed = false;
@@ -695,6 +761,7 @@ void typeChecker(ASTNode *astNode)
         newEntry = searchVar(curr->moduleTable, astNode->tk->val.identifier, astNode->tk->lineNo);
         if (newEntry == NULL)
         {
+            compile_error = true;
             printf("Semantic Error at line %d: Variable %s not declared in this scope\n", astNode->tk->lineNo, astNode->tk->val.identifier);
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
@@ -746,6 +813,7 @@ void typeChecker(ASTNode *astNode)
             printf("Semantic Error at line %d: Array variable %s not declared\n", astNode->child->tk->lineNo, astNode->child->tk->val.identifier);
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
+            compile_error = true;
         }
         else if (astNode->child->sibling->child != NULL)
         {
@@ -755,6 +823,7 @@ void typeChecker(ASTNode *astNode)
                 printf("Semantic Error at line %d: Index of array variable %s has been found to be of non-integer type\n", astNode->child->tk->lineNo, astNode->child->tk->val.identifier);
                 astNode->type.datatype = PRIMITIVE;
                 astNode->type.primtype = ERROR;
+                compile_error = true;
             }
             else {
                 astNode->type.primtype = newEntry->type.primtype;
@@ -762,11 +831,11 @@ void typeChecker(ASTNode *astNode)
                 astNode->type.lower_bound = -1e9;
                 astNode->type.upper_bound = -1e9;
                 if (astNode->child->sibling->child->label == NUM && newEntry->type.datatype == ARRAY_STATIC && (newEntry->type.lower_bound > astNode->child->sibling->child->tk->val.integer || newEntry->type.upper_bound < astNode->child->sibling->child->tk->val.integer))
-                    printf("Semantic Error at line %d: Array index out of bounds\n",astNode->child->sibling->child->tk->lineNo);
+                    {compile_error = true;printf("Semantic Error at line %d: Array index out of bounds\n",astNode->child->sibling->child->tk->lineNo);}
                 else if (astNode->child->sibling->child->label == UNARY_MINUS && astNode->child->sibling->child->child->label == NUM && newEntry->type.datatype == ARRAY_STATIC && (newEntry->type.lower_bound > ((-1) * astNode->child->sibling->child->child->tk->val.integer) || newEntry->type.upper_bound < ((-1) * astNode->child->sibling->child->child->tk->val.integer)))
-                    printf("Semantic Error at line %d: Array index out of bounds\n",astNode->child->sibling->child->tk->lineNo);
+                    {compile_error = true;printf("Semantic Error at line %d: Array index out of bounds\n",astNode->child->sibling->child->tk->lineNo);}
                 else if (astNode->child->sibling->child->label == UNARY_PLUS && astNode->child->sibling->child->child->label == NUM && newEntry->type.datatype == ARRAY_STATIC && (newEntry->type.lower_bound > astNode->child->sibling->child->child->tk->val.integer || newEntry->type.upper_bound < astNode->child->sibling->child->child->tk->val.integer))
-                    printf("Semantic Error at line %d: Array index out of bounds\n",astNode->child->sibling->child->tk->lineNo);
+                    {compile_error = true;printf("Semantic Error at line %d: Array index out of bounds\n",astNode->child->sibling->child->tk->lineNo);}
             }
         }
         else
@@ -792,18 +861,18 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in addition\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in addition\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in addition\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in addition\n", right_op->tk->lineNo);}
         }
         else if (left_op->type.primtype == BOOLEAN || right_op->type.primtype == BOOLEAN)
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Boolean operand found in addition\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Boolean operand found in addition\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Boolean operand found in addition\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Boolean operand found in addition\n", right_op->tk->lineNo);}
         }
         else if (p1==p2)
         {
@@ -815,12 +884,12 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected operands of similar type in addition\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected operands of similar type in addition\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected operands of similar type in addition\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected operands of similar type in addition\n", right_op->tk->lineNo);}
             else
             {
-                printf("Expected operands of similar type in addition\n");
+                {compile_error = true;printf("Expected operands of similar type in addition\n");}
             }
         }
         break;
@@ -842,18 +911,18 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in subtraction\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in subtraction\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in subtraction\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in subtraction\n", right_op->tk->lineNo);}
         }
         else if (left_op->type.primtype == BOOLEAN || right_op->type.primtype == BOOLEAN)
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Boolean operand found in subtraction\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Boolean operand found in subtraction\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Boolean operand found in subtraction\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Boolean operand found in subtraction\n", right_op->tk->lineNo);}
         }
         else if (p1==p2)
         {
@@ -865,11 +934,12 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected operands of similar type in subtraction\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected operands of similar type in subtraction\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected operands of similar type in subtraction\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected operands of similar type in subtraction\n", right_op->tk->lineNo);}
             else
             {
+                compile_error = true;
                 printf("Expected operands of similar type in subtraction\n");
             }
         }
@@ -887,9 +957,9 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in multiplication\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in multiplication\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in multiplication\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in multiplication\n", right_op->tk->lineNo);}
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
@@ -901,9 +971,9 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Boolean operand found in multiplication\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Boolean operand found in multiplication\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Boolean operand found in multiplication\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Boolean operand found in multiplication\n", right_op->tk->lineNo);}
         }
         else if (p1==p2)
         {
@@ -915,11 +985,12 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected operands of similar type in multiplication\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected operands of similar type in multiplication\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected operands of similar type in multiplication\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected operands of similar type in multiplication\n", right_op->tk->lineNo);}
             else
             {
+                compile_error = true;
                 printf("Expected operands of similar type in multiplication\n");
             }
         }
@@ -937,9 +1008,9 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in division\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in division\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in division\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in division\n", right_op->tk->lineNo);}
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
@@ -951,9 +1022,9 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Boolean operand found in division\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Boolean operand found in division\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Boolean operand found in division\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Boolean operand found in division\n", right_op->tk->lineNo);}
         }
         else if (p1==p2)
         {
@@ -970,11 +1041,12 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected operands of similar type in division\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected operands of similar type in division\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected operands of similar type in division\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected operands of similar type in division\n", right_op->tk->lineNo);}
             else
             {
+                compile_error = true;
                 printf("Expected operands of similar type in division\n");
             }
         }
@@ -990,9 +1062,9 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in logical operation\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in logical operation\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in logical operation\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in logical operation\n", right_op->tk->lineNo);}
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
@@ -1004,11 +1076,12 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected both operands of boolean type in logical operation\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected both operands of boolean type in logical operation\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected both operands of boolean type in logical operation\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected both operands of boolean type in logical operation\n", right_op->tk->lineNo);}
             else
             {
+                compile_error = true;
                 printf("Expected both operands of boolean type in logical operation\n");
             }
         }
@@ -1029,9 +1102,9 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in logical operation\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in logical operation\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in logical operation\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in logical operation\n", right_op->tk->lineNo);}
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
@@ -1043,11 +1116,12 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected both operands of boolean type in logical operation\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected both operands of boolean type in logical operation\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected both operands of boolean type in logical operation\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected both operands of boolean type in logical operation\n", right_op->tk->lineNo);}
             else
             {
+                compile_error = true;
                 printf("Expected both operands of boolean type in logical operation\n");
             }
         }
@@ -1068,9 +1142,9 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->tk->lineNo);}
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
@@ -1092,11 +1166,12 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", right_op->tk->lineNo);}
             else
             {
+                compile_error = true;
                 printf("Expected operands of similar type in relational operation\n");
             }
         }
@@ -1112,9 +1187,9 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->tk->lineNo);}
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
@@ -1135,12 +1210,17 @@ void typeChecker(ASTNode *astNode)
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
-            if (left_op->tk != NULL)
+            if (left_op->tk != NULL){
                 printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", left_op->tk->lineNo);
-            else if (right_op->tk != NULL)
+                compile_error = true;
+            }
+            else if (right_op->tk != NULL){
                 printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", right_op->tk->lineNo);
+                compile_error = true;
+            }
             else
             {
+                compile_error = true;
                 printf("Expected operands of similar type in relational operation\n");
             }
         }
@@ -1156,9 +1236,9 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->tk->lineNo);}
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
@@ -1180,11 +1260,12 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", right_op->tk->lineNo);}
             else
             {
+                compile_error = true;
                 printf("Expected operands of similar type in relational operation\n");
             }
         }
@@ -1200,9 +1281,9 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->tk->lineNo);}
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
@@ -1224,11 +1305,12 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", right_op->tk->lineNo);}
             else
             {
+                compile_error = true;
                 printf("Expected operands of similar type in relational operation\n");
             }
         }
@@ -1244,9 +1326,9 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->tk->lineNo);}
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
@@ -1268,11 +1350,12 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", right_op->tk->lineNo);}
             else
             {
+                compile_error = true;
                 printf("Expected operands of similar type in relational operation\n");
             }
         }
@@ -1288,9 +1371,9 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->tk->lineNo);}
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
@@ -1312,11 +1395,12 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", left_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", left_op->tk->lineNo);}
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", right_op->tk->lineNo);
+                {compile_error = true;printf("Semantic Error at line %d: Expected operands of similar type in relational operation\n", right_op->tk->lineNo);}
             else
             {
+                compile_error = true;
                 printf("Expected operands of similar type in relational operation\n");
             }
         }
@@ -1329,6 +1413,7 @@ void typeChecker(ASTNode *astNode)
         whileIDs = getWhileList(whileIDs,current);
         if (astNode->child->type.primtype != BOOLEAN || astNode->child->type.datatype != PRIMITIVE)
         {
+            compile_error = true;
             printf("Semantic Error at line %d: Condition of WHILE must be boolean\n", astNode->tk->lineNo);
         }
         current = current -> sibling;
@@ -1342,13 +1427,19 @@ void typeChecker(ASTNode *astNode)
             whileNode->var->is_changed = whileNode->var->is_changed || whileNode->isChangedBeforeWhile;
         }
         if (!modified)
-            printf("Semantic error at line %d: At least one variable in the while loop condition must be modified within the body of the loop\n",astNode->scope_end);
+            {
+                compile_error = true;
+                printf("Semantic error at line %d: At least one variable in the while loop condition must be modified within the body of the loop\n",astNode->scope_end);
+            }
         break;
 
     case ITER_FOR:
         searchedVar = searchVar(curr->moduleTable, astNode->tk->val.identifier, astNode->tk->lineNo);
         if (searchedVar != NULL && searchedVar->vartype == OUTPUT_VAR)
-            printf("Semaintic Error at line %d: Output parameter %s can never be shadowed\n",astNode->tk->lineNo, astNode->tk->val.identifier);
+            {
+                compile_error = true;
+                printf("Semaintic Error at line %d: Output parameter %s can never be shadowed\n",astNode->tk->lineNo, astNode->tk->val.identifier);
+            }
         else {
             newEntry = (ModuleTableEntry*)malloc(sizeof(ModuleTableEntry));
             newEntry->identifier = astNode->tk->val.identifier;
@@ -1385,6 +1476,7 @@ void typeChecker(ASTNode *astNode)
             right_op = astNode->child->sibling->child;
         if (!(left_op != NULL && right_op != NULL && left_op->tk->type == right_op->tk->type && left_op->tk->type == TK_NUM))
         {
+            compile_error = true;
             printf("Semantic Error: at line %d, iterator range bounds must be integer\n", astNode->tk->lineNo);
         }
         break;
@@ -1393,6 +1485,7 @@ void typeChecker(ASTNode *astNode)
         newEntry = searchVar(curr->moduleTable, astNode->tk->val.identifier,astNode->tk->lineNo);
         if (newEntry == NULL)
         {
+            compile_error = true;
             printf("Semantic Error: at line %d, identifier not declared previously\n", astNode->tk->lineNo);
             break;
         }
@@ -1416,6 +1509,7 @@ void typeChecker(ASTNode *astNode)
         bool flag = true;
         if (searched == NULL)
         {
+            compile_error = true;
             printf("Semantic Error: at line %d, Module not found\n", astNode->tk->lineNo);
             break;
         }
@@ -1473,6 +1567,7 @@ void typeChecker(ASTNode *astNode)
         }
         if (!flag)
         {
+            compile_error = true;
             printf("Semantic Error at line %d: Module reuse parameters mismatch\n", astNode->tk->lineNo);
         }
         break;

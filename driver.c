@@ -16,6 +16,8 @@
 #include "ast.h"
 #include "typeChecker.h"
 
+bool compile_error;
+
 int main(int argc, char *argv[]){
     int choice,size_of_buffer = 32; 
     clock_t start_time, end_time;
@@ -73,6 +75,7 @@ int main(int argc, char *argv[]){
             parserRoot = parse();
             makeAST(parserRoot);
             printAST(astroot);
+            printf("\n");
             if(ptr != NULL) fclose(ptr);
             break;
         case 5:
@@ -100,19 +103,24 @@ int main(int argc, char *argv[]){
             if(ptr != NULL) fclose(ptr);
             break;
         case 8:
+            ptr = fopen(test_file,"r");
             start_time = clock();
-
             ptr = initLexer(ptr, size_of_buffer);
             loadgrammar("grammar.txt");
             computefirstandfollow();
             createParseTable();
-            parse();
-            
+            compile_error = false;
+            parserRoot = parse();
+            if(compile_error==false){
+                makeAST(parserRoot);
+                typeChecker(astroot);
+            }
+            if(compile_error==false) printf("Program compiled succesfully\n"); 
             end_time = clock();
             if(ptr != NULL) fclose(ptr);
             double total_CPU_time = (double) (end_time - start_time);
             double total_CPU_time_in_seconds = total_CPU_time / CLOCKS_PER_SEC;
-            printf("\ntotal_CPU_time := %lf ticks \ntotal_CPU_time := %lf s\n\n",total_CPU_time,total_CPU_time_in_seconds);
+            printf("\n\ntotal_CPU_time := %lf ticks \ntotal_CPU_time := %lf s\n\n",total_CPU_time,total_CPU_time_in_seconds);
             break;
         case 9:
             break;
