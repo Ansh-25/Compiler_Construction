@@ -40,7 +40,28 @@ Statement type 3:
 -----------------------------------------------------------------------------------------------------------------------------------------
 
 Statement type 4:
+
   /*GOTO statement: Jump to a label*/
   jmp L            /*L is a label for a set of statemnts which is defined further down in the code*/
   
 -----------------------------------------------------------------------------------------------------------------------------------------
+
+Statement type 5:
+  
+  /*For this I'm assuming that x = 1 for true and x = 0 for false*/
+  /*x is true*/
+  mov rax, x
+  mov rbx, 0b
+  cmp rax, rbx
+  jg L
+
+  /*x is false*/
+  mov rax, x
+  mov rbx, 1b
+  cmp rax, rbx
+  jl L
+  
+------------------------------------------------------------------------------------------------------------------------------------------
+
+Statement type 6:
+
