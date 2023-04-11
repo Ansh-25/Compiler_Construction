@@ -1663,13 +1663,47 @@ void typeChecker(ASTNode *astNode)
             if(print_error) printf("Semantic Error: at line %d, identifier not declared previously\n", astNode->tk->lineNo);
             break;
         }
-        for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
+        if(newEntry->type.datatype!=PRIMITIVE){
+            compile_error = true;
+            if(print_error) printf("Semantic Error: at line %d, switch variable cannot be of array type\n", astNode->tk->lineNo);
+            break;
+        }
+        if(newEntry->type.primtype==REAL){
+            compile_error = true;
+            if(print_error) printf("Semantic Error: at line %d, switch variable cannot be of type real\n", astNode->tk->lineNo);
+            break;
+        }
+        CondType = newEntry->type.primtype;
+        int c = 0;
+        int d1 = 0;
+        for (ASTNode *current = astNode->child; current != NULL; current = current->sibling){
+            if(current->label!=DEFAULT)
+                c++;
+            else 
+                d1 = current->scope_begin;
             typeChecker(current);
+        }
+        if(CondType==BOOLEAN){
+            if(c>2){
+                compile_error = true;
+                if(print_error) printf("Semantic Error: at line %d, more than two cases found for boolean condition variable\n", astNode->tk->lineNo);
+                break;
+            }
+            if(c==2 && d1!=0){
+                compile_error = true;
+                if(print_error) printf("Semantic Error: at line %d, presence of default statement is incorrect as condiiton variable type is boolean\n",d1);
+                break;
+            }
+        }
         break;
 
     case CASE:
         for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
             typeChecker(current);
+        if(prim_type_arr[CondType]=="INTEGER" && astNode->child->type.primtype!=CondType){
+            compile_error = true;
+            if(print_error) printf("Semantic Error: at line %d, Case value is incorrect as condition variable type is %s\n", astNode->child->tk->lineNo,prim_type_arr[CondType]);
+        }
         break;
 
     case DEFAULT:

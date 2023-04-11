@@ -6,7 +6,7 @@
 # ID: 2020A7PS0116P | Name: Ansh Gupta
 
 run: compiler.exe
-	compiler.exe testcase7.txt code.asm
+	./compiler.exe testcase7.txt code.asm
 
 compiler.exe: driver.c ast.c lexer.c parser.c typeChecker.c hash.c
 	gcc driver.c lexer.c parser.c hash.c ast.c typeChecker.c -o compiler.exe

@@ -1468,8 +1468,11 @@ void makeAST(struct ParseNode* parserNode){
         
         case 132:
             c1 = parserNode->child->sibling->sibling;
+            //struct Token* tk = parserNode->child->val.t;
+            int line = parserNode->child->val.t->lineNo;
             makeAST(c1); 
             parserNode->addr = makeNode(DEFAULT,NULL,c1->addr,NULL);
+            parserNode->addr->scope_begin = line;
             free(parserNode->child->sibling->sibling->sibling->sibling->val.t); 
             free(parserNode->child->sibling->sibling->sibling->sibling); 
             free(parserNode->child->sibling->sibling->sibling->val.t); 
