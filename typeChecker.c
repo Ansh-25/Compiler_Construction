@@ -711,6 +711,8 @@ void typeChecker(ASTNode *astNode)
                 astNode->type.datatype = PRIMITIVE;
                 astNode->type.lower_bound = -1e9;
                 astNode->type.upper_bound = -1e9;
+                if (astNode->child->sibling->child->label == NUM && newEntry->type.datatype == ARRAY_STATIC && (newEntry->type.lower_bound > astNode->child->sibling->child->tk->val.integer || newEntry->type.upper_bound < astNode->child->sibling->child->tk->val.integer))
+                    printf("Semantic Error at line %d: Array index out of bounds\n",astNode->child->sibling->child->tk->lineNo);
             }
         }
         else

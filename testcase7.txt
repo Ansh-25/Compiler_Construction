@@ -2,6 +2,6 @@
 start
 	declare a: array[1..10] of integer;
 	declare b: integer;
-	b := a[2];
+	b := a[15];
 end
 
