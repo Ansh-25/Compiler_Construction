@@ -16,6 +16,8 @@
 #include "ast.h"
 #include "typeChecker.h"
 
+bool compile_error;
+
 int main(int argc, char *argv[]){
     int choice,size_of_buffer = 32; 
     clock_t start_time, end_time;
@@ -37,6 +39,7 @@ int main(int argc, char *argv[]){
         printf("Press '6' Activation record size: For printing the total memory requirement for each function\n");
         printf("Press '7' Static and dynamic arrays: For printing the type expressions and width of array variables\n");
         printf("Press '8' Errors reporting and total compiling time: For printing Syntactic and semantic error along with compile time\n");
+        printf("Press '9' Code generation: (Not Implemented)\n");
         scanf(" %d",&choice);
         switch (choice)
         {
@@ -72,6 +75,7 @@ int main(int argc, char *argv[]){
             parserRoot = parse();
             makeAST(parserRoot);
             printAST(astroot);
+            printf("\n");
             if(ptr != NULL) fclose(ptr);
             break;
         case 5:
@@ -86,27 +90,6 @@ int main(int argc, char *argv[]){
             printSymbolTable();
             if(ptr != NULL) fclose(ptr);
             break;
-        case 6:
-            start_time = clock();
-
-            ptr = initLexer(ptr, size_of_buffer);
-            loadgrammar("grammar.txt");
-            computefirstandfollow();
-            createParseTable();
-            parse();
-
-            end_time = clock();
-
-            if(ptr != NULL)
-                fclose(ptr);
-
-            double total_CPU_time = (double) (end_time - start_time);
-            double total_CPU_time_in_seconds = total_CPU_time / CLOCKS_PER_SEC;
-
-            printf("\ntotal_CPU_time := %lf ticks \ntotal_CPU_time := %lf s\n\n",total_CPU_time,total_CPU_time_in_seconds);
-            
-            break;
-
         case 7:
             ptr = fopen(test_file,"r");
             ptr = initLexer(ptr, size_of_buffer);
@@ -118,6 +101,28 @@ int main(int argc, char *argv[]){
             typeChecker(astroot);
             printAllArrays();
             if(ptr != NULL) fclose(ptr);
+            break;
+        case 8:
+            ptr = fopen(test_file,"r");
+            start_time = clock();
+            ptr = initLexer(ptr, size_of_buffer);
+            loadgrammar("grammar.txt");
+            computefirstandfollow();
+            createParseTable();
+            compile_error = false;
+            parserRoot = parse();
+            if(compile_error==false){
+                makeAST(parserRoot);
+                typeChecker(astroot);
+            }
+            if(compile_error==false) printf("Program compiled succesfully\n"); 
+            end_time = clock();
+            if(ptr != NULL) fclose(ptr);
+            double total_CPU_time = (double) (end_time - start_time);
+            double total_CPU_time_in_seconds = total_CPU_time / CLOCKS_PER_SEC;
+            printf("\n\ntotal_CPU_time := %lf ticks \ntotal_CPU_time := %lf s\n\n",total_CPU_time,total_CPU_time_in_seconds);
+            break;
+        case 9:
             break;
         default:
             printf("\nERROR: INVALID OPERATION CODE\n");
