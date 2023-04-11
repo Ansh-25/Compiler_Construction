@@ -1,0 +1,46 @@
+Start the code with:
+
+section .text
+global _start
+
+_start:
+  <assembly code here>
+  
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Statement type 1:
+
+  Assuming we're working with memory
+  mov (rax), y
+  mov (rbx), z
+  op (rax), (rbx)                        /*Result stored in (rax) which is equivalent to the variable x in code gen*/
+  
+/*Here op can be add, sub, imul, and, or
+For div, mov the dividend to rdx:rax (64 bits in each register) and then use any of the general purpose registers from r8 to r15 as the divisor
+Quotient: rax; Remainder rdx*/
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Statement type 2:
+
+  /*Unary plus: just mov the number to the mem location of the register*/
+  mov (rax), y
+  
+  /*Unary minus:*/
+  mov (rax), y
+  neg y
+  
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Statement type 3:
+
+  /*Assignment operator '='*/
+  mov (rax), y
+  
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Statement type 4:
+  /*GOTO statement: Jump to a label*/
+  jmp L            /*L is a label for a set of statemnts which is defined further down in the code*/
+  
+-----------------------------------------------------------------------------------------------------------------------------------------
