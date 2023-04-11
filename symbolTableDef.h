@@ -39,6 +39,7 @@ typedef struct{
     ParamList* inputList;
     ParamList* outputList;
     ModuleTableEntry** moduleTable;
+    bool is_reused;
 }MainTableEntry;
 
 struct WhileCondListNode{

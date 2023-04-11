@@ -8,6 +8,7 @@ MainTableEntry **SymbolTable;
 MainTableEntry *curr; // set curr at every module node
 int offset = 0;
 bool print_error;
+Prim_type CondType;
 
 char* arr[] = {"PROGRAM","ITER_FOR","MODULEDECLARATIONS","OTHERMODULES1","OTHERMODULES2","UNARY_PLUS","UNARY_MINUS", "ID", "NUM", "RNUM", "ARRAY_DTYPE", "ARRAY","ARRAY_RANGE","ARR_INDEX1", "ARR_INDEX2", "PLUS", "MINUS", "MUL", "DIV", "AND", "OR", "LT", "LE", "GT", "GE", "EQ", "NE", "MODULEDECLARATION", "DRIVERMODULE","MODULE_REUSE", "MODULE", "RET", "PARAMETER", "INTEGER_", "REAL_", "BOOLEAN_", "RANGE_WHILE","RANGE_FOR", "STATEMENTS", "INPUT", "OUTPUT", "ARR_OUTPUT", "TRUE", "FALSE", "ASSIGN", "ARR_ASSIGN", "INDEX_ARR", "DECLARE", "ID_LIST", "CASE","CASE_STMT","RANGE", "INPUT_PLIST", "OUTPUT_PLIST","DEFAULT"};
 char* prim_type_arr[] =  {"INTEGER", "REAL", "BOOLEAN", "Semantic Error"} ;
@@ -161,6 +162,7 @@ MainTableEntry *createModule(char *name, ParamList *inputList, ParamList *output
     newModule->inputList = inputList;
     newModule->outputList = outputList;
     newModule->moduleTable = table;
+    newModule->is_reused = false;
     return newModule;
 }
 
@@ -200,7 +202,7 @@ WhileCondListNode* getWhileList (WhileCondListNode* head, ASTNode* root) {
     if (root->label == ID)
         head = insertWhileNode(head, root);
     for (ASTNode* i = root->child; i != NULL; i = i->sibling)
-        getWhileList(head,i);
+        head = getWhileList(head,i);
     return head;
 }
 
@@ -401,6 +403,10 @@ void typeChecker(ASTNode *astNode)
         else
         {
             if (searched != NULL) {
+                if (!searched->is_reused) {
+                    if(print_error) printf("Semantic Error at line %d: Module %s has been declared but has not been reused before its definition\n", astNode->child->tk->lineNo, astNode->child->tk->val.identifier);
+                    compile_error = true;
+                }
                 curr = searched;
                 curr->inputList = NULL;
                 curr->outputList = NULL;
@@ -1673,14 +1679,19 @@ void typeChecker(ASTNode *astNode)
 
     // <moduleReuseStmt> <optional> ID <actual_para_list>
     case MODULE_REUSE:
+        if (strcmp(astNode->tk->val.identifier,curr->module_name) == 0) {
+            if (print_error) printf("Semantic Error at line %d: A module cannot call itself\n",astNode->tk->lineNo);
+            compile_error = true;
+        }
         searched = searchModule(SymbolTable, astNode->tk->val.identifier);
         bool flag = true;
         if (searched == NULL)
         {
             compile_error = true;
-            if(print_error) printf("Semantic Error: at line %d, Module not found\n", astNode->tk->lineNo);
+            if(print_error) printf("Semantic Error at line %d: Module not found\n", astNode->tk->lineNo);
             break;
         }
+        searched->is_reused = true;
         if (astNode->child->label == ASSIGN)
         {
             ASTNode *formal_out = astNode->child->child->child;
@@ -1689,6 +1700,9 @@ void typeChecker(ASTNode *astNode)
             ParamList *real_out = searched->outputList;
             while(formal_out!=NULL) {
                 typeChecker(formal_out);
+                newEntry = searchVar(curr->moduleTable,formal_out->tk->val.identifier,formal_out->tk->lineNo);
+                if (newEntry != NULL)
+                    newEntry->is_changed = true;
                 formal_out = formal_out->sibling;
             }
             while(formal_in!=NULL) {
