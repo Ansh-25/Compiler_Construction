@@ -333,11 +333,6 @@ void populateIOLists() {
 
         curr_supernode = curr_supernode->sibling;
     }
-    if (!found) {
-        free(curr);
-        curr = NULL;
-    }
-    printSymbolTable();
 }
 
 void calcActRecordSize(){
@@ -420,7 +415,14 @@ void typeChecker(ASTNode *astNode)
         }
         else
         {
-            curr = createModule(astNode->child->tk->val.identifier, NULL, NULL, createModuleTable(40));
+            if (searched != NULL) {
+                curr = searched;
+                curr->inputList = NULL;
+                curr->outputList = NULL;
+                curr->moduleTable = createModuleTable(40);
+            }
+            else
+                curr = createModule(astNode->child->tk->val.identifier, NULL, NULL, createModuleTable(40));
             insertModule(curr);
             ASTNode *current = astNode->child->sibling;
             while (current->label != STATEMENTS)
