@@ -6,7 +6,6 @@
 #include "lexer.h"
 #include "symbolTableDef.h"
 #include "typeChecker.h"
-//#include "IntCodeGenDef.h"
 
 
 ASTNode* astroot;

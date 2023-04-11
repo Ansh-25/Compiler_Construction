@@ -1,6 +1,6 @@
 #include "symbolTableDef.h"
 #include "hash.h"
-//#include "IntCodeGenDef.h"
+#include "typeChecker.h"
 
 //size of hash table??
 
