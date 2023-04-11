@@ -20,7 +20,7 @@ start
 		b:= m;
 		b[2]:= u+m[6];			**ERROR: variable u is not declared**
 		p:= b[18]*18;
-	end
+	end							**EROR: none of while loop condition varibles are modified**
         n:= a - b;
 	declare b:real;				**ERROR: variable b is re-declared**
 	b:= b+3;
@@ -63,9 +63,9 @@ start
 				 declare B: real;             **ERROR: variable B is re-declared**
 				 declare Q: integer;
 				 get_value(Q);
-				 u:= k+12 - Q*10;          **not an error**
+				 u:= k+12 - Q*10;          **ERROR: type mismatch**
 				 break;
-			default: C[9]:= A[15]+Q;	      **not an error**
+			default: C[9]:= A[15]+Q;	      **ERRROR: c[9] out of bound** **ERRROR: A[15] out of bound** **ERRROR: Q is not declared**
 				 break;			 	
 		end
 		x:=x+u*v;

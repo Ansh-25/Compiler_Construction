@@ -504,7 +504,9 @@ void typeChecker(ASTNode *astNode)
         TypeInfo t2 = astNode->child->sibling->type;
         // printf("\n%d",t1.datatype);
         // printf("\n%d",t1.datatype);
-
+        if(searchVar(curr->moduleTable,astNode->child->tk->val.identifier,astNode->child->tk->lineNo)!=NULL){
+            searchVar(curr->moduleTable,astNode->child->tk->val.identifier,astNode->child->tk->lineNo)->is_changed = true;
+        }
         if (t1.primtype == ERROR || t2.primtype == ERROR){
             // printf("hi");
             break;
@@ -545,6 +547,9 @@ void typeChecker(ASTNode *astNode)
         Prim_type pt1 = astNode->child->type.primtype;
         Prim_type pt2 = astNode->child->sibling->type.primtype;
         Prim_type pt3 = astNode->child->child->type.primtype;
+        if(searchVar(curr->moduleTable,astNode->child->tk->val.identifier,astNode->child->tk->lineNo)!=NULL){
+            searchVar(curr->moduleTable,astNode->child->tk->val.identifier,astNode->child->tk->lineNo)->is_changed = true;
+        }
         if(pt1==ERROR || pt2==ERROR) break;
         if(pt3!=INTEGER){
             printf("Semantic Error at line %d: Index of array variable %s found to be of non-integer type\n",astNode->child->tk->lineNo,astNode->child->tk->val.identifier);
