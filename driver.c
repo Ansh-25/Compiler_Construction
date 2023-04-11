@@ -107,6 +107,19 @@ int main(int argc, char *argv[]){
             printf("\ntotal_CPU_time := %lf ticks \ntotal_CPU_time := %lf s\n\n",total_CPU_time,total_CPU_time_in_seconds);
             
             break;
+
+        case 7:
+            ptr = fopen(test_file,"r");
+            ptr = initLexer(ptr, size_of_buffer);
+            loadgrammar("grammar.txt");
+            computefirstandfollow();
+            createParseTable();
+            parserRoot = parse();
+            makeAST(parserRoot);
+            typeChecker(astroot);
+            printAllArrays();
+            if(ptr != NULL) fclose(ptr);
+            break;
         default:
             printf("\nERROR: INVALID OPERATION CODE\n");
             break;
