@@ -21,11 +21,11 @@ bool compile_error;
 int main(int argc, char *argv[]){
     int choice,size_of_buffer = 32; 
     clock_t start_time, end_time;
-    char test_file[32],asm_file[32];
+    char test_file[32] = "testcase7.txt",asm_file[32];
     
     ParseNode* parserRoot=NULL;
-    strcpy(test_file,argv[1]);
-    strcpy(asm_file,argv[2]);
+    // strcpy(test_file,argv[1]);
+    // strcpy(asm_file,argv[2]);
 
     printf("\nIMPLEMENTATION STATUS\nLEVEL 4: Symbol table/ AST/ Semantic Rules work and handled static and dynamic arrays in type checking \n\n");
     do{

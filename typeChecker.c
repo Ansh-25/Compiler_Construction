@@ -131,26 +131,11 @@ ParamList* insertLast (ParamList* head, ParamList* newNode) {
 }
 
 bool compare_Datatype(TypeInfo d1, TypeInfo d2){
-    if((d1.ub_static==false && d1.lb_static==false) || (d2.ub_static==false && d2.lb_static==false)){
-        return true;
-    }
-    if(d1.datatype==ARRAY_DYNAMIC && d2.datatype==ARRAY_DYNAMIC){
-        if((d1.lb_static==true && d2.ub_static==true && d2.upper_bound.static_bound<d1.lower_bound.static_bound)||(d2.lb_static==true && d1.ub_static==true && d1.upper_bound.static_bound<d2.lower_bound.static_bound))
-            return false;
-        return true;
-    }
-    if(d1.datatype==ARRAY_DYNAMIC){
-        if((d1.lb_static==true && d2.upper_bound.static_bound<d1.lower_bound.static_bound)||(d1.lb_static==true && d1.upper_bound.static_bound<d2.lower_bound.static_bound))
-            return false;
-        return true;
-    }
-    if(d2.datatype==ARRAY_DYNAMIC){
-        if((d2.lb_static==true && d1.upper_bound.static_bound<d2.lower_bound.static_bound)||(d2.lb_static==true && d2.upper_bound.static_bound<d1.lower_bound.static_bound))
-            return false;
-        return true;
-    }
-    if(d1.datatype!=d2.datatype || d1.primtype!=d2.primtype || d1.lower_bound.static_bound!=d2.lower_bound.static_bound || d1.upper_bound.static_bound!=d2.upper_bound.static_bound)
-        return false;
+    if (d1.primtype != d2.primtype) return false;
+    if (d1.datatype != d2.datatype && (d1.datatype == PRIMITIVE || d2.datatype ==PRIMITIVE)) return false;
+    if (d1.datatype == PRIMITIVE) return true;
+    if (d1.lb_static == true && d2.lb_static == true && d1.lower_bound.static_bound != d2.lower_bound.static_bound) return false;
+    if (d1.ub_static == true && d2.ub_static == true && d1.upper_bound.static_bound != d2.upper_bound.static_bound) return false;
     return true;
 }
 
@@ -1722,6 +1707,7 @@ void typeChecker(ASTNode *astNode)
                 formal_out = formal_out->sibling;
                 real_out = real_out->next;
             }
+            if(real_out!=NULL) flag = false;
             while (formal_in != NULL)
             {
                 if (real_in == NULL || !compare_Datatype(formal_in->type, real_in->type))
@@ -1732,11 +1718,17 @@ void typeChecker(ASTNode *astNode)
                 formal_in = formal_in->sibling;
                 real_in = real_in->next;
             }
+            if(real_in!=NULL) flag = false;
         }
         else
         {
             ASTNode *actual_in = astNode->child->child;
             ParamList *formal_in = searched->inputList;
+            while(actual_in!=NULL) {
+                typeChecker(actual_in);
+                actual_in = actual_in->sibling;
+            }
+            actual_in = astNode->child->child;
             while (formal_in != NULL)
             {
                 if (actual_in == NULL || !compare_Datatype(actual_in->type, formal_in->type))
@@ -1747,6 +1739,7 @@ void typeChecker(ASTNode *astNode)
                 actual_in = actual_in->sibling;
                 formal_in = formal_in->next;
             }
+            if(actual_in!=NULL) flag = false;
         }
         if (!flag)
         {
