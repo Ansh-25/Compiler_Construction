@@ -18,13 +18,7 @@ int nest_level = 0;
 
 int countASTNodes(ASTNode* root) {
     if(root==NULL) return 0;
-    int count = 0;
-    ASTNode* curr = root->child;
-    while(curr!=NULL){
-        count = 1 + countASTNodes(root->child);
-        curr=curr->sibling;
-    }
-    return count;
+    return 1+countASTNodes(root->child)+countASTNodes(root->sibling);
 }
 
 void printAST(ASTNode* root){

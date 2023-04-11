@@ -767,11 +767,11 @@ void printTree(ParseNode* root) {
 
 int countParseNodes(ParseNode* root) {
     if(root==NULL) return 0;
-    int count = 0;
-    ParseNode* curr = root->child;
-    while(curr!=NULL){
-        count = 1 + countParseNodes(root->child);
-        curr=curr->sibling;
-    }
-    return count;
+    // ParseNode* curr = root->child;
+    // while(curr!=NULL){
+    //     count += 1 + countParseNodes(curr->child);
+    //     curr=curr->sibling;
+    // }
+    // return count;
+    return 1 + countParseNodes(root->child) + countParseNodes(root->sibling);
 }

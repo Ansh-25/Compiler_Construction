@@ -85,8 +85,15 @@ int main(int argc, char *argv[]){
             computefirstandfollow();
             createParseTable();
             parserRoot = parse();
+            int parse_nodes = countParseNodes(parserRoot);
+            int parse_node_size = sizeof(*parserRoot);
             makeAST(parserRoot);
-            printf("#parserNodes=%d , #astNodes=%d\n",countParseNodes(parserRoot),countASTNodes(astroot));
+            int ast_node_size = sizeof(*astroot);
+            int ast_nodes = countASTNodes(astroot);
+            float compression = (parse_node_size*parse_nodes-ast_node_size*ast_nodes)/(1.0*parse_node_size*parse_nodes);
+            printf("Parse tree Number of nodes = %d , Memory Allocated = %d Bytes\n",parse_nodes,parse_node_size*parse_nodes);
+            printf("AST Number of nodes = %d , Memory Allocated = %d Bytes\n",ast_nodes,ast_node_size*ast_nodes);
+            printf("Memory compression = %f %% \n\n", compression*100.0);
             if(ptr != NULL) fclose(ptr);
             break;
         case 5:
