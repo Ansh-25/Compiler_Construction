@@ -10,4 +10,6 @@ void printSymbolTable();
 
 void typeChecker(ASTNode *astNode);
 
+void printAllArrays();
+
 #endif
