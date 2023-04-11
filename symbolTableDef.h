@@ -10,6 +10,7 @@
 #define symbolTableDef_H
 
 #include "astDef.h"
+#include "ast.h"
 
 typedef enum {INPUT_VAR, OUTPUT_VAR, FOR_LOOP_VAR, NORMAL_VAR} typeOfVar;
 

@@ -242,6 +242,103 @@ void printAllArrays(){
     printf("\n\n");
 }
 
+void populateIOLists() {
+    ASTNode* curr_supernode = astroot->child->sibling;
+    ASTNode* curr_module = NULL;
+    bool found = false;
+    while(curr_supernode!= NULL && !found) {
+        if (curr_supernode->label == OTHERMODULES1 || curr_supernode->label == OTHERMODULES2) {
+            for (curr_module = curr_supernode->child; curr_module != NULL; curr_module = curr_module->sibling) {
+                if (strcmp(curr_module->child->tk->val.identifier,curr->module_name) == 0) {
+                    found = true;
+                    ASTNode *current = curr_module->child->sibling;
+                    while (current != NULL)
+                    {
+                        if (current->label == INPUT_PLIST)
+                        {
+                            ASTNode *parameter = current->child;
+                            ParamList *input_plist = NULL;
+                            while (parameter != NULL)
+                            {
+                                ParamList* currentParam = input_plist;
+                                while(currentParam!= NULL){
+                                    if (strcmp(currentParam->identifier,parameter->tk->val.identifier) == 0)
+                                        break;
+                                    currentParam = currentParam -> next;
+                                }
+                                if (currentParam != NULL) {
+                                    printf("Semantic Error at line %d: Identifier %s has already been declared\n", parameter->tk->lineNo, parameter->tk->val.identifier);
+                                    compile_error = true;
+                                }
+                                else {
+                                    ParamList *newnode = (ParamList *)malloc(sizeof(ParamList));
+                                    newnode->identifier = parameter->tk->val.identifier;
+                                    typeChecker(parameter->child);
+                                    newnode->type = parameter->child->type;
+                                    newnode->next = NULL;
+                                    input_plist = insertLast(input_plist, newnode);
+                                }
+                                parameter = parameter->sibling;
+                            }
+                            curr->inputList = input_plist;
+                        }
+                        else if (current->label == OUTPUT_PLIST)
+                        {
+                            ASTNode *parameter = current->child;
+                            ParamList *output_plist = NULL;
+                            while (parameter != NULL)
+                            {
+                                ParamList* currentParam = curr->inputList;
+                                while(currentParam!= NULL){
+                                    if (strcmp(currentParam->identifier,parameter->tk->val.identifier) == 0)
+                                        break;
+                                    currentParam = currentParam -> next;
+                                }
+                                if (currentParam != NULL) {
+                                    printf("Semantic Error at line %d: Identifier %s has already been declared\n", parameter->tk->lineNo, parameter->tk->val.identifier);
+                                    compile_error = true;
+                                }
+                                else {
+                                    currentParam = output_plist;
+                                    while(currentParam!= NULL){
+                                        if (strcmp(currentParam->identifier,parameter->tk->val.identifier) == 0)
+                                            break;
+                                        currentParam = currentParam -> next;
+                                    }
+                                    if (currentParam != NULL) {
+                                        printf("Semantic Error at line %d: Identifier %s has already been declared\n", parameter->tk->lineNo, parameter->tk->val.identifier);
+                                        compile_error = true;
+                                    }
+                                    else {
+                                        ParamList *newnode = (ParamList *)malloc(sizeof(ParamList));
+                                        newnode->identifier = parameter->tk->val.identifier;
+                                        typeChecker(parameter->child);
+                                        newnode->type = parameter->child->type;
+                                        newnode->next = NULL;
+                                        output_plist = insertLast(output_plist, newnode);
+                                    }
+                                }
+                                parameter = parameter->sibling;
+                            }
+                            curr->outputList = output_plist;
+                        }
+                        current = current->sibling;
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        curr_supernode = curr_supernode->sibling;
+    }
+    if (!found) {
+        free(curr);
+        curr = NULL;
+    }
+    printSymbolTable();
+}
+
 void typeChecker(ASTNode *astNode)
 {
     if (astNode == NULL)
@@ -278,12 +375,15 @@ void typeChecker(ASTNode *astNode)
         break;
 
     case MODULEDECLARATION:
-        if (searchModule(SymbolTable, astNode->tk->val.identifier)){
+        if (searchModule(SymbolTable, astNode->tk->val.identifier)) {
             printf("Semantic Error at line %d: Module %s has already been declared\n", astNode->tk->lineNo, astNode->tk->val.identifier);
             compile_error = true;
         }
-        else
-            insertModule(createModule(astNode->tk->val.identifier, NULL, NULL, NULL));
+        else {
+            curr = createModule(astNode->tk->val.identifier, NULL, NULL, NULL);
+            insertModule(curr);
+            populateIOLists();
+        }
         break;
 
     case DRIVERMODULE:
@@ -296,36 +396,30 @@ void typeChecker(ASTNode *astNode)
 
     case MODULE:
         searched = searchModule(SymbolTable, astNode->child->tk->val.identifier);
-        if (searched != NULL && searched->moduleTable != NULL){
-            printf("Semantic Error at line %d: Module %s has already been defined\n", astNode->tk->lineNo, astNode->tk->val.identifier);
+        if (searched != NULL && searched->moduleTable != NULL) {
+            printf("Semantic Error at line %d: Module %s has already been defined\n", astNode->child->tk->lineNo, astNode->child->tk->val.identifier);
             compile_error = true;
         }
         else
         {
-            if (searched == NULL) {
-                curr = createModule(astNode->child->tk->val.identifier, NULL, NULL, createModuleTable(40));
-                insertModule(curr);
-            }
-            else {
-                searched->moduleTable = createModuleTable(40);
-                curr = searched;
-            }
+            curr = createModule(astNode->child->tk->val.identifier, NULL, NULL, createModuleTable(40));
+            insertModule(curr);
             ASTNode *current = astNode->child->sibling;
-            while (current != NULL)
+            while (current->label != STATEMENTS)
             {
                 if (current->label == INPUT_PLIST)
                 {
                     ASTNode *parameter = current->child;
-                    ParamList *input_plist = NULL;
+                    curr->inputList = NULL;
                     while (parameter != NULL)
                     {
-                        ParamList* currentParam = input_plist;
+                        ParamList* currentParam = curr->inputList;
                         while(currentParam!= NULL){
                             if (strcmp(currentParam->identifier,parameter->tk->val.identifier) == 0)
                                 break;
                             currentParam = currentParam -> next;
                         }
-                        if (currentParam != NULL){
+                        if (currentParam != NULL) {
                             printf("Semantic Error at line %d: Identifier %s has already been declared\n", parameter->tk->lineNo, parameter->tk->val.identifier);
                             compile_error = true;
                         }
@@ -335,7 +429,7 @@ void typeChecker(ASTNode *astNode)
                             typeChecker(parameter->child);
                             newnode->type = parameter->child->type;
                             newnode->next = NULL;
-                            input_plist = insertLast(input_plist, newnode);
+                            curr->inputList = insertLast(curr->inputList, newnode);
                             ModuleTableEntry *newEntry = (ModuleTableEntry*)malloc(sizeof(ModuleTableEntry));
                             newEntry->identifier = newnode->identifier;
                             newEntry->nesting_lvl = 1;
@@ -348,24 +442,23 @@ void typeChecker(ASTNode *astNode)
                             if (newEntry->type.primtype == BOOLEAN)
                                 newEntry->width = 1;
                             else if (newEntry->type.primtype == INTEGER)
-                                newEntry->width = 2;
+                                newEntry->width = 2; 
                             else
                                 newEntry->width = 4;
                             if (newEntry->type.datatype == ARRAY_STATIC)
                                 newEntry->width = (newEntry->width * (newEntry->type.upper_bound.static_bound - newEntry->type.lower_bound.static_bound + 1)) + 1;
                             else if (newEntry->type.datatype == ARRAY_DYNAMIC)
-                                newEntry->width = 1;
+                                newEntry->width = 5;
                             insertVar(curr->moduleTable, newEntry);
                             offset+=newEntry->width;
                         }
                         parameter = parameter->sibling;
                     }
-                    curr->inputList = input_plist;
                 }
-                else if (current->label == OUTPUT_PLIST)
+                else
                 {
                     ASTNode *parameter = current->child;
-                    ParamList *output_plist = NULL;
+                    curr->outputList = NULL;
                     while (parameter != NULL)
                     {
                         ParamList* currentParam = curr->inputList;
@@ -374,18 +467,18 @@ void typeChecker(ASTNode *astNode)
                                 break;
                             currentParam = currentParam -> next;
                         }
-                        if (currentParam != NULL){
+                        if (currentParam != NULL) {
                             printf("Semantic Error at line %d: Identifier %s has already been declared\n", parameter->tk->lineNo, parameter->tk->val.identifier);
                             compile_error = true;
                         }
                         else {
-                            currentParam = output_plist;
+                            currentParam = curr->outputList;
                             while(currentParam!= NULL){
                                 if (strcmp(currentParam->identifier,parameter->tk->val.identifier) == 0)
                                     break;
                                 currentParam = currentParam -> next;
                             }
-                            if (currentParam != NULL){
+                            if (currentParam != NULL) {
                                 printf("Semantic Error at line %d: Identifier %s has already been declared\n", parameter->tk->lineNo, parameter->tk->val.identifier);
                                 compile_error = true;
                             }
@@ -395,7 +488,7 @@ void typeChecker(ASTNode *astNode)
                                 typeChecker(parameter->child);
                                 newnode->type = parameter->child->type;
                                 newnode->next = NULL;
-                                output_plist = insertLast(output_plist, newnode);
+                                curr->outputList = insertLast(curr->outputList, newnode);
                                 ModuleTableEntry *newEntry = (ModuleTableEntry*)malloc(sizeof(ModuleTableEntry));
                                 newEntry->identifier = newnode->identifier;
                                 newEntry->nesting_lvl = 1;
@@ -417,14 +510,12 @@ void typeChecker(ASTNode *astNode)
                         }
                         parameter = parameter->sibling;
                     }
-                    curr->outputList = output_plist;
-                }
-                else
-                {
-                    for (ASTNode *stmt = current->child; stmt != NULL; stmt = stmt->sibling)
-                        typeChecker(stmt);
                 }
                 current = current->sibling;
+            }
+            if (current != NULL) {
+                for (current = current->child; current != NULL; current = current->sibling)
+                    typeChecker(current);
             }
             isChanged(astNode->scope_end);
         }
@@ -761,7 +852,10 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         TypeInfo d = astNode->child->sibling->type;
         int width = 0;
-        if (d.primtype == BOOLEAN)
+        if (d.datatype == ARRAY_DYNAMIC) {
+            width = 1;
+        }
+        else if (d.primtype == BOOLEAN)
             width = 1;
         else if (d.primtype == INTEGER)
             width = 2;
@@ -789,10 +883,7 @@ void typeChecker(ASTNode *astNode)
                     newEntry->type = d;
                     newEntry->is_changed = false;
                     newEntry->vartype = NORMAL_VAR;
-                    if (d.datatype != ARRAY_DYNAMIC)
-                    {
-                        newEntry->width = width;
-                    }
+                    newEntry->width = width;
                     newEntry->offset = offset;
                     newEntry->nesting_lvl = idList->nest_level;
                     offset += width;
