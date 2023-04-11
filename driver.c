@@ -104,6 +104,7 @@ int main(int argc, char *argv[]){
             createParseTable();
             parserRoot = parse();
             makeAST(parserRoot);
+            print_error=false;
             typeChecker(astroot);
             printSymbolTable();
             if(ptr != NULL) fclose(ptr);
@@ -116,6 +117,7 @@ int main(int argc, char *argv[]){
             createParseTable();
             parserRoot = parse();
             makeAST(parserRoot);
+            print_error=false;
             typeChecker(astroot);
             calcActRecordSize();
             if(ptr != NULL) fclose(ptr);
@@ -128,6 +130,7 @@ int main(int argc, char *argv[]){
             createParseTable();
             parserRoot = parse();
             makeAST(parserRoot);
+            print_error=false;
             typeChecker(astroot);
             printAllArrays();
             if(ptr != NULL) fclose(ptr);
@@ -143,6 +146,7 @@ int main(int argc, char *argv[]){
             parserRoot = parse();
             if(compile_error==false){
                 makeAST(parserRoot);
+                print_error=true;
                 typeChecker(astroot);
             }
             if(compile_error==false) printf("Program compiled succesfully\n"); 

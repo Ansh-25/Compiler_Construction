@@ -5,6 +5,7 @@
 #include "astDef.h"
 
 extern char * arr[];
+extern bool print_error;
 
 void printSymbolTable();
 
