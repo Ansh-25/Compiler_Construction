@@ -550,7 +550,7 @@ void typeChecker(ASTNode *astNode)
         else if (t1.datatype == ARRAY_STATIC && t2.datatype == ARRAY_STATIC && t1.upper_bound-t1.lower_bound!=t2.upper_bound-t2.lower_bound)
         { // static type checking
             // printf("hi1");
-            printf("Semantic Error at line %d: Arrays are not structurally equivalent in assignment operation\n", astNode->child->child->tk->lineNo);
+            printf("Semantic Error at line %d: Arrays are not structurally equivalent in assignment operation\n", astNode->child->tk->lineNo);
         }
         else if (t1.datatype == PRIMITIVE){
             newEntry = searchVar(curr->moduleTable, astNode->child->tk->val.identifier, astNode->child->tk->lineNo);
@@ -770,14 +770,14 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
         }
-        else if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
+        else if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in addition\n", left_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in addition\n", left_op->tk->lineNo);
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in addition\n", right_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in addition\n", right_op->tk->lineNo);
         }
         else if (left_op->type.primtype == BOOLEAN || right_op->type.primtype == BOOLEAN)
         {
@@ -820,14 +820,14 @@ void typeChecker(ASTNode *astNode)
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
         }
-        else if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
+        else if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in subtraction\n", left_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in subtraction\n", left_op->tk->lineNo);
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in subtraction\n", right_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in subtraction\n", right_op->tk->lineNo);
         }
         else if (left_op->type.primtype == BOOLEAN || right_op->type.primtype == BOOLEAN)
         {
@@ -865,14 +865,14 @@ void typeChecker(ASTNode *astNode)
         right_op = astNode->child->sibling;
          p1 = left_op->type.primtype;
          p2 = right_op->type.primtype;
-        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
+        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in multiplication\n", left_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in multiplication\n", left_op->tk->lineNo);
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in multiplication\n", right_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in multiplication\n", right_op->tk->lineNo);
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
@@ -915,14 +915,14 @@ void typeChecker(ASTNode *astNode)
         right_op = astNode->child->sibling;
          p1 = left_op->type.primtype;
          p2 = right_op->type.primtype;
-        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
+        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in division\n", left_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in division\n", left_op->tk->lineNo);
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in division\n", right_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in division\n", right_op->tk->lineNo);
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
@@ -968,14 +968,14 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
-        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
+        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in logical operation\n", left_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in logical operation\n", left_op->tk->lineNo);
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in logical operation\n", right_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in logical operation\n", right_op->tk->lineNo);
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
@@ -1007,14 +1007,14 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
-        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
+        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in logical operation\n", left_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in logical operation\n", left_op->tk->lineNo);
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in logical operation\n", right_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in logical operation\n", right_op->tk->lineNo);
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
@@ -1046,14 +1046,14 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
-        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
+        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->tk->lineNo);
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->tk->lineNo);
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
@@ -1090,14 +1090,14 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
-        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
+        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->tk->lineNo);
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->tk->lineNo);
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
@@ -1134,14 +1134,14 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
-        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
+        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->tk->lineNo);
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->tk->lineNo);
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
@@ -1178,14 +1178,14 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
-        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
+        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->tk->lineNo);
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->tk->lineNo);
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
@@ -1222,14 +1222,14 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
-        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
+        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->tk->lineNo);
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->tk->lineNo);
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
@@ -1266,14 +1266,14 @@ void typeChecker(ASTNode *astNode)
         typeChecker(astNode->child->sibling);
         left_op = astNode->child;
         right_op = astNode->child->sibling;
-        if ((left_op->type.datatype != PRIMITIVE && left_op->child->sibling==NULL) || (right_op->type.datatype != PRIMITIVE && right_op->child->sibling==NULL))
+        if (left_op->type.datatype != PRIMITIVE || right_op->type.datatype != PRIMITIVE)
         {
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
             if (left_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in relational operation\n", left_op->tk->lineNo);
             else if (right_op->tk != NULL)
-                printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->child->tk->lineNo);
+                printf("Semantic Error at line %d: Array operand found in relational operation\n", right_op->tk->lineNo);
         }
         else if (left_op->type.primtype == ERROR || right_op->type.primtype == ERROR)
         {
