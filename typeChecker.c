@@ -21,14 +21,14 @@ void printSymbolTable() {
             printf("\nMODULE: %s\n", SymbolTable[i]->module_name);
             printf("Input Plist:\n");
             for (current = SymbolTable[i]->inputList; current != NULL; current = current->next){
-                printf("Name: %s, DataType: %d, PrimType = %d", current->identifier, current->type.datatype, current->type.primtype);
+                printf("Name: %s, DataType: %s, PrimType = %s", current->identifier, data_type_arr[current->type.datatype], prim_type_arr[current->type.primtype]);
                 if (current->type.datatype == ARRAY_STATIC)
                     printf(", LB = %d, UB = %d",current->type.lower_bound, current->type.upper_bound);
                 printf("\n");
             }
             printf("Output Plist:\n");
             for (current = SymbolTable[i]->outputList; current != NULL; current = current->next){
-                printf("Name: %s, DataType: %d, PrimType = %d", current->identifier, current->type.datatype, current->type.primtype);
+                printf("Name: %s, DataType: %s, PrimType = %s", current->identifier, data_type_arr[current->type.datatype], prim_type_arr[current->type.primtype]);
                 if (current->type.datatype == ARRAY_STATIC)
                     printf(", LB = %d, UB = %d",current->type.lower_bound, current->type.upper_bound);
                 printf("\n");
