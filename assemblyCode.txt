@@ -65,3 +65,17 @@ Statement type 5:
 
 Statement type 6:
 
+  /*Relational Operators:*/
+  mov rax, x
+  mov rbx, y
+  cmp rax, rbx
+  op L
+  
+  /*Here op can be: jl, jle, jg, jge, je, jne*/
+  
+------------------------------------------------------------------------------------------------------------------------------------------
+
+Statement type 9:
+
+  /*Taking input:*/
+  
