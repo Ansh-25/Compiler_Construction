@@ -22,11 +22,18 @@ typedef enum {ARRAY_STATIC, ARRAY_DYNAMIC, PRIMITIVE} DataType;
 // typedef struct Quadruple Quadruple;
 // typedef struct QuadNode QuadNode;
 
+union Bound{
+    int static_bound;
+    char* dynamic_bound;
+};
+
 typedef struct TypeInfo{
     DataType datatype;
     Prim_type primtype; 
-    int lower_bound;
-    int upper_bound;
+    bool lb_static;
+    bool ub_static;
+    union Bound lower_bound;
+    union Bound upper_bound;
 }TypeInfo;
 
 typedef struct ASTNode{
