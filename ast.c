@@ -20,12 +20,17 @@ void printAST(ASTNode* root){
     if(root==NULL) return;
     printf("%-15s",arr[root->label]);
     if(root->tk!=NULL) {
-        printToken(root->tk);
-        if(root->tk->type==TK_ID) {
-            printf("scope_start:%d scope_end:%d nest:%d\n",root->scope_begin,root->scope_end,root->nest_level);
+        if(root->tk->type == TK_NUM){
+            printf("Token_val := %d",root->tk->val.integer);
+        }
+        else if(root->tk->type == TK_RNUM){
+            printf("Token_val := %-15.11lf",root->tk->val.decimal);
+        }
+        else{
+            printf("Token_val := %s",root->tk->val.identifier);
         }
     }
-    else printf("\n");
+    printf("\n");
     ASTNode* temp = root->child;
     while(temp!=NULL){
         printAST(temp);
