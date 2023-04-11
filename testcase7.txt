@@ -1,7 +1,7 @@
 <<<driver program>>>
 start
-	declare a: array[2..10] of integer;
+	declare a: array[-2..10] of integer;
 	declare b: integer;
-	b := a[+5];
+	a[-4] := b;
 end
 

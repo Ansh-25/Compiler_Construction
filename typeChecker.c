@@ -326,8 +326,8 @@ void typeChecker(ASTNode *astNode)
                 }
                 current = current->sibling;
             }
+            isChanged(astNode->scope_end);
         }
-        isChanged(astNode->scope_end);
         break;
 
     case INTEGER_:
@@ -548,8 +548,9 @@ void typeChecker(ASTNode *astNode)
         Prim_type pt1 = astNode->child->type.primtype;
         Prim_type pt2 = astNode->child->sibling->type.primtype;
         Prim_type pt3 = astNode->child->child->type.primtype;
-        if(searchVar(curr->moduleTable,astNode->child->tk->val.identifier,astNode->child->tk->lineNo)!=NULL){
-            searchVar(curr->moduleTable,astNode->child->tk->val.identifier,astNode->child->tk->lineNo)->is_changed = true;
+        newEntry = searchVar(curr->moduleTable,astNode->child->tk->val.identifier,astNode->child->tk->lineNo);
+        if(newEntry!=NULL){
+            newEntry->is_changed = true;
         }
         if(pt1==ERROR || pt2==ERROR) break;
         if(pt3!=INTEGER){
@@ -561,6 +562,13 @@ void typeChecker(ASTNode *astNode)
         if(pt1!=pt2){
             printf("Semantic Error at line %d: Operand types don't match in assignment operation\n", astNode->child->tk->lineNo);
         }
+        ASTNode* index = astNode->child->child->child;
+        if (index->label == NUM && newEntry->type.datatype == ARRAY_STATIC && (index->tk->val.integer < newEntry->type.lower_bound || index->tk->val.integer > newEntry->type.upper_bound))
+            printf("Semantic Error at line %d: Array index out of bounds\n",index->tk->lineNo);
+        else if (index->label == UNARY_PLUS && index->child->label == NUM && newEntry->type.datatype == ARRAY_STATIC && (index->child->tk->val.integer < newEntry->type.lower_bound || index->child->tk->val.integer > newEntry->type.upper_bound))
+            printf("Semantic Error at line %d: Array index out of bounds\n",index->tk->lineNo);
+        else if (index->label == UNARY_MINUS && index->child->label == NUM && newEntry->type.datatype == ARRAY_STATIC && (((-1) * index->child->tk->val.integer) <  newEntry->type.lower_bound || ((-1) * index->child->tk->val.integer) > newEntry->type.upper_bound))
+            printf("Semantic Error at line %d: Array index out of bounds\n",index->tk->lineNo);
         break;
 
     case ARR_INDEX1:
