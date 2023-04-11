@@ -18,10 +18,13 @@ int nest_level = 0;
 
 void printAST(ASTNode* root){
     if(root==NULL) return;
-    printf("%s",arr[root->label]);
-    if(root->tk!=NULL) {printToken(root->tk);
-    if(root->tk->type==TK_ID)
-        printf("scope_start:%d scope_end:%d nest:%d\n",root->scope_begin,root->scope_end,root->nest_level);}
+    printf("%-15s",arr[root->label]);
+    if(root->tk!=NULL) {
+        printToken(root->tk);
+        if(root->tk->type==TK_ID) {
+            printf("scope_start:%d scope_end:%d nest:%d\n",root->scope_begin,root->scope_end,root->nest_level);
+        }
+    }
     else printf("\n");
     ASTNode* temp = root->child;
     while(temp!=NULL){

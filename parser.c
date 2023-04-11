@@ -747,10 +747,10 @@ ParseNode* parse(){
 
 void printTree(ParseNode* root) {
     if(root==NULL) return;
-    if(root->t==TERMINAL && root->val.t->type==TK_NUM) printf("Terminal %s with token value %d\n", mapttokentostring(root->val.t->type),root->val.t->val.integer);
-    else if(root->t==TERMINAL && root->val.t->type==TK_RNUM) {printf("Terminal %s with token value %lf\n", mapttokentostring(root->val.t->type),root->val.t->val.decimal);}
-    else if(root->t==TERMINAL) {printf("Terminal %s with token value %s\n", mapttokentostring(root->val.t->type),root->val.t->val.identifier);}
-    else printf("Non-Terminal %s\n",mapnttostring(root->val.nt));
+    if(root->t==TERMINAL && root->val.t->type==TK_NUM) printf("Terminal: %-15s Token value: %d\n", mapttokentostring(root->val.t->type),root->val.t->val.integer);
+    else if(root->t==TERMINAL && root->val.t->type==TK_RNUM) {printf("Terminal: %-15s Token value: %lf\n", mapttokentostring(root->val.t->type),root->val.t->val.decimal);}
+    else if(root->t==TERMINAL) {printf("Terminal: %-15s Token value: %s\n", mapttokentostring(root->val.t->type),root->val.t->val.identifier);}
+    else printf("Non-Terminal: %s\n",mapnttostring(root->val.nt));
     ParseNode* curr = root->child;
     printTree(root->child);
     if (curr != NULL) curr=curr->sibling;

@@ -713,12 +713,12 @@ void printToken(struct Token *tk){
         printf("\t\t\t!!! END OF FILE !!!\n\n");
         return;
     }
-    printf("Line_number := %d\t",tk->lineNo);
+    printf("Line_number := %-15d",tk->lineNo);
     if(tk -> type == TK_NUM){
         printf("lexeme := %-15d",tk->val.integer);
     }
     else if(tk -> type == TK_RNUM){
-        printf("lexeme := %-20.17lf",tk->val.decimal);
+        printf("lexeme := %-15.11lf",tk->val.decimal);
     }
     else{
         printf("lexeme := %-15s",tk->val.identifier);
