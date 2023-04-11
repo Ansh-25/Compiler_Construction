@@ -1526,6 +1526,8 @@ void makeAST(struct ParseNode* parserNode){
             nest_level--;
             newNode = makeNode(RANGE_WHILE,NULL,c1->addr,NULL);
             newNode->child->sibling = c2->addr;
+            newNode->scope_begin = parserNode->child->val.t->lineNo;
+            newNode->scope_end = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->val.t->lineNo;
             parserNode->addr = newNode;
             free(parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->val.t); 
             free(parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling); 
@@ -1591,8 +1593,8 @@ ASTNode* AST(){
     // printTree(parserNode,fp);
     // fflush(fp); fclose(fp);
 	makeAST(parserNode);
-    printf("\nPrinting AST\n\n");
-    printAST(astroot);
+    // printf("\nPrinting AST\n\n");
+    // printAST(astroot);
     printf("\nTypeChecking AST ...\n\n");
     typeChecker(astroot);
     printSymbolTable();
