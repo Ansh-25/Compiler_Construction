@@ -706,6 +706,12 @@ void typeChecker(ASTNode *astNode)
                 astNode->type.datatype = PRIMITIVE;
                 astNode->type.primtype = ERROR;
             }
+            else {
+                astNode->type.primtype = newEntry->type.primtype;
+                astNode->type.datatype = PRIMITIVE;
+                astNode->type.lower_bound = -1e9;
+                astNode->type.upper_bound = -1e9;
+            }
         }
         else
         {
