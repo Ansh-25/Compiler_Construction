@@ -16,6 +16,17 @@ int nest_level = 0;
 
 // char* arr[] = {"PROGRAM","ITER_FOR","MODULEDECLARATIONS","OTHERMODULES1","OTHERMODULES2","UNARY_PLUS","UNARY_MINUS", "ID", "NUM", "RNUM", "ARRAY_DTYPE", "ARRAY","ARRAY_RANGE","ARR_INDEX1", "ARR_INDEX2", "PLUS", "MINUS", "MUL", "DIV", "AND", "OR", "LT", "LE", "GT", "GE", "EQ", "NE", "MODULEDECLARATION", "DRIVERMODULE","MODULE_REUSE", "MODULE", "RET", "PARAMETER", "INTEGER_", "REAL_", "BOOLEAN_", "RANGE_WHILE","RANGE_FOR", "STATEMENTS", "INPUT", "OUTPUT", "ARR_OUTPUT", "TRUE", "FALSE", "ASSIGN", "ARR_ASSIGN", "INDEX_ARR", "DECLARE", "ID_LIST", "CASE","CASE_STMT","RANGE", "INPUT_PLIST", "OUTPUT_PLIST","DEFAULT"};
 
+int countASTNodes(ASTNode* root) {
+    if(root==NULL) return 0;
+    int count = 0;
+    ASTNode* curr = root->child;
+    while(curr!=NULL){
+        count = 1 + countASTNodes(root->child);
+        curr=curr->sibling;
+    }
+    return count;
+}
+
 void printAST(ASTNode* root){
     if(root==NULL) return;
     printf("%-15s",arr[root->label]);

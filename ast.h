@@ -17,6 +17,8 @@ extern ASTNode* astroot;
 
 void printAST(ASTNode* root);
 
+int countASTNodes(ASTNode* root) ;
+
 void makeAST(struct ParseNode* parserNode);
 
 #endif

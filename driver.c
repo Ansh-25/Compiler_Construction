@@ -78,6 +78,17 @@ int main(int argc, char *argv[]){
             printf("\n");
             if(ptr != NULL) fclose(ptr);
             break;
+        case 4:
+            ptr = fopen(test_file,"r");
+            ptr = initLexer(ptr, size_of_buffer);
+            loadgrammar("grammar.txt");
+            computefirstandfollow();
+            createParseTable();
+            parserRoot = parse();
+            makeAST(parserRoot);
+            printf("#parserNodes=%d , #astNodes=%d\n",countParseNodes(parserRoot),countASTNodes(astroot));
+            if(ptr != NULL) fclose(ptr);
+            break;
         case 5:
             ptr = fopen(test_file,"r");
             ptr = initLexer(ptr, size_of_buffer);

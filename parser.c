@@ -764,3 +764,14 @@ void printTree(ParseNode* root) {
         printTree(curr);
     }
 }
+
+int countParseNodes(ParseNode* root) {
+    if(root==NULL) return 0;
+    int count = 0;
+    ParseNode* curr = root->child;
+    while(curr!=NULL){
+        count = 1 + countParseNodes(root->child);
+        curr=curr->sibling;
+    }
+    return count;
+}
