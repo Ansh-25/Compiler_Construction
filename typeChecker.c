@@ -339,6 +339,23 @@ void populateIOLists() {
     printSymbolTable();
 }
 
+void calcActRecordSize(){
+    printf("\n\nModuleName      Activation Record Size(in Bytes)\n");
+    ModuleTableEntry** currModule;
+    for (int i = 0; i < 40; i ++){
+        if (SymbolTable[i] != NULL){
+            int size = 0;
+            currModule = SymbolTable[i]->moduleTable;
+            for (int j = 0; j < 40; j ++){
+                if (currModule[j] != NULL)
+                    size+=currModule[j]->width;
+            }
+            printf("%-25s %-12d\n",SymbolTable[i]->module_name,size);
+        }
+    }
+    printf("\n\n");
+}
+
 void typeChecker(ASTNode *astNode)
 {
     if (astNode == NULL)

@@ -12,4 +12,6 @@ void typeChecker(ASTNode *astNode);
 
 void printAllArrays();
 
+void calcActRecordSize();
+
 #endif

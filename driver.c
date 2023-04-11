@@ -108,6 +108,18 @@ int main(int argc, char *argv[]){
             printSymbolTable();
             if(ptr != NULL) fclose(ptr);
             break;
+        case 6:
+            ptr = fopen(test_file,"r");
+            ptr = initLexer(ptr, size_of_buffer);
+            loadgrammar("grammar.txt");
+            computefirstandfollow();
+            createParseTable();
+            parserRoot = parse();
+            makeAST(parserRoot);
+            typeChecker(astroot);
+            calcActRecordSize();
+            if(ptr != NULL) fclose(ptr);
+            break;
         case 7:
             ptr = fopen(test_file,"r");
             ptr = initLexer(ptr, size_of_buffer);
