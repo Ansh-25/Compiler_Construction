@@ -13,15 +13,15 @@ start
 	get_value(q);
 	r:= 23.67e+2;
 	value:= p+q*r; 
-	m:=a + x;						**Not an error as m is the formal parameter**
+	m:=a + x;								**Not an error as m is the formal parameter**
 	u:= true AND false OR v;		**ERROR: variable v is not declared**
 	u:= a<=b;
-	declare w: integer;				**Not an error as a local variable can shadow the input parameter**
-	w:= 23;                         **not an error as type of w is integer now**
+	declare w: integer;						**Not an error as a local variable can shadow the input parameter**
+	w:= 23;                                 **Not an error as type of w is integer now**
 	n:= a*25+100;
-	declare b, c: real;			**ERROR: variable b is re-declared**
+	declare b, c: real;				**ERROR: variable b is re-declared**
 	c:= value-q+r;
-	w:= w + 5;				**No type error as well as type of w is now taken as integer**
+	w:= w + 5;								**No type error as well as type of w is now taken as integer**
 end
 
 
@@ -50,12 +50,12 @@ end
 <<<driver program>>>
 start
 	declare v_1_2_3:integer;
-	get_value(v_1_2_43);				**ERROR: variable v_1_2_43 is not declared**		
+	get_value(v_1_2_43);						**ERROR: variable v_1_2_43 is not declared**		
 	declare result_, v7, v9:integer;
 	declare u1:boolean;
 	[u1, result_, k]:=use module compute with parameters v_1_2_3, v7, v9;	**ERROR: variable k is not declared** **ERROR: input parameter mismatch**
 	print(result_);
-	declare u1: real;				**ERROR: variable u1 is re-declared**
+	declare u1: real;							**ERROR: variable u1 is re-declared**
 end
 
 

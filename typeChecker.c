@@ -147,7 +147,7 @@ void isChanged(int line){
     while(itr!=NULL){
         var = searchVar(curr->moduleTable,itr->identifier,line);
         if(var->is_changed==0){
-            printf("Semantic Error: Output Parameter %s has not been modified\n",itr->identifier);
+            printf("Semantic Error at line %d: Output Parameter %s has not been modified\n",line,itr->identifier);
         }
         itr = itr->next;
     }
