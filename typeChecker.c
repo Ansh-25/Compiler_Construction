@@ -38,7 +38,7 @@ void printSymbolTable() {
             printf("Name    Scope_begin    Scope_end    DataType      PrimitiveType    LowerBound     UpperBound    Offset    Width    NestingLvl\n");
             for (int j = 0; j < 40; j ++) {
                 if (currModule[j] != NULL) {
-                    printf("%-12s %-12d %-9d %-16s %-13s %-14d %-16d %-8d %-10d %d\n",currModule[j]->identifier,currModule[j]->scope_begin,currModule[j]->scope_end,data_type_arr[currModule[j]->type.datatype],prim_type_arr[currModule[j]->type.primtype],currModule[j]->type.lower_bound,currModule[j]->type.upper_bound,currModule[j]->offset,currModule[j]->width,currModule[j]->nesting_lvl);
+                    printf("%-12s %-12d %-9d %-16s %-13s %-14d %-16d %-8d %-10d %d %d\n",currModule[j]->identifier,currModule[j]->scope_begin,currModule[j]->scope_end,data_type_arr[currModule[j]->type.datatype],prim_type_arr[currModule[j]->type.primtype],currModule[j]->type.lower_bound,currModule[j]->type.upper_bound,currModule[j]->offset,currModule[j]->width,currModule[j]->nesting_lvl, currModule[j]->is_changed);
                 }
             }
         }
@@ -137,7 +137,21 @@ MainTableEntry *createModule(char *name, ParamList *inputList, ParamList *output
     return newModule;
 }
 
-
+void isChanged(int line){
+    if(curr==NULL){
+        return;
+    }
+    ParamList* itr = curr->outputList;
+    int flag = 0;
+    ModuleTableEntry* var;
+    while(itr!=NULL){
+        var = searchVar(curr->moduleTable,itr->identifier,line);
+        if(var->is_changed==0){
+            printf("Semantic Error: Output Parameter %s has not been modified\n",itr->identifier);
+        }
+        itr = itr->next;
+    }
+}
 void typeChecker(ASTNode *astNode)
 {
     if (astNode == NULL)
@@ -184,6 +198,7 @@ void typeChecker(ASTNode *astNode)
         insertModule(curr);
         for (ASTNode *stmt = astNode->child->child; stmt != NULL; stmt = stmt->sibling)
             typeChecker(stmt);
+        isChanged(astNode->scope_end);
         break;
 
     case MODULE:
@@ -311,6 +326,7 @@ void typeChecker(ASTNode *astNode)
                 current = current->sibling;
             }
         }
+        isChanged(astNode->scope_end);
         break;
 
     case INTEGER_:
@@ -493,6 +509,7 @@ void typeChecker(ASTNode *astNode)
             // printf("hi");
             break;
         }
+
         else if (t1.datatype != t2.datatype || t1.primtype != t2.primtype)
         {
             if (astNode->child->child == NULL)
@@ -515,6 +532,10 @@ void typeChecker(ASTNode *astNode)
                 newEntry->is_changed = true;
         }
         // dynamic type checking
+        ModuleTableEntry* var = searchVar(curr->moduleTable,astNode->child->tk->val.identifier,astNode->child->tk->lineNo);
+        if(var!=NULL){
+            var->is_changed = true;
+        } 
         break;
 
     case ARR_ASSIGN:

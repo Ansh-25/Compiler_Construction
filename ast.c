@@ -102,12 +102,16 @@ void makeAST(struct ParseNode* parserNode){
             break;
 
         case 6:
+            scope_start1 = parserNode->child->val.t->lineNo;
+            scope_end1 = parserNode->child->sibling->sibling->sibling->sibling->child->sibling->sibling->val.t->lineNo;
             makeAST(parserNode->child->sibling->sibling->sibling->sibling);
             parserNode->addr = (ASTNode*)malloc(sizeof(ASTNode));
             parserNode->addr->label = DRIVERMODULE;
             parserNode->addr->tk = NULL;
             parserNode->addr->child = parserNode->child->sibling->sibling->sibling->sibling->addr;
             parserNode->addr->sibling = NULL;
+            parserNode->addr->scope_begin = scope_start1;
+            parserNode->addr->scope_end = scope_end1;
             free(parserNode->child->sibling->sibling->sibling->sibling);
             free(parserNode->child->sibling->sibling->sibling->val.t);
             free(parserNode->child->sibling->sibling->sibling);
@@ -120,7 +124,7 @@ void makeAST(struct ParseNode* parserNode){
             break;
 
         case 7:
-            scope_start1 = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->child->val.t->lineNo;
+            scope_start1 = parserNode->child->val.t->lineNo;
             scope_end1 = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->child->sibling->sibling->val.t->lineNo;
             c1 = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling;
             c2 = parserNode->child->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling->sibling;
@@ -129,6 +133,8 @@ void makeAST(struct ParseNode* parserNode){
             makeAST(c2);
             makeAST(c3);
             parserNode->addr = makeNode(MODULE,NULL,NULL,NULL);
+            parserNode->addr->scope_begin = scope_start1;
+            parserNode->addr->scope_end = scope_end1;
             parserNode->addr->child = makeNode(ID,parserNode->child->sibling->sibling->val.t,NULL,c1->addr);
             if(c1->addr==NULL) parserNode->addr->child->sibling = c2->addr;
             else parserNode->addr->child->sibling->sibling = c2->addr; 
@@ -1587,7 +1593,7 @@ ASTNode* AST(){
     printAST(astroot);
     printf("\nTypeChecking AST ...\n\n");
     typeChecker(astroot);
-    //printSymbolTable();
+    printSymbolTable();
 	return astroot;
 }
 
