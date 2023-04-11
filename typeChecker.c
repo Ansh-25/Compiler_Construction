@@ -893,7 +893,7 @@ void typeChecker(ASTNode *astNode)
         else if (p1==p2)
         {
             astNode->type.datatype = PRIMITIVE;
-            astNode->type.primtype = p1;
+            astNode->type.primtype = REAL;
         }
         else if ((left_op->type.primtype == INTEGER && right_op->type.primtype == REAL) || (right_op->type.primtype == INTEGER && left_op->type.primtype == REAL))
         {
@@ -1272,12 +1272,15 @@ void typeChecker(ASTNode *astNode)
         newEntry->identifier = astNode->tk->val.identifier;
         newEntry->nesting_lvl = astNode->nest_level;
         newEntry->offset = offset;
+        newEntry->width = 2;
         offset += 2;
         newEntry->scope_begin = astNode->scope_begin;
         newEntry->scope_end = astNode->scope_end;
         newEntry->is_changed = false;
         newEntry->vartype = FOR_LOOP_VAR;
         newEntry->type.datatype = PRIMITIVE;
+        newEntry->type.lower_bound = -1e9;
+        newEntry->type.upper_bound = -1e9;
         newEntry->type.primtype = INTEGER;
         insertVar(curr->moduleTable, newEntry);
         for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
