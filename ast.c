@@ -44,8 +44,8 @@ ASTNode* makeNode(Label label_1,struct Token* token_1,struct ASTNode* child_1,st
 void makeAST(struct ParseNode* parserNode){
     ASTNode *newNode = NULL, *newNode1 = NULL;
     ParseNode *c1=NULL,*c2=NULL,*c3=NULL;
-    printf("%d ",parserNode->ruleno + 1);
-    printf("%s\n",mapnttostring(parserNode->val.nt));
+    // printf("%d ",parserNode->ruleno + 1);
+    // printf("%s\n",mapnttostring(parserNode->val.nt));
     switch(parserNode->ruleno) {
 
         case 0:
@@ -1353,13 +1353,10 @@ void makeAST(struct ParseNode* parserNode){
 
         case 125:
             c1= parserNode->child->sibling->sibling->sibling->sibling->sibling;
-            c2= c1->sibling;
-            scope_end2 = scope_end1;
-            scope_start1 = parserNode->child->sibling->sibling->sibling->sibling->val.t->lineNo;
+            c2= c1->sibling; 
             makeAST(c2);
             c1->addr = c2->addr;
             makeAST(c1);
-            scope_end1 = scope_end2;
             parserNode->addr = makeNode(CASE_STMT,parserNode->child->sibling->sibling->val.t,c1->addr,NULL);
             free(c2->sibling->val.t);
             free(c2->sibling);
@@ -1382,11 +1379,9 @@ void makeAST(struct ParseNode* parserNode){
             c3= c2->sibling->sibling->sibling;
             makeAST(c1); 
             nest_level++;
-            scope_end2 = scope_end1;
             scope_start1 = parserNode->child->val.t->lineNo;
             scope_end1 = c2->sibling->val.t->lineNo;
             makeAST(c2);
-            scope_end1 = scope_end2;
             nest_level--;
             c3->addr = parserNode->addr;
             makeAST(c3);
@@ -1520,13 +1515,14 @@ void makeAST(struct ParseNode* parserNode){
             c1= parserNode->child->sibling->sibling;
             c2= c1->sibling->sibling->sibling;
             nest_level++;
+            scope_start2 = scope_start1;
             scope_end2 = scope_end1;
             scope_end1 = c2->sibling->val.t->lineNo;
+            scope_start1 = parserNode->child->val.t->lineNo;
             makeAST(c1); 
             makeAST(c2);
             scope_end1 = scope_end2;
             scope_start1 = scope_start2;
-            scope_start1 = parserNode->child->val.t->lineNo;
             nest_level--;
             newNode = makeNode(RANGE_WHILE,NULL,c1->addr,NULL);
             newNode->child->sibling = c2->addr;
@@ -1590,13 +1586,13 @@ ASTNode* AST(){
     computefirstandfollow();
     createParseTable();
 	ParseNode* parserNode = parse();
-    FILE* fp = fopen("checktree.txt","w");
-    printf("Printing AST ruleno\n");
-    printTree(parserNode,fp);
-    fflush(fp); fclose(fp);
+    // FILE* fp = fopen("checktree.txt","w");
+    // printf("Printing AST ruleno\n");
+    // printTree(parserNode,fp);
+    // fflush(fp); fclose(fp);
 	makeAST(parserNode);
-    printf("\nPrinting AST\n\n");
-    printAST(astroot);
+    // printf("\nPrinting AST\n\n");
+    // printAST(astroot);
     printf("\nTypeChecking AST ...\n\n");
     typeChecker(astroot);
     printSymbolTable();

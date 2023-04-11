@@ -38,7 +38,7 @@ void printSymbolTable() {
             printf("Name    Scope_begin    Scope_end    DataType      PrimitiveType    LowerBound     UpperBound    Offset    Width    NestingLvl\n");
             for (int j = 0; j < 40; j ++) {
                 if (currModule[j] != NULL) {
-                    printf("%-12s %-12d %-9d %-16s %-13s %-14d %-16d %-8d %-10d %d %d\n",currModule[j]->identifier,currModule[j]->scope_begin,currModule[j]->scope_end,data_type_arr[currModule[j]->type.datatype],prim_type_arr[currModule[j]->type.primtype],currModule[j]->type.lower_bound,currModule[j]->type.upper_bound,currModule[j]->offset,currModule[j]->width,currModule[j]->nesting_lvl, currModule[j]->is_changed);
+                    printf("%-12s %-12d %-9d %-16s %-13s %-14d %-16d %-8d %-10d %d\n",currModule[j]->identifier,currModule[j]->scope_begin,currModule[j]->scope_end,data_type_arr[currModule[j]->type.datatype],prim_type_arr[currModule[j]->type.primtype],currModule[j]->type.lower_bound,currModule[j]->type.upper_bound,currModule[j]->offset,currModule[j]->width,currModule[j]->nesting_lvl);
                 }
             }
         }
@@ -642,7 +642,7 @@ void typeChecker(ASTNode *astNode)
         newEntry = searchVar(curr->moduleTable, astNode->tk->val.identifier, astNode->tk->lineNo);
         if (newEntry == NULL)
         {
-            printf("Semantic Error at line %d: Variable %s has not been declared\n", astNode->tk->lineNo, astNode->tk->val.identifier);
+            printf("Semantic Error at line %d: Variable %s not declared in this scope\n", astNode->tk->lineNo, astNode->tk->val.identifier);
             astNode->type.datatype = PRIMITIVE;
             astNode->type.primtype = ERROR;
         }
@@ -1263,7 +1263,7 @@ void typeChecker(ASTNode *astNode)
             typeChecker(current);
         if (astNode->child->type.primtype != BOOLEAN || astNode->child->type.datatype != PRIMITIVE)
         {
-            printf("Semantic Error: at line:= %d, Module %s has already been defined\n", astNode->tk->lineNo, astNode->tk->val.identifier);
+            printf("Semantic Error at line:= %d: Condition of WHILE must be boolean\n", astNode->tk->lineNo);
         }
         break;
 
