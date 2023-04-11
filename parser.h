@@ -29,6 +29,8 @@ void printTree(ParseNode* root);
 
 ParseNode* parse();
 
+int countParseNodes(ParseNode* root);
+
 tokentype mapttoenum(char* s);
 
 non_terminal mapnttoenum(char* s);
