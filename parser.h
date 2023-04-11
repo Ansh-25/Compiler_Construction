@@ -25,7 +25,7 @@ void loadgrammar(char* filename);
 
 void createParseTable();
 
-void printTree(ParseNode* root, FILE* fp);
+void printTree(ParseNode* root);
 
 ParseNode* parse();
 

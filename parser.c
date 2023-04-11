@@ -745,21 +745,16 @@ ParseNode* parse(){
     return Root;
 }
 
-void printTree(ParseNode* root, FILE* fp) {
+void printTree(ParseNode* root) {
     if(root==NULL) return;
-    if(!fp){
-        printf("\nERROR: file pointer invalid\n\n");
-        exit(1);
-    }
-    if(root->t==TERMINAL && root->val.t->type==TK_NUM) fprintf(fp,"Terminal %s with token value %d\n", mapttokentostring(root->val.t->type),root->val.t->val.integer);
-    else if(root->t==TERMINAL && root->val.t->type==TK_RNUM) {fprintf(fp,"Terminal %s with token value %lf\n", mapttokentostring(root->val.t->type),root->val.t->val.decimal);}
-    else if(root->t==TERMINAL) {fprintf(fp,"Terminal %s with token value %s\n", mapttokentostring(root->val.t->type),root->val.t->val.identifier);}
-    else fprintf(fp,"Non-Terminal %s\n",mapnttostring(root->val.nt));
+    if(root->t==TERMINAL && root->val.t->type==TK_NUM) printf("Terminal %s with token value %d\n", mapttokentostring(root->val.t->type),root->val.t->val.integer);
+    else if(root->t==TERMINAL && root->val.t->type==TK_RNUM) {printf("Terminal %s with token value %lf\n", mapttokentostring(root->val.t->type),root->val.t->val.decimal);}
+    else if(root->t==TERMINAL) {printf("Terminal %s with token value %s\n", mapttokentostring(root->val.t->type),root->val.t->val.identifier);}
+    else printf("Non-Terminal %s\n",mapnttostring(root->val.nt));
     ParseNode* curr = root->child;
-    printTree(root->child,fp);
-    if (curr != NULL)
-        curr=curr->sibling;
+    printTree(root->child);
+    if (curr != NULL) curr=curr->sibling;
     for(;curr!=NULL; curr=curr->sibling){
-        printTree(curr,fp);
+        printTree(curr);
     }
 }
