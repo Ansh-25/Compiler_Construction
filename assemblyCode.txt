@@ -84,7 +84,7 @@ global _start .......*/
 
 ------------------------------------------------------------------------------------------------------------------------------------------
 
-Statement type 9:
+Statement type 9: /*Input and Output*/
 
 SYS_READ   equ     0          ; read text from stdin
     SYS_WRITE  equ     1          ; write text to stdout
