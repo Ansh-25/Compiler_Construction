@@ -152,6 +152,31 @@ void isChanged(int line){
         itr = itr->next;
     }
 }
+
+WhileCondListNode* insertWhileNode (WhileCondListNode* head, ASTNode* tree_node) {
+    ModuleTableEntry* newEntry = searchVar(curr->moduleTable, tree_node->tk->val.identifier, tree_node->tk->lineNo);
+    if (newEntry == NULL) return head;
+    WhileCondListNode* newNode = (WhileCondListNode*)malloc(sizeof(WhileCondListNode));
+    newNode->var = newEntry;
+    newNode->isChangedBeforeWhile = newNode->var->is_changed;
+    newNode->var->is_changed = false;
+    newNode->next = NULL;
+    if (head == NULL) return newNode;
+    WhileCondListNode* current = head;
+    for (;current->next != NULL; current = current->next);
+    current->next = newNode;
+    return head;
+}
+
+WhileCondListNode* getWhileList (WhileCondListNode* head, ASTNode* root) {
+    if (root == NULL) return head;
+    if (root->label == ID)
+        head = insertWhileNode(head, root);
+    for (ASTNode* i = root->child; i != NULL; i = i->sibling)
+        getWhileList(head,i);
+    return head;
+}
+
 void typeChecker(ASTNode *astNode)
 {
     if (astNode == NULL)
@@ -1282,18 +1307,31 @@ void typeChecker(ASTNode *astNode)
 
     case RANGE_WHILE:
         current = astNode->child;
-        for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
-            typeChecker(current);
+        typeChecker(current);
+        WhileCondListNode* whileIDs = NULL;
+        whileIDs = getWhileList(whileIDs,current);
         if (astNode->child->type.primtype != BOOLEAN || astNode->child->type.datatype != PRIMITIVE)
         {
-            printf("Semantic Error at line:= %d: Condition of WHILE must be boolean\n", astNode->tk->lineNo);
+            printf("Semantic Error at line %d: Condition of WHILE must be boolean\n", astNode->tk->lineNo);
         }
+        current = current -> sibling;
+        while (current != NULL) {
+            typeChecker(current);
+            current = current -> sibling;
+        }
+        bool modified = false;
+        for (WhileCondListNode* whileNode = whileIDs; whileNode != NULL; whileNode = whileNode->next) {
+            modified = modified || whileNode->var->is_changed;
+            whileNode->var->is_changed = whileNode->var->is_changed || whileNode->isChangedBeforeWhile;
+        }
+        if (!modified)
+            printf("Semantic error at line %d: At least one variable in the while loop condition must be modified within the body of the loop\n",astNode->scope_end);
         break;
 
     case ITER_FOR:
         searchedVar = searchVar(curr->moduleTable, astNode->tk->val.identifier, astNode->tk->lineNo);
         if (searchedVar != NULL && searchedVar->vartype == OUTPUT_VAR)
-            printf("Semaintic Error at line:= %d: Output parameter %s can never be shadowed\n",astNode->tk->lineNo, astNode->tk->val.identifier);
+            printf("Semaintic Error at line %d: Output parameter %s can never be shadowed\n",astNode->tk->lineNo, astNode->tk->val.identifier);
         else {
             newEntry = (ModuleTableEntry*)malloc(sizeof(ModuleTableEntry));
             newEntry->identifier = astNode->tk->val.identifier;
@@ -1330,7 +1368,7 @@ void typeChecker(ASTNode *astNode)
             right_op = astNode->child->sibling->child;
         if (!(left_op != NULL && right_op != NULL && left_op->tk->type == right_op->tk->type && left_op->tk->type == TK_NUM))
         {
-            printf("Semantic Error: at line:= %d, iterator range bounds must be integer\n", astNode->tk->lineNo);
+            printf("Semantic Error: at line %d, iterator range bounds must be integer\n", astNode->tk->lineNo);
         }
         break;
 
@@ -1338,7 +1376,7 @@ void typeChecker(ASTNode *astNode)
         newEntry = searchVar(curr->moduleTable, astNode->tk->val.identifier,astNode->tk->lineNo);
         if (newEntry == NULL)
         {
-            printf("Semantic Error: at line:= %d, identifier not declared previously\n", astNode->tk->lineNo);
+            printf("Semantic Error: at line %d, identifier not declared previously\n", astNode->tk->lineNo);
             break;
         }
         for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
@@ -1361,7 +1399,7 @@ void typeChecker(ASTNode *astNode)
         bool flag = true;
         if (searched == NULL)
         {
-            printf("Semantic Error: at line:= %d, Module not found\n", astNode->tk->lineNo);
+            printf("Semantic Error: at line %d, Module not found\n", astNode->tk->lineNo);
             break;
         }
         if (astNode->child->label == ASSIGN)

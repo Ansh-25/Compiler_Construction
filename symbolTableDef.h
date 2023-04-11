@@ -13,6 +13,8 @@
 
 typedef enum {INPUT_VAR, OUTPUT_VAR, FOR_LOOP_VAR, NORMAL_VAR} typeOfVar;
 
+typedef struct WhileCondListNode WhileCondListNode;
+
 typedef struct ParamList{
     TypeInfo type;
     char* identifier;
@@ -37,5 +39,11 @@ typedef struct{
     ParamList* outputList;
     ModuleTableEntry** moduleTable;
 }MainTableEntry;
+
+struct WhileCondListNode{
+    ModuleTableEntry* var;
+    bool isChangedBeforeWhile;
+    struct WhileCondListNode* next;
+};
 
 #endif
