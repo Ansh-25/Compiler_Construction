@@ -1,12 +1,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "astDef.h"
+#include "ast.h"
 #include "parser.h"
 #include "lexer.h"
 #include "symbolTableDef.h"
 #include "typeChecker.h"
-
 
 ASTNode* astroot;
 int scope_start1 = 1;
@@ -1598,9 +1597,4 @@ ASTNode* AST(){
     typeChecker(astroot);
     printSymbolTable();
 	return astroot;
-}
-
-int main(){
-    AST();
-    return 0;
 }
