@@ -1591,8 +1591,8 @@ ASTNode* AST(){
     // printTree(parserNode,fp);
     // fflush(fp); fclose(fp);
 	makeAST(parserNode);
-    // printf("\nPrinting AST\n\n");
-    // printAST(astroot);
+    printf("\nPrinting AST\n\n");
+    printAST(astroot);
     printf("\nTypeChecking AST ...\n\n");
     typeChecker(astroot);
     printSymbolTable();
