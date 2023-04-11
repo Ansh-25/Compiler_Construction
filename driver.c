@@ -74,7 +74,7 @@ int main(int argc, char *argv[]){
             printAST(astroot);
             if(ptr != NULL) fclose(ptr);
             break;
-        case 4:
+        case 5:
             ptr = fopen(test_file,"r");
             ptr = initLexer(ptr, size_of_buffer);
             loadgrammar("grammar.txt");
@@ -82,12 +82,11 @@ int main(int argc, char *argv[]){
             createParseTable();
             parserRoot = parse();
             makeAST(parserRoot);
-            printAST(astroot);
             typeChecker(astroot);
             printSymbolTable();
             if(ptr != NULL) fclose(ptr);
             break;
-        case 5:
+        case 6:
             start_time = clock();
 
             ptr = initLexer(ptr, size_of_buffer);

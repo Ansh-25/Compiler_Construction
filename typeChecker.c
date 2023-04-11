@@ -178,7 +178,7 @@ WhileCondListNode* getWhileList (WhileCondListNode* head, ASTNode* root) {
 }
 
 void printAllArrays(){
-    printf("\nModuleName         Scope     ArrayName       Static/Dynamic         Range          Element Type\n");
+    printf("\nModuleName         Scope     ArrayName       Static/Dynamic        Range              Element Type\n");
     ModuleTableEntry** currModule;
     for (int i = 0; i < 40; i ++){
         if (SymbolTable[i] != NULL){
@@ -186,11 +186,12 @@ void printAllArrays(){
             for (int j = 0; j < 40; j ++) {
                 ModuleTableEntry* currVar = currModule[j];
                 if (currVar != NULL && currVar->type.datatype!=PRIMITIVE){
-                    printf("%-18s[%d-%d]      %-15s %-20s [%d-%d]            %-12s\n",SymbolTable[i]->module_name,currVar->scope_begin,currVar->scope_end,currVar->identifier,data_type_arr[currVar->type.datatype],currVar->type.lower_bound,currVar->type.upper_bound,prim_type_arr[currVar->type.primtype]);
+                    printf("%-18s[%d-%d]\t%-13s %-20s [%d-%d]\t\t%-12s\n",SymbolTable[i]->module_name,currVar->scope_begin,currVar->scope_end,currVar->identifier,data_type_arr[currVar->type.datatype],currVar->type.lower_bound,currVar->type.upper_bound,prim_type_arr[currVar->type.primtype]);
                 }
             }
         }
     }
+    printf("\n\n");
 }
 
 void typeChecker(ASTNode *astNode)
