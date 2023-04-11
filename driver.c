@@ -14,7 +14,7 @@
 #include "lexer.h"
 #include "parser.h"
 #include "ast.h"
-#include "typechecker.h"
+#include "typeChecker.h"
 
 int main(int argc, char *argv[]){
     int choice,size_of_buffer = 32; 
