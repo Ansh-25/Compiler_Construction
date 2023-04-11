@@ -11,7 +11,7 @@
 
 #include "astDef.h"
 
-typedef enum {INPUT_VAR, FOR_LOOP_VAR, NORMAL_VAR} typeOfVar;
+typedef enum {INPUT_VAR, OUTPUT_VAR, FOR_LOOP_VAR, NORMAL_VAR} typeOfVar;
 
 typedef struct ParamList{
     TypeInfo type;

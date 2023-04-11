@@ -160,6 +160,7 @@ void typeChecker(ASTNode *astNode)
     ASTNode *current = NULL;
     MainTableEntry *searched = NULL;
     ModuleTableEntry *newEntry = NULL;
+    ModuleTableEntry *searchedVar = NULL;
     ASTNode *left_op = NULL;
     ASTNode *right_op = NULL;
     switch (c)
@@ -303,7 +304,7 @@ void typeChecker(ASTNode *astNode)
                                 newEntry->scope_end = parameter->scope_end;
                                 newEntry->type = newnode->type;
                                 newEntry->is_changed = false;
-                                newEntry->vartype = NORMAL_VAR;
+                                newEntry->vartype = OUTPUT_VAR;
                                 if (newEntry->type.primtype == BOOLEAN)
                                     newEntry->width = 1;
                                 else if (newEntry->type.primtype == INTEGER)
@@ -591,7 +592,9 @@ void typeChecker(ASTNode *astNode)
         {
             char *s = idList->tk->val.identifier;
             newEntry = searchVar(curr->moduleTable,s,idList->tk->lineNo);
-            if(newEntry!=NULL && idList->scope_begin==newEntry->scope_begin && idList->scope_end==newEntry->scope_end){
+            if (newEntry != NULL && newEntry->vartype == OUTPUT_VAR)
+                printf("Semantic error at line %d: Output paramater %s cannot be shadowed\n",idList->tk->lineNo, idList->tk->val.identifier);
+            else if(newEntry!=NULL && idList->scope_begin==newEntry->scope_begin && idList->scope_end==newEntry->scope_end){
                 if (newEntry->vartype != INPUT_VAR)
                     printf("Semantic Error at line %d: Variable %s has already been declared in this scope\n",idList->tk->lineNo,idList->tk->val.identifier);
                 else {
@@ -1268,21 +1271,26 @@ void typeChecker(ASTNode *astNode)
         break;
 
     case ITER_FOR:
-        newEntry = (ModuleTableEntry*)malloc(sizeof(ModuleTableEntry));
-        newEntry->identifier = astNode->tk->val.identifier;
-        newEntry->nesting_lvl = astNode->nest_level;
-        newEntry->offset = offset;
-        newEntry->width = 2;
-        offset += 2;
-        newEntry->scope_begin = astNode->scope_begin;
-        newEntry->scope_end = astNode->scope_end;
-        newEntry->is_changed = false;
-        newEntry->vartype = FOR_LOOP_VAR;
-        newEntry->type.datatype = PRIMITIVE;
-        newEntry->type.lower_bound = -1e9;
-        newEntry->type.upper_bound = -1e9;
-        newEntry->type.primtype = INTEGER;
-        insertVar(curr->moduleTable, newEntry);
+        searchedVar = searchVar(curr->moduleTable, astNode->tk->val.identifier, astNode->tk->lineNo);
+        if (searchedVar != NULL && searchedVar->vartype == OUTPUT_VAR)
+            printf("Semaintic Error at line:= %d: Output parameter %s can never be shadowed\n",astNode->tk->lineNo, astNode->tk->val.identifier);
+        else {
+            newEntry = (ModuleTableEntry*)malloc(sizeof(ModuleTableEntry));
+            newEntry->identifier = astNode->tk->val.identifier;
+            newEntry->nesting_lvl = astNode->nest_level;
+            newEntry->offset = offset;
+            newEntry->width = 2;
+            offset += 2;
+            newEntry->scope_begin = astNode->scope_begin;
+            newEntry->scope_end = astNode->scope_end;
+            newEntry->is_changed = false;
+            newEntry->vartype = FOR_LOOP_VAR;
+            newEntry->type.datatype = PRIMITIVE;
+            newEntry->type.lower_bound = -1e9;
+            newEntry->type.upper_bound = -1e9;
+            newEntry->type.primtype = INTEGER;
+            insertVar(curr->moduleTable, newEntry);
+        }
         for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
             typeChecker(current);
         break;
