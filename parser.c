@@ -394,7 +394,7 @@ void loadgrammar(char* filename) { //reads through the grammar file and converts
                     currinput[i] = '\0';
                 input_index = 0;
             }
-            else {
+            else if (ch != '\r'){
                 currinput[input_index] = ch;
                 input_index ++;
             }

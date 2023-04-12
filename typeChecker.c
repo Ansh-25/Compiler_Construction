@@ -885,20 +885,9 @@ void typeChecker(ASTNode *astNode)
                 compile_error = true;
                 if(print_error) printf("Semantic error at line %d: Output paramater %s cannot be shadowed\n",idList->tk->lineNo, idList->tk->val.identifier);
             }
-            else if(newEntry!=NULL && idList->scope_begin==newEntry->scope_begin && idList->scope_end==newEntry->scope_end){
-                if (newEntry->vartype != INPUT_VAR){
-                    compile_error = true;
-                    if(print_error) printf("Semantic Error at line %d: Variable %s has already been declared in this scope\n",idList->tk->lineNo,idList->tk->val.identifier);
-                }
-                else {
-                    newEntry->type = d;
-                    newEntry->is_changed = false;
-                    newEntry->vartype = NORMAL_VAR;
-                    newEntry->width = width;
-                    newEntry->offset = offset;
-                    newEntry->nesting_lvl = idList->nest_level;
-                    offset += width;
-                }
+            else if(newEntry!=NULL && idList->scope_begin==newEntry->scope_begin && idList->scope_end==newEntry->scope_end && newEntry->vartype != INPUT_VAR) {
+                compile_error = true;
+                if(print_error) printf("Semantic Error at line %d: Variable %s has already been declared in this scope\n",idList->tk->lineNo,idList->tk->val.identifier);
             }
             else{
                 ModuleTableEntry *new_entry = (ModuleTableEntry *)malloc(sizeof(ModuleTableEntry));
