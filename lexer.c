@@ -187,7 +187,7 @@ struct Token* getNextToken()
                 state = 36;
             else if (ch == '\n')
                 state = 38;
-            else if (ch == '\b' || ch == '\t' || ch==32)
+            else if (ch == '\b' || ch == '\t' || ch==32 || '\r')
                 state = 39;
             else {
                 printf("\nERROR: Symbol not recognized at line %d\n\n", line);

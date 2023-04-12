@@ -102,7 +102,7 @@ void insertVar(ModuleTableEntry** table, ModuleTableEntry* new_var) {
 }
 
 ModuleTableEntry* searchVar(ModuleTableEntry** table, char* varName, int lineNo) {
-    int ind=0, bestNest = 0;
+    int ind=0, bestNest = -1;
     ModuleTableEntry* newEntry = NULL;
     for(int i=0;varName[i]!='\0';++i){
         ind = (ind+varName[i])%40;
@@ -353,6 +353,7 @@ void typeChecker(ASTNode *astNode)
     switch (c)
     {
     case PROGRAM:
+        offset = 0;
         createMainTable(40);
         curr = NULL;
         for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
@@ -443,7 +444,7 @@ void typeChecker(ASTNode *astNode)
                             curr->inputList = insertLast(curr->inputList, newnode);
                             ModuleTableEntry *newEntry = (ModuleTableEntry*)malloc(sizeof(ModuleTableEntry));
                             newEntry->identifier = newnode->identifier;
-                            newEntry->nesting_lvl = 1;
+                            newEntry->nesting_lvl = 0;
                             newEntry->offset = offset;
                             newEntry->scope_begin = parameter->scope_begin;
                             newEntry->scope_end = parameter->scope_end;
@@ -502,7 +503,7 @@ void typeChecker(ASTNode *astNode)
                                 curr->outputList = insertLast(curr->outputList, newnode);
                                 ModuleTableEntry *newEntry = (ModuleTableEntry*)malloc(sizeof(ModuleTableEntry));
                                 newEntry->identifier = newnode->identifier;
-                                newEntry->nesting_lvl = 1;
+                                newEntry->nesting_lvl = 0;
                                 newEntry->offset = offset;
                                 newEntry->scope_begin = parameter->scope_begin;
                                 newEntry->scope_end = parameter->scope_end;
