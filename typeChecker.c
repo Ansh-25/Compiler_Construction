@@ -1683,13 +1683,18 @@ void typeChecker(ASTNode *astNode)
                 d1 = current->scope_begin;
             typeChecker(current);
         }
+        if(CondType==INTEGER && d1==0){
+            compile_error = true;
+            if(print_error) printf("Semantic Error: at line %d, default statement is missing- the type of switch variable is integer\n",astNode->scope_end);
+            break;
+        }
         if(CondType==BOOLEAN){
-            if(c>2){
-                compile_error = true;
-                if(print_error) printf("Semantic Error: at line %d, more than two cases found for boolean condition variable\n", astNode->tk->lineNo);
-                break;
-            }
-            if(c==2 && d1!=0){
+            // if(c>2){
+            //     compile_error = true;
+            //     if(print_error) printf("Semantic Error: at line %d, more than two cases found for boolean condition variable\n", astNode->tk->lineNo);
+            //     break;
+            // }
+            if(c>=2 && d1!=0){
                 compile_error = true;
                 if(print_error) printf("Semantic Error: at line %d, presence of default statement is incorrect as condiiton variable type is boolean\n",d1);
                 break;
@@ -1698,12 +1703,14 @@ void typeChecker(ASTNode *astNode)
         break;
 
     case CASE:
-        for (ASTNode *current = astNode->child; current != NULL; current = current->sibling)
-            typeChecker(current);
-        if(prim_type_arr[CondType]=="INTEGER" && astNode->child->type.primtype!=CondType){
+        typeChecker(astNode->child);
+        if(CondType!=REAL && astNode->child->type.primtype!=CondType){
             compile_error = true;
             if(print_error) printf("Semantic Error: at line %d, Case value is incorrect as condition variable type is %s\n", astNode->child->tk->lineNo,prim_type_arr[CondType]);
         }
+        for (ASTNode *current = astNode->child->sibling; current != NULL; current = current->sibling)
+            typeChecker(current);
+        
         break;
 
     case DEFAULT:
