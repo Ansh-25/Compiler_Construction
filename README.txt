@@ -11,17 +11,12 @@ COMMANDS
 
 sample command to run the program
 
-./stage1.exe testcase4.txt testOutput.txt 32
+make
 
-command template to run the driver
-
-./stage1.exe testcase.txt  parsetreeOutFile.txt  size_of_buffer
-
-FILES
-
-commentFreeFile.txt gets created on option 1.
-
-parsetreeOutFile.txt will contain the final parse tree on choosing option 3.
+./compiler.exe t1.txt code.asm
 
 
-NOTE: Buffer size should not exceed 23 since maximum length of identifier is 20.
+NOTE:
+lexer parser semantic analyzer correctly working
+Code-genration not implemented.
+All testcases t1 to t16 working and all reporting errors 

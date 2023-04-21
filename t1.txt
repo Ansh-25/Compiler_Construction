@@ -1,7 +1,6 @@
 ** Test case 1: Testing symbol table creation for variable declaration and redeclaration checks**
 ** Single level nesting using primitive data types**
 
-
 <<module var_demo>>
 takes input [x:integer, w: boolean, p:real];
 returns [m:integer, n:integer, u: boolean];

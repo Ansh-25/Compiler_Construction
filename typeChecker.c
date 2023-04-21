@@ -1,3 +1,11 @@
+/*
+    ID: 2020A7PS0035P | Name: Shreekar Puranik
+    ID: 2020A7PS1209P | Name: Sriram Ramanathan
+    ID: 2020A7PS1205P | Name: Nikhil Pradhan
+    ID: 2020A7PS0146P | Name: Toshit Jain
+    ID: 2020A7PS0116P | Name: Ansh Gupta
+*/
+
 #include "symbolTableDef.h"
 #include "hash.h"
 #include "typeChecker.h"
@@ -15,60 +23,94 @@ char* prim_type_arr[] =  {"INTEGER", "REAL", "BOOLEAN", "Semantic Error"} ;
 
 char* data_type_arr[] =  {"ARRAY_STATIC", "ARRAY_DYNAMIC", "PRIMITIVE"} ;
 
-void printSymbolTable() {
-    ParamList* current = NULL;
-    ModuleTableEntry** currModule;
-    for (int i = 0; i < 40; i ++) {
-        if (SymbolTable[i] != NULL) {
-            printf("\nMODULE: %s\n", SymbolTable[i]->module_name);
-            printf("Input Plist:\n");
-            for (current = SymbolTable[i]->inputList; current != NULL; current = current->next){
-                printf("Name: %s, DataType: %s, PrimType = %s", current->identifier, data_type_arr[current->type.datatype], prim_type_arr[current->type.primtype]);
-                if (current->type.datatype == ARRAY_STATIC)
-                    printf(", LB = %d, UB = %d",current->type.lower_bound.static_bound, current->type.upper_bound.static_bound);
-                if (current->type.datatype == ARRAY_DYNAMIC){
-                    if(current->type.lb_static==true){
-                        printf(", LB = %d, UB = %s",current->type.lower_bound.static_bound, current->type.upper_bound.dynamic_bound);
-                    }
-                    else{
-                        printf(", LB = %s, UB = %d",current->type.lower_bound.dynamic_bound, current->type.upper_bound.static_bound);
-                    }
-                }
-                printf("\n");
-            }
-            printf("Output Plist:\n");
-            for (current = SymbolTable[i]->outputList; current != NULL; current = current->next){
-                printf("Name: %s, DataType: %s, PrimType = %s", current->identifier, data_type_arr[current->type.datatype], prim_type_arr[current->type.primtype]);
-                if (current->type.datatype == ARRAY_STATIC)
-                    printf(", LB = %d, UB = %d",current->type.lower_bound.static_bound, current->type.upper_bound.static_bound);
-                if (current->type.datatype == ARRAY_DYNAMIC){
-                    if(current->type.lb_static==true){
-                        printf(", LB = %d, UB = %s",current->type.lower_bound.static_bound, current->type.upper_bound.dynamic_bound);
-                    }
-                    else{
-                        printf(", LB = %s, UB = %d",current->type.lower_bound.dynamic_bound, current->type.upper_bound.static_bound);
-                    }
-                }
-                printf("\n");
-            }
-            printf("\nModule's symbol table\n");
+void printSymbolTable(){
+    
+    printf("\nVariableName    scope(ModuleName)  Scope(#line)  ElementType  isArray  Static/Dynamic   ArrayRange     Width     Offset   Nesting Level\n");
+    ModuleTableEntry** currModule = NULL;
+    for (int i = 0; i < 40; i ++){
+        if (SymbolTable[i] != NULL){
             currModule = SymbolTable[i]->moduleTable;
-            printf("Name    Scope_begin    Scope_end    DataType      PrimitiveType    LowerBound     UpperBound    Offset    Width    NestingLvl\n");
             for (int j = 0; j < 40; j ++) {
-                if (currModule[j] != NULL) {
-                    if(currModule[j]->type.datatype==ARRAY_DYNAMIC){
-                        if(currModule[j]->type.lb_static==true)
-                            printf("%-12s %-12d %-9d %-16s %-13s %-14d %-16s %-8d %-10d %d\n",currModule[j]->identifier,currModule[j]->scope_begin,currModule[j]->scope_end,data_type_arr[currModule[j]->type.datatype],prim_type_arr[currModule[j]->type.primtype],currModule[j]->type.lower_bound.static_bound,currModule[j]->type.upper_bound.dynamic_bound,currModule[j]->offset,currModule[j]->width,currModule[j]->nesting_lvl);
-                        else    
-                            printf("%-12s %-12d %-9d %-16s %-13s %-14s %-16d %-8d %-10d %d\n",currModule[j]->identifier,currModule[j]->scope_begin,currModule[j]->scope_end,data_type_arr[currModule[j]->type.datatype],prim_type_arr[currModule[j]->type.primtype],currModule[j]->type.lower_bound.dynamic_bound,currModule[j]->type.upper_bound.static_bound,currModule[j]->offset,currModule[j]->width,currModule[j]->nesting_lvl);
-                    }
-                    else
-                        printf("%-12s %-12d %-9d %-16s %-13s %-14d %-16d %-8d %-10d %d\n",currModule[j]->identifier,currModule[j]->scope_begin,currModule[j]->scope_end,data_type_arr[currModule[j]->type.datatype],prim_type_arr[currModule[j]->type.primtype],currModule[j]->type.lower_bound.static_bound,currModule[j]->type.upper_bound.static_bound,currModule[j]->offset,currModule[j]->width,currModule[j]->nesting_lvl);
+                ModuleTableEntry* currVar = currModule[j];
+                if (currVar != NULL){
+                    if(currVar->type.datatype==PRIMITIVE)
+                        printf("%-15s %-18s [%d-%d]\t %-12s no \t**\t\t **\t\t%-9d %-9d %-9d\n",currVar->identifier,SymbolTable[i]->module_name,currVar->scope_begin,currVar->scope_end,prim_type_arr[currVar->type.primtype],currVar->width,currVar->offset,currVar->nesting_lvl);
+                    else if(currVar->type.datatype==ARRAY_STATIC)
+                        printf("%-15s %-18s [%d-%d]\t %-12s yes \tStatic\t\t %d..%-10d %-9d %-9d %-9d\n",currVar->identifier,SymbolTable[i]->module_name,currVar->scope_begin,currVar->scope_end,prim_type_arr[currVar->type.primtype],currVar->type.lower_bound.static_bound,currVar->type.upper_bound.static_bound,currVar->width,currVar->offset,currVar->nesting_lvl);
+                    else if(currVar->type.lb_static==true)
+                        printf("%-15s %-18s [%d-%d]\t %-12s yes \tDynamic\t\t %d..%-10s %-9d %-9d %-9d\n",currVar->identifier,SymbolTable[i]->module_name,currVar->scope_begin,currVar->scope_end,prim_type_arr[currVar->type.primtype],currVar->type.lower_bound.static_bound,currVar->type.upper_bound.dynamic_bound,currVar->width,currVar->offset,currVar->nesting_lvl);
+                    else if(currVar->type.ub_static==true)
+                        printf("%-15s %-18s [%d-%d]\t %-12s yes \tDynamic\t\t %s..%-10d %-9d %-9d %-9d\n",currVar->identifier,SymbolTable[i]->module_name,currVar->scope_begin,currVar->scope_end,prim_type_arr[currVar->type.primtype],currVar->type.lower_bound.dynamic_bound,currVar->type.upper_bound.static_bound,currVar->width,currVar->offset,currVar->nesting_lvl);
+                    else    
+                        printf("%-15s %-18s [%d-%d]\t %-12s yes \tDynamic\t\t %s..%-10s %-9d %-9d %-9d\n",currVar->identifier,SymbolTable[i]->module_name,currVar->scope_begin,currVar->scope_end,prim_type_arr[currVar->type.primtype],currVar->type.lower_bound.dynamic_bound,currVar->type.upper_bound.dynamic_bound,currVar->width,currVar->offset,currVar->nesting_lvl);
                 }
             }
         }
     }
+    printf("\n\n");
 }
+
+// void printSymbolTable() {
+//     ParamList* current = NULL;
+//     ModuleTableEntry** currModule;
+//     for (int i = 0; i < 40; i ++) {
+//         if (SymbolTable[i] != NULL) {
+//             printf("\nMODULE: %s\n", SymbolTable[i]->module_name);
+//             printf("Input Plist:\n");
+//             for (current = SymbolTable[i]->inputList; current != NULL; current = current->next){
+//                 printf("Name: %s, DataType: %s, PrimType = %s", current->identifier, data_type_arr[current->type.datatype], prim_type_arr[current->type.primtype]);
+//                 if (current->type.datatype == ARRAY_STATIC)
+//                     printf(", LB = %d, UB = %d",current->type.lower_bound.static_bound, current->type.upper_bound.static_bound);
+//                 if (current->type.datatype == ARRAY_DYNAMIC){
+//                     if(current->type.lb_static==true){
+//                         printf(", LB = %d, UB = %s",current->type.lower_bound.static_bound, current->type.upper_bound.dynamic_bound);
+//                     }
+//                     else{
+//                         printf(", LB = %s, UB = %d",current->type.lower_bound.dynamic_bound, current->type.upper_bound.static_bound);
+//                     }
+//                 }
+//                 printf("\n");
+//             }
+//             printf("Output Plist:\n");
+//             for (current = SymbolTable[i]->outputList; current != NULL; current = current->next){
+//                 printf("Name: %s, DataType: %s, PrimType = %s", current->identifier, data_type_arr[current->type.datatype], prim_type_arr[current->type.primtype]);
+//                 if (current->type.datatype == ARRAY_STATIC)
+//                     printf(", LB = %d, UB = %d",current->type.lower_bound.static_bound, current->type.upper_bound.static_bound);
+//                 if (current->type.datatype == ARRAY_DYNAMIC){
+//                     if(current->type.lb_static==true){
+//                         printf(", LB = %d, UB = %s",current->type.lower_bound.static_bound, current->type.upper_bound.dynamic_bound);
+//                     }
+//                     else{
+//                         printf(", LB = %s, UB = %d",current->type.lower_bound.dynamic_bound, current->type.upper_bound.static_bound);
+//                     }
+//                 }
+//                 printf("\n");
+//             }
+//             printf("\nModule's symbol table\n");
+//             currModule = SymbolTable[i]->moduleTable;
+//             printf("Name    Scope_begin    Scope_end    DataType      PrimitiveType    LowerBound     UpperBound    Offset    Width    NestingLvl\n");
+//             for (int j = 0; j < 40; j ++) {
+//                 if (currModule[j] != NULL) {
+//                     if(currModule[j]->type.datatype==ARRAY_DYNAMIC){
+//                         if(currModule[j]->type.lb_static==true){
+//                             printf("%-12s %-12d %-9d %-16s %-13s ",currModule[j]->identifier,currModule[j]->scope_begin,currModule[j]->scope_end,data_type_arr[currModule[j]->type.datatype],prim_type_arr[currModule[j]->type.primtype]);
+//                             printf("%-14d %-16s %-8d %-10d %d\n",currModule[j]->type.lower_bound.static_bound,currModule[j]->type.upper_bound.dynamic_bound,currModule[j]->offset,currModule[j]->width,currModule[j]->nesting_lvl);
+
+//                         }
+//                         else {  
+//                             printf("%-12s %-12d %-9d %-16s %-13s %-14s %-16d %-8d %-10d %d\n",currModule[j]->identifier,currModule[j]->scope_begin,currModule[j]->scope_end,data_type_arr[currModule[j]->type.datatype],prim_type_arr[currModule[j]->type.primtype],currModule[j]->type.lower_bound.dynamic_bound,currModule[j]->type.upper_bound.static_bound,currModule[j]->offset,currModule[j]->width,currModule[j]->nesting_lvl);
+//                         }
+//                     }
+//                     else{
+//                         printf("%-12s %-12d %-9d %-16s %-13s ",currModule[j]->identifier,currModule[j]->scope_begin,currModule[j]->scope_end,data_type_arr[currModule[j]->type.datatype],prim_type_arr[currModule[j]->type.primtype]);
+//                         printf("%-14d %-16d ",currModule[j]->type.lower_bound.static_bound,currModule[j]->type.upper_bound.static_bound);
+//                         printf("%-8d %-10d %d\n",currModule[j]->offset,currModule[j]->width,currModule[j]->nesting_lvl);
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
 
 void insertModule(MainTableEntry* new_module) {
     int ind=0;
@@ -206,8 +248,10 @@ WhileCondListNode* getWhileList (WhileCondListNode* head, ASTNode* root) {
     return head;
 }
 
+
+
 void printAllArrays(){
-    printf("\nModuleName         Scope     ArrayName       Static/Dynamic        Range              Element Type\n");
+    printf("\nScope(ModuleName)    Scope(line numbers)     ArrayName         Static/Dynamic       ArrayRange       Element Type\n");
     ModuleTableEntry** currModule;
     for (int i = 0; i < 40; i ++){
         if (SymbolTable[i] != NULL){
@@ -216,13 +260,13 @@ void printAllArrays(){
                 ModuleTableEntry* currVar = currModule[j];
                 if (currVar != NULL && currVar->type.datatype!=PRIMITIVE){
                     if(currVar->type.datatype==ARRAY_STATIC)
-                        printf("%-18s[%d-%d]\t%-13s %-20s [%d,%d]\t\t%-12s\n",SymbolTable[i]->module_name,currVar->scope_begin,currVar->scope_end,currVar->identifier,data_type_arr[currVar->type.datatype],currVar->type.lower_bound.static_bound,currVar->type.upper_bound.static_bound,prim_type_arr[currVar->type.primtype]);
+                        printf("%-20s\t[%d-%d]\t\t\t%-15s %-20s [%d,%d]\t\t%-12s\n",SymbolTable[i]->module_name,currVar->scope_begin,currVar->scope_end,currVar->identifier,data_type_arr[currVar->type.datatype],currVar->type.lower_bound.static_bound,currVar->type.upper_bound.static_bound,prim_type_arr[currVar->type.primtype]);
                     else if(currVar->type.lb_static==true && currVar->type.ub_static==true)
-                        printf("%-18s[%d-%d]\t%-13s %-20s [%s,%s]\t\t%-12s\n",SymbolTable[i]->module_name,currVar->scope_begin,currVar->scope_end,currVar->identifier,data_type_arr[currVar->type.datatype],currVar->type.lower_bound.dynamic_bound,currVar->type.upper_bound.dynamic_bound,prim_type_arr[currVar->type.primtype]);
+                        printf("%-20s\t[%d-%d]\t\t\t%-15s %-20s [%s,%s]\t\t%-12s\n",SymbolTable[i]->module_name,currVar->scope_begin,currVar->scope_end,currVar->identifier,data_type_arr[currVar->type.datatype],currVar->type.lower_bound.dynamic_bound,currVar->type.upper_bound.dynamic_bound,prim_type_arr[currVar->type.primtype]);
                     else if(currVar->type.ub_static==true)
-                        printf("%-18s[%d-%d]\t%-13s %-20s [%s,%d]\t\t%-12s\n",SymbolTable[i]->module_name,currVar->scope_begin,currVar->scope_end,currVar->identifier,data_type_arr[currVar->type.datatype],currVar->type.lower_bound.dynamic_bound,currVar->type.upper_bound.static_bound,prim_type_arr[currVar->type.primtype]);
+                        printf("%-20s\t[%d-%d]\t\t\t%-15s %-20s [%s,%d]\t\t%-12s\n",SymbolTable[i]->module_name,currVar->scope_begin,currVar->scope_end,currVar->identifier,data_type_arr[currVar->type.datatype],currVar->type.lower_bound.dynamic_bound,currVar->type.upper_bound.static_bound,prim_type_arr[currVar->type.primtype]);
                     else    
-                        printf("%-18s[%d-%d]\t%-13s %-20s [%d,%s]\t\t%-12s\n",SymbolTable[i]->module_name,currVar->scope_begin,currVar->scope_end,currVar->identifier,data_type_arr[currVar->type.datatype],currVar->type.lower_bound.static_bound,currVar->type.upper_bound.dynamic_bound,prim_type_arr[currVar->type.primtype]);
+                        printf("%-20s\t[%d-%d]\t\t\t%-15s %-20s [%d,%s]\t\t%-12s\n",SymbolTable[i]->module_name,currVar->scope_begin,currVar->scope_end,currVar->identifier,data_type_arr[currVar->type.datatype],currVar->type.lower_bound.static_bound,currVar->type.upper_bound.dynamic_bound,prim_type_arr[currVar->type.primtype]);
                 }
             }
         }
